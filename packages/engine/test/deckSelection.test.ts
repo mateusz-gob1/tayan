@@ -33,6 +33,12 @@ describe('deck selection', () => {
     expect(big.lowestRank).toBe(2);
   });
 
+  it('memoizes default-option simulations', () => {
+    const p = { players: 5, startingCards: 1, eliminationLimit: 4 };
+    const first = chooseDeck(p);
+    expect(chooseDeck(p)).toBe(first);
+  });
+
   it('simulateRates gives sane averages', () => {
     const r = simulateRates(
       { players: 2, startingCards: 2, eliminationLimit: 5, lowestRank: 9, games: 300 },
