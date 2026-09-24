@@ -62,7 +62,7 @@ export function RevealBoard({
               style={{ animationDelay: `${i * 80}ms` }}
             >
               <PlayingCard card={m.card} scale={2} highlight />
-              <span className="text-[0.7rem] text-stone-300">
+              <span className="text-[0.95rem] text-stone-300">
                 {t('reveal.owner', { nick: nick(m.ownerId) })}
               </span>
             </div>
