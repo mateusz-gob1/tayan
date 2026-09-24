@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@tayan/engine": "workspace:*",
-    "i18next": "^25.0.0",
+    "i18next": "^26.4.2",
     "i18next-browser-languagedetector": "^8.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
