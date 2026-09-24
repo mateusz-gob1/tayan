@@ -1,7 +1,10 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MAX_PLAYERS, deckSize, rankLabel, type GameSettings, type Rank } from '@tayan/engine';
-import { kick, setSettings, startGame } from '../net/actions';
+import { addBot, kick, playWithBots, setSettings, startGame } from '../net/actions';
+
+// Testing aid, easy to hide: set VITE_ENABLE_BOTS=false when building the client.
+const BOTS_ENABLED = import.meta.env.VITE_ENABLE_BOTS !== 'false';
 import type { RoomState } from '../net/types';
 import { useStore } from '../store';
 
@@ -54,6 +57,7 @@ export function Lobby({ room }: { room: RoomState }) {
                     {t('lobby.host')}
                   </span>
                 )}
+                {m.bot && <span className="text-xs text-stone-400">{t('lobby.bot')}</span>}
                 {m.spectator && (
                   <span className="text-xs text-stone-400">{t('lobby.spectator')}</span>
                 )}
@@ -84,6 +88,27 @@ export function Lobby({ room }: { room: RoomState }) {
             </button>
             {players.filter((p) => p.connected).length < 2 && (
               <p className="mt-2 text-center text-sm text-stone-400">{t('lobby.needTwo')}</p>
+            )}
+            {BOTS_ENABLED && (
+              <div className="mt-4 space-y-2 border-t border-white/10 pt-3">
+                <div className="flex gap-2">
+                  <button
+                    className="btn-ghost flex-1 text-sm"
+                    disabled={room.members.length >= MAX_PLAYERS}
+                    onClick={() => void addBot()}
+                  >
+                    {t('lobby.addBot')}
+                  </button>
+                  <button
+                    className="btn-ghost flex-1 text-sm"
+                    disabled={room.members.length > MAX_PLAYERS}
+                    onClick={() => void playWithBots()}
+                  >
+                    {t('lobby.playWithBots')}
+                  </button>
+                </div>
+                <p className="text-center text-xs text-stone-400">{t('lobby.botsHint')}</p>
+              </div>
             )}
           </div>
         ) : (

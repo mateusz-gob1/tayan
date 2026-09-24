@@ -13,7 +13,13 @@ export type RoomState = {
   code: string;
   hostId: string;
   phase: RoomPhase;
-  members: { id: string; nick: string; connected: boolean; spectator: boolean }[];
+  members: {
+    id: string;
+    nick: string;
+    connected: boolean;
+    spectator: boolean;
+    bot: boolean;
+  }[];
   overrides: Partial<GameSettings>;
   settings: GameSettings;
   deckWarning: boolean;

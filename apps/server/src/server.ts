@@ -163,6 +163,12 @@ export function createGameServer(config: ServerConfig, deps: ServerDeps = {}): G
       rooms.touch(room);
     });
 
+    on('room:addBot', () => {
+      if (!config.enableBots) throw new RoomError('NOT_ALLOWED');
+      const { room, member } = current(socket);
+      room.addBot(member.id);
+    });
+
     on('game:start', () => {
       const { room, member } = current(socket);
       room.start(member.id);

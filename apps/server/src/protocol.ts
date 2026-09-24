@@ -108,6 +108,7 @@ export const clientEvents = {
   'room:leave': empty,
   'room:settings': settingsSchema,
   'room:kick': z.object({ playerId }),
+  'room:addBot': empty,
   'game:start': empty,
   'game:declare': z.object({ declarationId: z.string().min(1).max(40) }),
   'game:check': empty,
@@ -127,7 +128,7 @@ export type RoomStatePayload = {
   code: string;
   hostId: string;
   phase: RoomPhase;
-  members: { id: string; nick: string; connected: boolean; spectator: boolean }[];
+  members: { id: string; nick: string; connected: boolean; spectator: boolean; bot: boolean }[];
   /** What the host has set explicitly; everything else is automatic. */
   overrides: Partial<GameSettings>;
   /** Effective settings: overrides plus automatic values for the current player count. */

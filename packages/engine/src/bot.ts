@@ -7,7 +7,11 @@ export interface Bot {
   decide(view: PlayerView): Intent;
 }
 
-/** Plays a uniformly random legal move; used for simulations and tests. */
+/**
+ * Plays a random legal move; used for simulations, tests and the lobby's test bots.
+ * Raises are usually small (the offset above the minimum is skewed towards 0), so a game
+ * does not jump to the top hands in the first bid.
+ */
 export function randomBot(rng: Rng, checkChance = 0.4): Bot {
   return {
     decide(view) {
@@ -16,9 +20,9 @@ export function randomBot(rng: Rng, checkChance = 0.4): Bot {
       if (view.canCheck && (remaining <= 0 || rng.int(1000) < checkChance * 1000)) {
         return { type: 'CHECK' };
       }
-      // Bias towards small raises so bidding rounds are not over in one step.
-      const span = Math.max(1, Math.min(remaining, 1 + rng.int(Math.max(1, remaining))));
-      const pick = list[view.allowedDeclarationMinOrder + rng.int(span)];
+      const t = rng.int(1000) / 1000;
+      const offset = Math.floor(t ** 4 * remaining);
+      const pick = list[view.allowedDeclarationMinOrder + offset];
       if (!pick) return { type: 'CHECK' };
       return { type: 'DECLARE', declarationId: pick.id };
     },

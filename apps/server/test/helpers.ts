@@ -16,7 +16,14 @@ export type TestServer = {
 export async function startTestServer(config: Partial<ServerConfig> = {}): Promise<TestServer> {
   const scheduler = new ManualScheduler();
   const server = createGameServer(
-    { port: 0, clientOrigin: '*', logLevel: 'silent', rateLimitPerSec: 1000, ...config },
+    {
+      port: 0,
+      clientOrigin: '*',
+      logLevel: 'silent',
+      rateLimitPerSec: 1000,
+      enableBots: true,
+      ...config,
+    },
     { scheduler, rng: seededRng(42), logger: pino({ level: 'silent' }) },
   );
   const port = await server.listen(0);

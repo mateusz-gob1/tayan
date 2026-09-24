@@ -3,6 +3,7 @@ import {
   activePlayers,
   applyAction,
   createGame,
+  randomBot,
   resolveSettings,
   toPlayerView,
   MAX_PLAYERS,
@@ -26,6 +27,8 @@ export type Member = {
   nick: string;
   token: string;
   socketId: string | null;
+  /** Server-driven test player; has no socket and always counts as connected. */
+  bot?: boolean;
   joinedAt: number;
   role: 'player' | 'spectator';
   disconnectedAt: number | null;
@@ -69,6 +72,8 @@ export class Room {
   private cancelTurn: (() => void) | undefined;
   private cancelReveal: (() => void) | undefined;
   private cancelInactive: (() => void) | undefined;
+  private cancelBot: (() => void) | undefined;
+  private botTimerKey = '';
 
   constructor(
     readonly code: string,
@@ -83,6 +88,11 @@ export class Room {
 
   memberBySocket(socketId: string): Member | undefined {
     return this.members.find((m) => m.socketId === socketId);
+  }
+
+  /** Humans need a live socket; bots are always online. */
+  private online(m: Member): boolean {
+    return m.bot === true || m.socketId !== null;
   }
 
   connectedCount(): number {
@@ -109,6 +119,29 @@ export class Room {
     this.deps.transport.join(socketId, this.code);
     this.afterChange();
     return member;
+  }
+
+  /** Adds a server-driven bot (host only, lobby only). */
+  addBot(byId: string): Member {
+    this.requireHost(byId);
+    if (this.phase !== 'LOBBY') throw new RoomError('INVALID_PHASE');
+    if (this.members.length >= MAX_PLAYERS) throw new RoomError('ROOM_FULL');
+    let n = 1;
+    while (this.members.some((m) => m.nick.toLowerCase() === `bot ${n}`)) n++;
+    const bot: Member = {
+      id: randomUUID().slice(0, 8),
+      nick: `Bot ${n}`,
+      token: randomBytes(16).toString('hex'),
+      socketId: null,
+      joinedAt: ++this.joinCounter,
+      role: 'player',
+      disconnectedAt: null,
+      bot: true,
+    };
+    this.members.push(bot);
+    this.nickById.set(bot.id, bot.nick);
+    this.afterChange();
+    return bot;
   }
 
   /** Re-attaches a new socket to an existing member identified by session token. */
@@ -184,7 +217,8 @@ export class Room {
     const current = this.member(this.hostId);
     if (current?.socketId) return;
     const pick = (list: Member[]) => list.sort((a, b) => a.joinedAt - b.joinedAt)[0];
-    const next = pick(this.members.filter((m) => m.socketId)) ?? current ?? pick([...this.members]);
+    const humans = this.members.filter((m) => !m.bot);
+    const next = pick(humans.filter((m) => m.socketId)) ?? current ?? pick([...humans]);
     this.hostId = next?.id ?? '';
   }
 
@@ -212,7 +246,7 @@ export class Room {
   start(memberId: string): void {
     this.requireHost(memberId);
     if (this.phase !== 'LOBBY') throw new RoomError('INVALID_PHASE');
-    const players = this.members.filter((m) => m.role === 'player' && m.socketId);
+    const players = this.members.filter((m) => m.role === 'player' && this.online(m));
     if (players.length < 2) throw new RoomError('NOT_ENOUGH_PLAYERS');
     // players who are offline sit out until the rematch
     for (const m of this.members) if (!players.includes(m)) m.role = 'spectator';
@@ -242,7 +276,7 @@ export class Room {
     this.kickVotes.clear();
     for (const m of this.members) {
       m.role = 'player';
-      if (!m.socketId) this.scheduleGrace(m);
+      if (!this.online(m)) this.scheduleGrace(m);
     }
     this.afterChange();
   }
@@ -373,7 +407,7 @@ export class Room {
     const limit = st.settings.inactiveTimeoutSec;
     if (r.phase === 'BIDDING' && limit) {
       const m = this.member(r.currentTurn);
-      if (m && !m.socketId) {
+      if (m && !this.online(m)) {
         const since = Math.max(this.turnStartedAt, m.disconnectedAt ?? 0);
         const delay = Math.max(0, since + limit * 1000 - scheduler.now());
         const target = r.currentTurn;
@@ -415,6 +449,41 @@ export class Room {
     this.deps.transport.toRoom(this.code, 'game:event', { type: 'AUTO_PLAYED', playerId });
   }
 
+  /** Schedules the move of a bot whose turn it is, after a human-like pause. */
+  private driveBots(): void {
+    const st = this.state;
+    const turn =
+      st && !st.winner && st.round.phase === 'BIDDING'
+        ? this.member(st.round.currentTurn)
+        : undefined;
+    if (!st || !turn?.bot) {
+      this.cancelBot?.();
+      this.cancelBot = undefined;
+      this.botTimerKey = '';
+      return;
+    }
+    const key = `${st.round.number}:${st.round.bids.length}:${turn.id}`;
+    if (key === this.botTimerKey) return;
+    this.cancelBot?.();
+    this.botTimerKey = key;
+    const delay = 800 + this.deps.rng.int(1200);
+    this.cancelBot = this.deps.scheduler.after(delay, () => this.guard(() => this.botMove(key)));
+  }
+
+  private botMove(key: string): void {
+    this.botTimerKey = ''; // if the move fails, the next change schedules a new attempt
+    const st = this.state;
+    if (!st || st.winner || st.round.phase !== 'BIDDING') return;
+    const turn = this.member(st.round.currentTurn);
+    if (!turn?.bot || `${st.round.number}:${st.round.bids.length}:${turn.id}` !== key) return;
+    const intent = randomBot(this.deps.rng).decide(toPlayerView(st, turn.id, this.meta()));
+    this.run(
+      intent.type === 'CHECK'
+        ? { type: 'CHECK', playerId: turn.id }
+        : { type: 'DECLARE', playerId: turn.id, declarationId: intent.declarationId },
+    );
+  }
+
   private checkReadyAdvance(): void {
     const st = this.state;
     if (!st || st.winner || st.round.phase !== 'REVEAL') return;
@@ -435,6 +504,7 @@ export class Room {
       this.deps.log.warn({ err: e }, 'ready advance failed');
     }
     this.syncTimers();
+    this.driveBots();
     this.broadcast();
   }
 
@@ -458,7 +528,8 @@ export class Room {
       members: this.members.map((m) => ({
         id: m.id,
         nick: m.nick,
-        connected: m.socketId !== null,
+        connected: this.online(m),
+        bot: m.bot === true,
         spectator: m.role === 'spectator',
       })),
       overrides: this.overrides,
@@ -479,7 +550,7 @@ export class Room {
   private meta(): PlayerMeta {
     const meta: PlayerMeta = {};
     for (const [id, nick] of this.nickById) meta[id] = { nick, connected: false };
-    for (const m of this.members) meta[m.id] = { nick: m.nick, connected: m.socketId !== null };
+    for (const m of this.members) meta[m.id] = { nick: m.nick, connected: this.online(m) };
     return meta;
   }
 
@@ -501,6 +572,7 @@ export class Room {
   }
 
   dispose(): void {
+    this.cancelBot?.();
     this.clearTurnTimers();
     this.cancelInactive?.();
     for (const cancel of this.graceCancel.values()) cancel();

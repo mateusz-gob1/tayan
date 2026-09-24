@@ -65,7 +65,11 @@
     "settings": "Ustawienia gry",
     "onlyHost": "Ustawienia zmienia tylko host.",
     "deckWarning": "Przy tylu graczach nawet pełna talia często daje karety i pokery. Rozważ obniżenie limitu eliminacji do 4.",
-    "auto": "auto"
+    "auto": "auto",
+    "addBot": "Dodaj bota",
+    "playWithBots": "Graj z botami",
+    "botsHint": "Tryb testowy: boty grają losowo.",
+    "bot": "bot"
   },
   "settings": {
     "deckMode": "Talia",

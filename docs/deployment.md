@@ -18,6 +18,8 @@ Rooms live in the server's memory. Restarting or redeploying the server ends gam
 | `CLIENT_ORIGIN`      | server (Render)                 | Address(es) of the client allowed to connect, comma separated, e.g. `https://tayan.pages.dev,https://tayan.example`. |
 | `PORT`               | server                          | Set by the host; defaults to 3001.                                                                                   |
 | `LOG_LEVEL`          | server                          | `info` by default.                                                                                                   |
+| `ENABLE_BOTS`        | server                          | `true` by default: the host can add bots in the lobby (testing aid). Set to `false` to disable.                      |
+| `VITE_ENABLE_BOTS`   | client build                    | Set to `false` to hide the bot buttons in the lobby.                                                                 |
 | `RATE_LIMIT_PER_SEC` | server                          | Events per second per connection, 10 by default.                                                                     |
 
 ## Server on Render
