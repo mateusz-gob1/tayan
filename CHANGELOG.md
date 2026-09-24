@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+
+- Updated all dependencies (zod 4, vitest 5, vite 8, eslint 10, pino 10, i18next 26, TypeScript 6) and GitHub Actions; Dependabot now groups major and action updates into one pull request each
+
 ### Removed
 
 - The tagline under the logo and the first-visit tutorial (help stays available under "?" and the H key)
