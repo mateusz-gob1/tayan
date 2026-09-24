@@ -278,27 +278,6 @@ body {
   animation: deal-in 0.4s steps(6) both;
 }
 
-/* turning a card over: the back squashes away, the face grows in */
-@keyframes flip-out {
-  to {
-    transform: scaleX(0);
-  }
-}
-@keyframes flip-in {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-.flip-out {
-  animation: flip-out 0.13s steps(3) both;
-}
-.flip-in {
-  animation: flip-in 0.13s steps(3) both;
-}
-
 /* the player whose turn it is blinks their frame */
 @keyframes blink-border {
   50% {
@@ -352,13 +331,5 @@ body {
   .bounce,
   .blink {
     animation: none;
-  }
-  .flip-out {
-    animation: none;
-    opacity: 0;
-  }
-  .flip-in {
-    animation: none;
-    transform: none;
   }
 }
