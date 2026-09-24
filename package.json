@@ -1,6 +1,7 @@
 {
   "name": "tayan",
   "private": true,
+  "packageManager": "pnpm@12.6.0",
   "version": "0.1.0",
   "description": "Tayan: a real-time multiplayer bluffing card game for the browser.",
   "license": "MIT",
