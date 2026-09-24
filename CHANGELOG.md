@@ -4,6 +4,12 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+
+- The interface scales to the window in whole-number steps (fonts, borders and card sprites together, so pixels stay crisp); the table fills the free space
+- Table screen: your cards and the action buttons sit together in one area below the table; bid history moved to a narrow side panel
+- UI font changed to Jersey 25 (Pixelify Sans made the digit 5 look like an S)
+
 ### Added
 
 - Testing aid: the host can add bots in the lobby ("Add a bot", "Play with bots"); bots are driven by the server and can be switched off with `ENABLE_BOTS=false` (server) and `VITE_ENABLE_BOTS=false` (client)

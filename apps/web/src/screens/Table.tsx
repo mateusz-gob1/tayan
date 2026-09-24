@@ -5,6 +5,7 @@ import { CardBack, PlayingCard } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
 import { SuitText } from '../components/SuitIcon';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
+import { seatCardScale, useArtScale } from '../lib/scale';
 import { playTurnSound, startTitleBlink, stopTitleBlink } from '../lib/sound';
 import { check, declare, voteKick } from '../net/actions';
 import type { RoomState, ServerEvent } from '../net/types';
@@ -17,6 +18,12 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const declarations = useDeclarations(view.settings);
   const byId = (id: string) => declarations.find((d) => d.id === id);
   const now = useNow(250);
+  const art = useArtScale();
+  const seatScale = seatCardScale(art);
+  // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
+  const fanRem = (136 * seatScale) / (8 * art);
+  const halfW = Math.max(4, (fanRem + 1) / 2) + 0.5;
+  const halfH = 1.75 + (5 * seatScale) / art + 0.5;
 
   const myPlayer = view.players.find((p) => p.id === view.me);
   const isPlayer = myPlayer !== undefined && !myPlayer.eliminated;
@@ -39,11 +46,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   }, [myTurn, t]);
 
   return (
-    <div className="grid gap-4 p-4 xl:grid-cols-[minmax(0,1fr)_21rem]">
-      <div className="min-w-0 space-y-4">
-        <div className="table-shape mx-auto max-w-4xl bg-wood p-3">
-          <div className="table-shape felt-texture relative h-[34rem]">
-            <div className="absolute left-1/2 top-1/2 w-64 -translate-x-1/2 -translate-y-1/2 text-center">
+    <div className="flex h-full min-h-0 flex-col gap-4 p-4">
+      <div className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="table-shape flex min-h-[16rem] bg-wood p-3">
+          <div className="table-shape felt-texture relative flex-1">
+            <div className="absolute left-1/2 top-[40%] w-72 -translate-x-1/2 -translate-y-1/2 text-center">
               <p className="text-xs uppercase tracking-widest text-stone-300">
                 {t('table.round', { n: view.roundNumber })}
               </p>
@@ -53,7 +60,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                     {t('table.lastBidBy', { nick: nickOf(view, room, lastBid.playerId) })}
                   </p>
                   <p className="text-2xl font-bold leading-tight text-gold">
-                    <SuitText text={formatDeclaration(lastDecl, lang)} size={21} />
+                    <SuitText text={formatDeclaration(lastDecl, lang)} size={7 * art} />
                   </p>
                 </div>
               ) : (
@@ -67,30 +74,35 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
               );
               const rel = (i - myIndex + view.players.length) % view.players.length;
               const theta = ((90 + (rel * 360) / view.players.length) * Math.PI) / 180;
-              const x = 50 + 44 * Math.cos(theta);
-              const y = 50 + 42 * Math.sin(theta);
+              const cos = Math.cos(theta);
+              const sin = Math.sin(theta);
               const active = view.currentTurn === p.id && !p.eliminated;
               return (
                 <div
                   key={p.id}
-                  className={`absolute flex h-[156px] w-44 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center border-4 px-2 text-center shadow-md ${
+                  className={`absolute flex w-max min-w-32 -translate-x-1/2 -translate-y-1/2 flex-col items-center border-4 px-2 py-1 text-center shadow-md ${
                     active ? 'border-gold bg-wood-light' : 'border-ink bg-panel'
                   } ${p.eliminated ? 'opacity-40 grayscale' : ''}`}
-                  // snap to whole pixels (even numbers, since the box is centred), or the sprites blur
-                  style={{ left: `round(nearest, ${x}%, 2px)`, top: `round(nearest, ${y}%, 2px)` }}
+                  // snap to whole pixels so the sprites are not resampled unevenly
+                  style={{
+                    left: `round(nearest, calc(50% + (50% - ${halfW}rem) * ${cos.toFixed(4)}), 2px)`,
+                    top: `round(nearest, calc(50% + (50% - ${halfH}rem) * ${sin.toFixed(4)}), 2px)`,
+                  }}
                 >
-                  <p className="max-w-[7rem] truncate text-sm font-bold">
+                  <p className="max-w-[8rem] truncate text-sm font-bold">
                     {p.nick}
                     {p.id === view.me && ' ★'}
                   </p>
-                  <div className="mt-1 flex justify-center">
-                    {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
-                      <div key={k} style={{ marginLeft: k === 0 ? 0 : -36 }}>
-                        <CardBack scale={1} />
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-0.5 text-[0.7rem] text-stone-300">
+                  {p.id !== view.me && (
+                    <div className="mt-1 flex justify-center">
+                      {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
+                        <div key={k} style={{ marginLeft: k === 0 ? 0 : -36 * seatScale }}>
+                          <CardBack scale={seatScale} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="mt-0.5 text-[0.95rem] text-stone-300">
                     {p.eliminated
                       ? t('table.eliminated')
                       : !p.connected
@@ -108,30 +120,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
           </div>
         </div>
 
-        <div className="panel">
-          <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
-          {view.myCards.length ? (
-            <div className="flex flex-wrap gap-3">
-              {view.myCards.map((c) => (
-                <PlayingCard key={`${c.rank}${c.suit}`} card={c} scale={2} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-stone-400">{isPlayer ? '' : t('table.spectating')}</p>
-          )}
-        </div>
-      </div>
-
-      <aside className="space-y-4">
-        <ActionPanel
-          view={view}
-          room={room}
-          declarations={declarations}
-          myTurn={myTurn}
-          isPlayer={isPlayer}
-          now={now}
-        />
-        <div className="panel max-h-80 overflow-y-auto">
+        <aside className="panel min-h-0 overflow-y-auto">
           <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.bidHistory')}</h3>
           <ol className="space-y-1 text-sm">
             {view.bids.map((b, i) => {
@@ -149,8 +138,32 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             })}
           </ol>
           <EventLog log={log} view={view} room={room} />
+        </aside>
+      </div>
+
+      {/* the player's area: cards and actions next to each other */}
+      <div className="panel grid shrink-0 gap-x-6 gap-y-3 lg:grid-cols-[auto_minmax(0,1fr)]">
+        <div>
+          <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
+          {view.myCards.length ? (
+            <div className="flex gap-3">
+              {view.myCards.map((c) => (
+                <PlayingCard key={`${c.rank}${c.suit}`} card={c} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-stone-400">{isPlayer ? '' : t('table.spectating')}</p>
+          )}
         </div>
-      </aside>
+        <ActionPanel
+          view={view}
+          room={room}
+          declarations={declarations}
+          myTurn={myTurn}
+          isPlayer={isPlayer}
+          now={now}
+        />
+      </div>
     </div>
   );
 }
@@ -207,50 +220,50 @@ function ActionPanel({
   const targetNick = nickOf(view, room, view.currentTurn);
 
   return (
-    <div className="panel space-y-3">
-      <p className={`text-center text-lg font-bold ${myTurn ? 'text-gold' : 'text-stone-200'}`}>
-        {myTurn ? t('table.yourTurn') : t('table.turnOf', { nick: targetNick })}
-      </p>
-
-      {!isPlayer && <p className="text-center text-sm text-stone-300">{t('table.spectating')}</p>}
-
-      {isPlayer && myTurn && (
-        <>
+    <div className="flex min-w-0 flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <p className={`text-lg font-bold ${myTurn ? 'text-gold' : 'text-stone-200'}`}>
+          {myTurn ? t('table.yourTurn') : t('table.turnOf', { nick: targetNick })}
+        </p>
+        {isPlayer && myTurn && minDecl && (
           <button
-            className="btn-danger w-full py-3 text-lg"
+            className="btn-ghost min-w-0 flex-1 text-sm"
+            onClick={() => void declare(minDecl.id)}
+            title={formatDeclaration(minDecl, lang)}
+          >
+            <SuitText text={`${t('table.minRaise')}: ${formatDeclaration(minDecl, lang)}`} />
+          </button>
+        )}
+        {isPlayer && myTurn && (
+          <button
+            className="btn-danger ml-auto px-8 py-2 text-lg"
             disabled={!view.canCheck}
             onClick={() => void check()}
           >
             {t('table.check')}
           </button>
+        )}
+      </div>
+
+      {!isPlayer && <p className="text-sm text-stone-300">{t('table.spectating')}</p>}
+
+      {isPlayer && myTurn && (
+        <div className="border-t-4 border-ink pt-3">
           {minDecl ? (
-            <>
-              <button
-                className="btn-ghost w-full text-sm"
-                onClick={() => void declare(minDecl.id)}
-                title={formatDeclaration(minDecl, lang)}
-              >
-                {t('table.minRaise')}: {formatDeclaration(minDecl, lang)}
-              </button>
-              <div className="border-t border-white/10 pt-3">
-                <DeclarationPicker
-                  key={view.bids.length}
-                  declarations={declarations}
-                  settings={view.settings}
-                  minOrder={view.allowedDeclarationMinOrder}
-                  onSubmit={(id) => void declare(id)}
-                />
-              </div>
-            </>
+            <DeclarationPicker
+              key={view.bids.length}
+              declarations={declarations}
+              settings={view.settings}
+              minOrder={view.allowedDeclarationMinOrder}
+              onSubmit={(id) => void declare(id)}
+            />
           ) : (
             <p className="text-sm text-amber-200">{t('table.maxBid')}</p>
           )}
-        </>
+        </div>
       )}
 
-      {isPlayer && !myTurn && (
-        <p className="text-center text-sm text-stone-300">{t('table.waiting')}</p>
-      )}
+      {isPlayer && !myTurn && <p className="text-sm text-stone-300">{t('table.waiting')}</p>}
 
       {isPlayer && kickVote && kickVote.targetId !== view.me && (
         <KickVote view={view} room={room} now={now} targetNick={targetNick} />

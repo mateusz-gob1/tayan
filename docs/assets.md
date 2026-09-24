@@ -12,7 +12,7 @@ The code is MIT-licensed; artwork keeps its own license. Every asset used in the
 
 ## Fonts (SIL Open Font License, self-hosted through @fontsource)
 
-- Pixelify Sans, Silkscreen, Press Start 2P (Google Fonts)
+- Jersey 25, Silkscreen, Press Start 2P (Google Fonts)
 
 ## Everything else
 
