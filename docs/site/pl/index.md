@@ -2,7 +2,6 @@
 layout: home
 hero:
   name: Tayan
-  text: Karciany blef z układami pokerowymi
   tagline: Utwórz pokój, wyślij link i graj. Bez kont, w przeglądarce, po polsku lub angielsku.
   actions:
     - theme: brand
