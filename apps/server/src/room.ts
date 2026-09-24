@@ -18,7 +18,7 @@ import type { Logger } from 'pino';
 import { RoomError, toRoomError, type RoomPhase, type RoomStatePayload } from './protocol';
 import type { Scheduler } from './scheduler';
 
-export const REVEAL_MS = 6000;
+export const REVEAL_MS = 10_000;
 export const LOBBY_GRACE_MS = 60_000;
 
 export type Member = {
