@@ -25,6 +25,7 @@
     "code": "Kod pokoju",
     "codePlaceholder": "np. K7XQM",
     "or": "albo",
+    "joinHint": "Masz kod pokoju od znajomego? Wpisz go tutaj, żeby dołączyć.",
     "invited": "Zaproszenie do pokoju {{code}}",
     "nickRequired": "Wpisz nick (1 do 16 znaków)"
   },
