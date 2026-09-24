@@ -16,13 +16,28 @@
     "e2e": "pnpm -r --if-present e2e",
     "engine:deck-table": "pnpm --filter @tayan/engine deck-table",
     "engine:cli": "pnpm --filter @tayan/engine cli",
-    "dev:bots": "pnpm --filter @tayan/server bots"
+    "dev:bots": "pnpm --filter @tayan/server bots",
+    "docs:dev": "vitepress dev docs/site",
+    "docs:build": "vitepress build docs/site",
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
     "prettier": "^3.0.0",
     "typescript": "^5.6.0",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "vitepress": "^1.6.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css}": [
+      "prettier --write"
+    ]
   }
 }
