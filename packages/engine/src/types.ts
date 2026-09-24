@@ -53,7 +53,7 @@ export type GameSettings = {
   deckMode: DeckMode;
   lowestRank: Rank; // AUTO: from the deck-selection table, FULL: 2, CUSTOM: chosen by host
   startingCards: 1 | 2;
-  eliminationLimit: number; // default 5
+  eliminationLimit: number; // default 6 (5 above 10 players)
   categoryOrder: Category[];
   turnTimerSec: number | null; // null = no limit
   inactiveTimeoutSec: number | null; // null = wait forever (default)

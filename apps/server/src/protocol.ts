@@ -80,7 +80,7 @@ export const settingsSchema = z
       .max(9)
       .transform((n) => n as Rank),
     startingCards: z.union([z.literal(1), z.literal(2)]),
-    eliminationLimit: z.number().int().min(3).max(5),
+    eliminationLimit: z.number().int().min(3).max(6),
     categoryOrder: z
       .array(category)
       .length(9)

@@ -107,12 +107,13 @@ describe('rooms and lobby', () => {
     const { code, clients, host } = await createRoom(ts.url, ['a', 'b']);
     track(clients);
     expect(host.state!.settings.lowestRank).toBe(9);
-    for (const nick of ['c', 'd', 'e', 'f']) {
+    for (const nick of ['c', 'd']) {
       const c = track([await TestClient.connect(ts.url)])[0]!;
       await c.ok('room:join', { code, nick });
     }
-    await host.until(() => host.state?.members.length === 6);
-    expect(host.state!.settings.lowestRank).toBe(5); // auto: 6 players use a deck from 5
+    await host.until(() => host.state?.members.length === 4);
+    expect(host.state!.settings.lowestRank).toBe(7); // auto: 4 players use a deck from 7
+    expect(host.state!.settings.eliminationLimit).toBe(6);
     await host.ok('room:settings', { deckMode: 'FULL' });
     await host.until(() => host.state?.settings.lowestRank === 2);
   });

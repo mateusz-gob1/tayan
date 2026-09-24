@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-felt: #12513c;
+  --color-felt-dark: #0a2f23;
+  --color-felt-light: #1b6b4f;
+  --color-gold: #e8c46a;
+  --color-card-red: #c62828;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #f4f1e8;
+  background: radial-gradient(ellipse at 50% 0%, #14563f 0%, #0a2f23 60%, #071f18 100%);
+  font-family: var(--font-sans);
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition
+      select-none disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2
+      focus-visible:outline-offset-2 focus-visible:outline-gold;
+}
+@utility btn-primary {
+  @apply btn bg-gold text-felt-dark shadow hover:brightness-110 active:brightness-95;
+}
+@utility btn-danger {
+  @apply btn bg-red-600 text-white shadow hover:bg-red-500 active:bg-red-700;
+}
+@utility btn-ghost {
+  @apply btn border border-white/20 bg-white/5 text-stone-100 hover:bg-white/10;
+}
+@utility input {
+  @apply w-full rounded-lg border border-white/20 bg-black/25 px-3 py-2 text-stone-100
+      placeholder:text-stone-400 focus:border-gold focus:outline-none;
+}
+@utility panel {
+  @apply rounded-2xl border border-white/10 bg-black/25 p-4 shadow-lg backdrop-blur-sm;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.pop-in {
+  animation: pop-in 0.25s ease-out both;
+}

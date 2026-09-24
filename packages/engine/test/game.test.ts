@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { randomBot } from '../src/bot';
 import { formatDeclaration, formatSlot, formatCard, rankLabel } from '../src/format';
 import { activePlayers, applyAction, createGame, resolveSettings, type Ctx } from '../src/game';
+import { defaultEliminationLimit } from '../src/deckSelection';
 import { seededRng } from '../src/rng';
 import { EngineError, type Rank, type Card, type GameState, type PlayerId } from '../src/types';
 import { toPlayerView } from '../src/view';
@@ -22,10 +23,12 @@ describe('setup', () => {
   it('resolves default settings from the player count', () => {
     expect(resolveSettings({}, 4)).toMatchObject({
       startingCards: 2,
-      lowestRank: 8,
-      eliminationLimit: 5,
+      lowestRank: 7,
+      eliminationLimit: 6,
     });
-    expect(resolveSettings({}, 8)).toMatchObject({ startingCards: 1, lowestRank: 3 });
+    expect(resolveSettings({}, 8)).toMatchObject({ startingCards: 1, lowestRank: 2 });
+    expect(resolveSettings({}, 12).eliminationLimit).toBe(5); // 5-card hands would not fit
+    expect(resolveSettings({ eliminationLimit: 4 }, 4).eliminationLimit).toBe(4);
     expect(resolveSettings({ deckMode: 'FULL' }, 3).lowestRank).toBe(2);
     expect(resolveSettings({ deckMode: 'CUSTOM', lowestRank: 6 }, 3).lowestRank).toBe(6);
   });
@@ -319,8 +322,6 @@ describe('format', () => {
   });
 });
 
-const deckLimit = (players: number) => 4 * players; // cards needed at the default limit
-
 describe('random simulation', () => {
   it('10 000 random games all end with exactly one winner and no exception', () => {
     const rng = seededRng(12345);
@@ -330,7 +331,7 @@ describe('random simulation', () => {
       const ids = Array.from({ length: n }, (_, i) => `p${i}`);
       const c: Ctx = { rng, now: 0 };
       // explicit deck: AUTO with non-standard settings would run a simulation per game
-      const maxLow = Math.min(9, 15 - Math.ceil(deckLimit(n) / 4)); // 4 cards per player must fit
+      const maxLow = Math.min(9, 15 - Math.ceil(((defaultEliminationLimit(n) - 1) * n) / 4)); // hands must fit
       const lowestRank = (2 + rng.int(maxLow - 1)) as Rank;
       let s = createGame(
         ids,

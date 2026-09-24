@@ -30,7 +30,7 @@ Każda runda kończy się sprawdzeniem, po którym dokładnie jeden gracz dostaj
 
 - Liczba graczy: od 2 do 13 (górna granica wynika z talii, patrz Talia).
 - Startowa liczba kart na gracza: 1 lub 2, ustawiana przez hosta. Domyślnie 2 przy maksymalnie 6 graczach, 1 przy 7 i więcej.
-- Limit eliminacji: 5 kart (konfigurowalny, domyślnie 5). Gracz, który po przegranej rundzie ma tyle kart, odpada.
+- Limit eliminacji: 6 kart (konfigurowalny, domyślnie 6; przy 11 i więcej graczach domyślnie 5, bo ręce po 5 kart nie mieszczą się w talii 52 kart). Gracz, który po przegranej rundzie ma tyle kart, odpada, a z limitem-1 kartami jeszcze gra. *(Zmiana wobec pierwotnej wersji specyfikacji, która zakładała 5; patrz `docs/adr/0005-elimination-limit-6.md`.)*
 - Kolejność graczy przy stole jest losowana na starcie gry i stała przez całą grę.
 
 **Przebieg rundy**
@@ -71,7 +71,7 @@ Talia zawsze kończy się na asie, a w trybie automatycznym jej najniższa figur
 
 **Uzasadnienie:** wzór "tyle figur, ilu graczy" gwarantował tylko, że kart wystarczy. Przy 6 graczach i talii od 9 w grze jest średnio ponad połowa talii, więc kareta występuje w ok. 49% rund, a poker w ok. 32%, i licytacja szybko ucieka w najwyższe układy. O trudności decyduje stosunek kart w grze do wielkości talii, dlatego talia musi rosnąć szybciej niż liczba graczy.
 
-**Tabela referencyjna** (symulacja 300 gier na wariant, przegrany rundy losowany, 2 karty startowe do 6 graczy, 1 od 7, limit 5):
+**Tabela referencyjna** (pierwotna, dla limitu 5; aktualna tabela dla limitu domyślnego jest w `packages/engine/src/deckSelection.ts` i powstaje z `pnpm engine:deck-table`; symulacja 300 gier na wariant, przegrany rundy losowany, 2 karty startowe do 6 graczy, 1 od 7, limit 5):
 
 | Liczba graczy | Najniższa figura | Kart w talii | Śr. kart w grze | Kareta w puli (% rund) | Jakikolwiek poker (% rund) |
 | --- | --- | --- | --- | --- | --- |
@@ -194,7 +194,7 @@ type GameSettings = {
   deckMode: 'AUTO' | 'FULL' | 'CUSTOM'; // wybór hosta, domyślnie AUTO
   lowestRank: Rank;          // AUTO: z tabeli doboru talii, FULL: 2, CUSTOM: wybrana przez hosta
   startingCards: 1 | 2;
-  eliminationLimit: number;  // domyślnie 5
+  eliminationLimit: number;  // domyślnie 6 (5 przy 11+ graczach)
   categoryOrder: Category[];
   turnTimerSec: number | null; // null = bez limitu
   inactiveTimeoutSec: number | null; // null = czekamy bez końca (domyślnie)

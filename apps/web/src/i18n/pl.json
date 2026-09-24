@@ -1,0 +1,228 @@
+{
+  "app": {
+    "name": "Tayan",
+    "tagline": "Karciany blef z układami pokerowymi"
+  },
+  "nav": {
+    "help": "Pomoc (H)",
+    "soundOn": "Dźwięk włączony",
+    "soundOff": "Dźwięk wyłączony",
+    "leave": "Wyjdź z pokoju"
+  },
+  "common": {
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "back": "Wstecz"
+  },
+  "conn": {
+    "waking": "Budzę serwer...",
+    "wakingHint": "Darmowy serwer wstaje po przerwie, to może potrwać do minuty. Łączymy się do skutku.",
+    "reconnecting": "Utracono połączenie, łączę ponownie..."
+  },
+  "start": {
+    "nick": "Twój nick",
+    "nickPlaceholder": "np. Ania",
+    "create": "Utwórz pokój",
+    "join": "Dołącz",
+    "code": "Kod pokoju",
+    "codePlaceholder": "np. K7XQM",
+    "or": "albo",
+    "invited": "Zaproszenie do pokoju {{code}}",
+    "nickRequired": "Wpisz nick (1 do 16 znaków)"
+  },
+  "errors": {
+    "ROOM_NOT_FOUND": "Nie ma takiego pokoju. Sprawdź kod.",
+    "ROOM_FULL": "Pokój jest pełny.",
+    "GAME_IN_PROGRESS": "Gra już trwa.",
+    "NOT_YOUR_TURN": "To nie Twoja tura.",
+    "BID_TOO_LOW": "Deklaracja musi być wyższa od poprzedniej.",
+    "NOTHING_TO_CHECK": "Nie ma jeszcze czego sprawdzać.",
+    "NOT_HOST": "Tylko host może to zrobić.",
+    "INVALID_PAYLOAD": "Nieprawidłowe dane.",
+    "NICK_TAKEN": "Ten nick jest już zajęty w tym pokoju.",
+    "NOT_IN_ROOM": "Nie jesteś w żadnym pokoju.",
+    "NOT_ALLOWED": "Ta akcja jest teraz niedostępna.",
+    "INVALID_PHASE": "Nie można tego zrobić w tej fazie gry.",
+    "INVALID_SETTINGS": "Te ustawienia są nieprawidłowe dla tej liczby graczy.",
+    "NOT_ENOUGH_PLAYERS": "Potrzeba co najmniej 2 połączonych graczy.",
+    "RATE_LIMITED": "Zwolnij, za dużo akcji naraz.",
+    "KICKED": "Host usunął Cię z pokoju.",
+    "SERVER_SHUTDOWN": "Serwer się restartuje, spróbuj za chwilę.",
+    "INTERNAL": "Coś poszło nie tak po stronie serwera."
+  },
+  "lobby": {
+    "title": "Poczekalnia",
+    "roomCode": "Kod pokoju",
+    "copyLink": "Kopiuj link",
+    "linkCopied": "Skopiowano!",
+    "players": "Gracze ({{count}})",
+    "host": "host",
+    "offline": "offline",
+    "spectator": "widz",
+    "you": "to Ty",
+    "kick": "Wyrzuć",
+    "start": "Start",
+    "needTwo": "Do startu potrzeba co najmniej 2 graczy.",
+    "waitHost": "Czekamy, aż host rozpocznie grę.",
+    "settings": "Ustawienia gry",
+    "onlyHost": "Ustawienia zmienia tylko host.",
+    "deckWarning": "Przy tylu graczach nawet pełna talia często daje karety i pokery. Rozważ obniżenie limitu eliminacji do 4.",
+    "auto": "auto"
+  },
+  "settings": {
+    "deckMode": "Talia",
+    "deckModes": {
+      "AUTO": "Automatyczna",
+      "FULL": "Pełna (od 2)",
+      "CUSTOM": "Własna"
+    },
+    "lowestRank": "Najniższa figura",
+    "startingCards": "Karty na start",
+    "eliminationLimit": "Limit eliminacji",
+    "turnTimer": "Limit czasu tury",
+    "inactiveTimeout": "Czekanie na rozłączonego",
+    "kickVoteAfter": "Głosowanie na wyrzucenie po",
+    "off": "wyłączony",
+    "forever": "bez limitu",
+    "seconds": "{{count}} s",
+    "minutes": "{{count}} min",
+    "deckSummary": "od {{rank}} ({{cards}} kart)",
+    "tooSmall": "za mała dla tylu graczy"
+  },
+  "table": {
+    "round": "Runda {{n}}",
+    "yourTurn": "Twoja tura",
+    "turnOf": "Tura: {{nick}}",
+    "check": "Sprawdzam",
+    "minRaise": "Minimalne przebicie",
+    "confirm": "Potwierdź: {{name}}",
+    "pickCategory": "Wybierz układ",
+    "noBids": "Nikt jeszcze nie licytował. Zacznij od dowolnej deklaracji.",
+    "lastBid": "Ostatnia deklaracja",
+    "lastBidBy": "{{nick}} zadeklarował",
+    "cards_one": "{{count}} karta",
+    "cards_few": "{{count}} karty",
+    "cards_many": "{{count}} kart",
+    "cards_other": "{{count}} kart",
+    "offline": "offline",
+    "eliminated": "odpadł",
+    "waiting": "Czekaj na swoją turę",
+    "spectating": "Oglądasz grę jako widz",
+    "myCards": "Twoje karty",
+    "bidHistory": "Historia licytacji",
+    "timeLeft": "{{sec}} s",
+    "voteKick": "Zagłosuj za wyrzuceniem {{nick}}",
+    "voteKickWait": "Głosowanie za wyrzuceniem będzie możliwe za {{sec}} s",
+    "votes": "Głosy: {{count}}/{{needed}}",
+    "maxBid": "To najwyższy możliwy układ, możesz tylko sprawdzić.",
+    "log": {
+      "autoPlayed": "{{nick}} nie zdążył, ruch wykonał serwer",
+      "eliminationReason": {
+        "VOTE": "{{nick}} odpada po głosowaniu graczy",
+        "INACTIVE": "{{nick}} odpada z powodu bezczynności",
+        "LEFT": "{{nick}} opuścił grę",
+        "KICKED": "{{nick}} został usunięty przez hosta"
+      }
+    },
+    "param": {
+      "rank": "Wybierz figurę",
+      "high": "Wybierz wyższą parę",
+      "low": "Wybierz niższą parę",
+      "trips": "Wybierz figurę trójki",
+      "pair": "Wybierz figurę pary",
+      "top": "Wybierz najwyższą figurę",
+      "suit": "Wybierz kolor"
+    },
+    "suits": {
+      "C": "Trefl",
+      "D": "Karo",
+      "H": "Kier",
+      "S": "Pik"
+    }
+  },
+  "reveal": {
+    "title": "Odkrycie kart",
+    "declared": "{{nick}} zadeklarował",
+    "checkedBy": "Sprawdza: {{nick}}",
+    "exists": "Układ występuje w puli.",
+    "missing": "Układu nie ma w puli, brakowało {{missing}} z {{total}}.",
+    "gets": "Kartę dostaje {{nick}}.",
+    "eliminated": "{{nick}} odpada z gry!",
+    "next": "Dalej",
+    "waitingFor": "Gotowi: {{ready}}/{{total}}",
+    "autoIn": "Automatycznie za {{sec}} s",
+    "hands": "Karty graczy",
+    "hand": "Układ z puli",
+    "emptySlot": "brak: {{what}}",
+    "owner": "od {{nick}}",
+    "pool": "Karty wszystkich graczy"
+  },
+  "gameOver": {
+    "winner": "Zwycięzca: {{nick}}",
+    "youWon": "Wygrałeś!",
+    "order": "Kolejność odpadania",
+    "place": "{{n}}. miejsce",
+    "rematch": "Rewanż",
+    "waitRematch": "Czekamy, aż host zaproponuje rewanż.",
+    "leave": "Wyjdź"
+  },
+  "help": {
+    "title": "Pomoc",
+    "tabs": {
+      "categories": "Układy w tej grze",
+      "settings": "Ustawienia tej gry",
+      "rules": "Zasady"
+    },
+    "order": "Od najniższego do najwyższego układu:",
+    "example": "np. {{name}}",
+    "howMany": "{{count}} możliwych deklaracji",
+    "params": {
+      "HIGH": "figura",
+      "PAIR": "figura",
+      "TWO_PAIR": "dwie figury",
+      "STRAIGHT": "najwyższa figura",
+      "THREE": "figura",
+      "FLUSH": "sam kolor (bez figury)",
+      "FULL": "trójka i para",
+      "FOUR": "figura",
+      "STRAIGHT_FLUSH": "najwyższa figura i kolor"
+    },
+    "colorOrder": "Kolejność kolorów (od najniższego): ♣ trefl, ♦ karo, ♥ kier, ♠ pik.",
+    "settings": {
+      "deck": "Talia",
+      "startingCards": "Karty na start",
+      "eliminationLimit": "Limit eliminacji (odpadasz przy tylu kartach)",
+      "turnTimer": "Limit czasu tury",
+      "players": "Liczba graczy"
+    },
+    "noRoom": "Ustawienia zobaczysz po wejściu do pokoju. Poniżej wartości domyślne.",
+    "rules": {
+      "1": "Każdy gracz dostaje kilka kart. Cudzych kart nie widzisz, ale wiesz, ile kart ma każdy.",
+      "2": "Licytujecie po kolei układy pokerowe, które Waszym zdaniem są wśród wszystkich kart na stole, nie tylko w Twojej ręce.",
+      "3": "W swojej turze musisz albo zadeklarować układ ściśle wyższy od poprzedniego, albo go sprawdzić. Pasować nie można.",
+      "4": "Po sprawdzeniu wszyscy pokazują karty. Jeśli układ jest w puli, kartę dostaje sprawdzający, jeśli go nie ma, deklarujący.",
+      "5": "Kto dzięki przegranej osiągnie limit kart, odpada z gry. Każdą kolejną rundę zaczyna kolejny gracz.",
+      "6": "Wygrywa ostatni gracz w grze. Talia i kolejność układów zależą od ustawień pokoju, zobacz pozostałe zakładki."
+    },
+    "fullRules": "Pełne zasady znajdziesz w dokumentacji projektu."
+  },
+  "tutorial": {
+    "skip": "Pomiń",
+    "next": "Dalej",
+    "done": "Zaczynamy",
+    "steps": {
+      "1": {
+        "title": "Deklaruj",
+        "body": "Podaj układ pokerowy, który Twoim zdaniem jest w kartach wszystkich graczy razem. Nie musisz mieć go u siebie."
+      },
+      "2": {
+        "title": "Przebijaj",
+        "body": "Kolejny gracz musi zadeklarować układ wyższy albo sprawdzić poprzednią deklarację. Pasować nie można."
+      },
+      "3": {
+        "title": "Sprawdzaj",
+        "body": "Po sprawdzeniu wszyscy pokazują karty. Kto się pomylił, dostaje dodatkową kartę, a przy limicie kart odpada z gry."
+      }
+    }
+  }
+}
