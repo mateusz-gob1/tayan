@@ -1,0 +1,17 @@
+name: Keep server awake
+
+# The free server tier sleeps after 15 minutes without traffic. Set the repository
+# variable SERVER_URL (Settings > Secrets and variables > Actions > Variables) to
+# the server address, e.g. https://tayan-server.onrender.com, to enable this ping.
+# Note: GitHub pauses scheduled workflows after 60 days without repository activity.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    if: ${{ vars.SERVER_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS --max-time 90 --retry 3 --retry-delay 15 "${{ vars.SERVER_URL }}/healthz"
