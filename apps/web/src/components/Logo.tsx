@@ -1,3 +1,5 @@
+import { iconZoom, useLayoutScale } from '../lib/scale';
+
 // 11x11 spade, drawn as SVG rects so it is exactly the same pixel art at any whole-number size.
 const SPADE = [
   '.....#.....',
@@ -47,9 +49,11 @@ export function SpadeMark({
 
 /** Logo: pixel spade and the name in the display font. `big` is for the start screen. */
 export function Logo({ big = false }: { big?: boolean }) {
+  const { rem } = useLayoutScale();
+  const zoom = iconZoom(rem);
   return (
     <span className={`inline-flex items-center gap-3 ${big ? 'gap-5' : ''}`}>
-      <SpadeMark size={big ? 88 : 33} />
+      <SpadeMark size={11 * (big ? zoom * 2 + 2 : zoom)} />
       <span
         className={`font-display uppercase text-gold ${big ? 'text-4xl' : 'text-base'}`}
         style={{ textShadow: big ? '4px 4px 0 var(--color-ink)' : '2px 2px 0 var(--color-ink)' }}
