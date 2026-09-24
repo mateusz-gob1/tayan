@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Logo } from '../components/Logo';
 import { codeFromUrl, createRoom, joinRoom } from '../net/socket';
 import { loadNick, useStore } from '../store';
 
@@ -22,7 +23,9 @@ export function Start() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 pt-16">
-      <h1 className="text-6xl font-black tracking-tight text-gold">♠ Tayan</h1>
+      <h1>
+        <Logo big />
+      </h1>
 
       <div className="panel mt-10 w-full space-y-4">
         <label className="block">

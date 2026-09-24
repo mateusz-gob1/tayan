@@ -6,7 +6,8 @@
     "help": "Help (H)",
     "soundOn": "Sound on",
     "soundOff": "Sound off",
-    "leave": "Leave room"
+    "leave": "Leave room",
+    "fourColors": "Four-colour cards"
   },
   "common": {
     "close": "Close",

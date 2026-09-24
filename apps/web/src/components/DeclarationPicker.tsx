@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CATEGORY_NAMES, SUIT_SYMBOL, formatDeclaration, rankLabel } from '@tayan/engine';
+import { CATEGORY_NAMES, formatDeclaration, rankLabel } from '@tayan/engine';
+import { SuitIcon, SuitText } from './SuitIcon';
 import type { Category, Declaration, GameSettings, Rank, Suit } from '@tayan/engine';
 import { useLang } from '../lib/hooks';
 import { availableByCategory, nextStep, paramLabelKey, type Param } from '../lib/declarationTree';
@@ -67,7 +68,9 @@ export function DeclarationPicker({
       </div>
       {step.done ? (
         <button className="btn-primary w-full" onClick={() => onSubmit(step.declaration.id)}>
-          {t('table.confirm', { name: formatDeclaration(step.declaration, lang) })}
+          <SuitText
+            text={t('table.confirm', { name: formatDeclaration(step.declaration, lang) })}
+          />
         </button>
       ) : (
         <div>
@@ -85,10 +88,10 @@ export function DeclarationPicker({
                   rankLabel(value as Rank)
                 ) : (
                   <span
-                    className={value === 'D' || value === 'H' ? 'text-red-400' : 'text-stone-100'}
+                    className="inline-flex items-center gap-2"
                     title={t(`table.suits.${value as Suit}`)}
                   >
-                    {SUIT_SYMBOL[value as Suit]} {t(`table.suits.${value as Suit}`)}
+                    <SuitIcon suit={value as Suit} size={14} /> {t(`table.suits.${value as Suit}`)}
                   </span>
                 )}
               </button>
@@ -96,9 +99,12 @@ export function DeclarationPicker({
           </div>
           {chosen.length > 0 && (
             <p className="mt-2 text-xs text-stone-400">
-              {chosen
-                .map((c) => (typeof c === 'number' ? rankLabel(c) : SUIT_SYMBOL[c]))
-                .join(' · ')}
+              {chosen.map((c, i) => (
+                <span key={i}>
+                  {i > 0 && ' · '}
+                  {typeof c === 'number' ? rankLabel(c) : <SuitIcon suit={c} size={14} />}
+                </span>
+              ))}
             </p>
           )}
         </div>

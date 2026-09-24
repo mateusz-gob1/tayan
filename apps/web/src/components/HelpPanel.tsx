@@ -10,6 +10,7 @@ import {
 } from '@tayan/engine';
 import { useDeclarations, useLang } from '../lib/hooks';
 import { useStore } from '../store';
+import { SuitText } from './SuitIcon';
 
 const DEFAULT_SETTINGS: GameSettings = {
   deckMode: 'AUTO',
@@ -87,14 +88,18 @@ export function HelpPanel() {
                     <p className="text-xs text-stone-300">{t(`help.params.${c}`)}</p>
                     {example && (
                       <p className="mt-1 text-xs text-gold">
-                        {t('help.example', { name: formatDeclaration(example, lang) })}
+                        <SuitText
+                          text={t('help.example', { name: formatDeclaration(example, lang) })}
+                        />
                       </p>
                     )}
                   </li>
                 );
               })}
             </ol>
-            <p className="mt-3 text-xs text-stone-400">{t('help.colorOrder')}</p>
+            <p className="mt-3 text-xs text-stone-400">
+              <SuitText text={t('help.colorOrder')} />
+            </p>
           </div>
         )}
         {tab === 'settings' && (

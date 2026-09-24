@@ -12,6 +12,9 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource/pixelify-sans": "^5.3.0",
+    "@fontsource/press-start-2p": "^5.3.0",
+    "@fontsource/silkscreen": "^5.3.0",
     "@tayan/engine": "workspace:*",
     "i18next": "^26.4.2",
     "i18next-browser-languagedetector": "^8.2.1",

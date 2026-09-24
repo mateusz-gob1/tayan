@@ -10,6 +10,7 @@ import { useDeclarations, useLang } from '../lib/hooks';
 import type { RoomState } from '../net/types';
 import { nickOf } from '../store';
 import { EmptySlot, PlayingCard } from './PlayingCard';
+import { SuitText } from './SuitIcon';
 
 const sameCard = (a: Card, b: Card) => a.rank === b.rank && a.suit === b.suit;
 
@@ -40,7 +41,11 @@ export function RevealBoard({
           {t('reveal.declared', { nick: nick(result.declarerId) })}
         </p>
         <p className="text-3xl font-black text-gold">
-          {decl ? formatDeclaration(decl, lang) : result.declarationId}
+          {decl ? (
+            <SuitText text={formatDeclaration(decl, lang)} size={28} />
+          ) : (
+            result.declarationId
+          )}
         </p>
         <p className="text-sm text-stone-300">
           {t('reveal.checkedBy', { nick: nick(result.checkerId) })}
@@ -56,7 +61,7 @@ export function RevealBoard({
               className="pop-in flex flex-col items-center gap-1"
               style={{ animationDelay: `${i * 80}ms` }}
             >
-              <PlayingCard card={m.card} size="lg" highlight />
+              <PlayingCard card={m.card} scale={2} highlight />
               <span className="text-[0.7rem] text-stone-300">
                 {t('reveal.owner', { nick: nick(m.ownerId) })}
               </span>
@@ -65,7 +70,7 @@ export function RevealBoard({
           {result.missingSlots.map((slot, i) => (
             <div key={`m${i}`} className="flex flex-col items-center gap-1">
               <EmptySlot
-                size="lg"
+                scale={2}
                 label={t('reveal.emptySlot', { what: formatSlot(slot, lang) })}
               />
             </div>
@@ -97,7 +102,7 @@ export function RevealBoard({
                     <PlayingCard
                       key={`${c.rank}${c.suit}`}
                       card={c}
-                      size="md"
+                      scale={2}
                       highlight={matched}
                       dim={!matched}
                     />
