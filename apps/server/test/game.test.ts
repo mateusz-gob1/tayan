@@ -315,3 +315,60 @@ describe('timers', () => {
     ).toBe(true);
   });
 });
+
+describe('the last reveal before the end screen', () => {
+  async function toFinalReveal() {
+    // 2 players and a limit of 3 cards: whoever loses the first round is out, so the game ends
+    const r = await room(['Ala', 'Bob'], { eliminationLimit: 3 });
+    await r.host.ok('game:start');
+    await inPhase(r.clients, 'BIDDING');
+    const list = getDeclarations(r.host.view!.settings);
+    await turnOf(r.clients).ok('game:declare', { declarationId: list[list.length - 1]!.id });
+    await r.host.until(() => r.clients.every((c) => c.view!.bids.length === 1));
+    await turnOf(r.clients).ok('game:check');
+    await inPhase(r.clients, 'REVEAL');
+    return r;
+  }
+
+  it('keeps the reveal on screen, without announcing the winner yet', async () => {
+    const { clients, host } = await toFinalReveal();
+    for (const c of clients) {
+      expect(c.view!.lastResult).toBeDefined();
+      expect(c.view!.winner).toBeUndefined();
+    }
+    expect(host.state!.phase).toBe('PLAYING');
+    expect(host.events.some((e) => e.type === 'GAME_OVER')).toBe(false);
+    expect(host.events.some((e) => e.type === 'PLAYER_ELIMINATED')).toBe(true);
+  });
+
+  it('shows the end screen once everyone who played the round has skipped', async () => {
+    const { clients, host } = await toFinalReveal();
+    await clients[0]!.ok('game:ready'); // the loser is eliminated but may still skip
+    await host.until(() => host.state!.readyIds.length === 1);
+    expect(host.view!.phase).toBe('REVEAL');
+    await clients[1]!.ok('game:ready');
+    await inPhase(clients, 'GAME_OVER');
+    expect(host.view!.winner).toBeDefined();
+    expect(host.state!.phase).toBe('GAME_OVER');
+    expect(host.events.some((e) => e.type === 'GAME_OVER')).toBe(true);
+  });
+
+  it('shows the end screen after the reveal time even if nobody skips', async () => {
+    const { clients, host } = await toFinalReveal();
+    ts.scheduler.advance(REVEAL_MS - 100);
+    expect(host.view!.phase).toBe('REVEAL');
+    ts.scheduler.advance(200);
+    await inPhase(clients, 'GAME_OVER');
+    expect(host.view!.winner).toBeDefined();
+  });
+
+  it('a rematch works after the end screen', async () => {
+    const { clients, host } = await toFinalReveal();
+    ts.scheduler.advance(REVEAL_MS + 100);
+    await inPhase(clients, 'GAME_OVER');
+    await host.ok('game:rematch');
+    await host.until(() => host.state?.phase === 'LOBBY');
+    await host.ok('game:start');
+    await inPhase(clients, 'BIDDING');
+  });
+});

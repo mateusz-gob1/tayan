@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { PlayerView } from '@tayan/engine';
 import { TrophyMark } from '../components/Logo';
-import { RevealBoard } from '../components/RevealBoard';
 import { iconZoom, useLayoutScale } from '../lib/scale';
 import { rematch } from '../net/actions';
 import { leaveRoom } from '../net/socket';
@@ -54,8 +53,6 @@ export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) 
           {t('gameOver.leave')}
         </button>
       </div>
-
-      {view.lastResult && <RevealBoard view={view} room={room} result={view.lastResult} />}
     </div>
   );
 }

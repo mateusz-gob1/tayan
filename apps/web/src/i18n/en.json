@@ -98,7 +98,6 @@
     "yourTurn": "Your turn",
     "turnOf": "Turn: {{nick}}",
     "check": "Check",
-    "minRaise": "Minimum raise",
     "confirm": "Confirm: {{name}}",
     "pickCategory": "Choose a hand",
     "noBids": "Nobody has bid yet. Start with any declaration.",
