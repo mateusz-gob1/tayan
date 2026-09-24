@@ -7,3 +7,8 @@ coverage/
 .DS_Store
 .claude/settings.local.json
 .claude/launch.json
+!.env.example
+playwright-report/
+test-results/
+docs/site/.vitepress/dist/
+docs/site/.vitepress/cache/

@@ -1,0 +1,15 @@
+# Render Blueprint: New > Blueprint > pick this repository.
+services:
+  - type: web
+    name: tayan-server
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: frankfurt
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: CLIENT_ORIGIN
+        sync: false # set in the Render dashboard to the client URL, e.g. https://tayan.pages.dev
+      - key: LOG_LEVEL
+        value: info
