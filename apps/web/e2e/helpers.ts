@@ -30,24 +30,39 @@ export async function joinRoom(page: Page, code: string, nick: string): Promise<
 }
 
 /**
- * Plays for a player until the game is over: bids the minimum raise, sometimes checks, and
- * clicks "Next" on every reveal. Resolves when the winner banner appears.
+ * Plays for a player until the game is over: sometimes checks, otherwise picks the first
+ * available declaration in the picker (a small raise), and clicks "Next" on every reveal.
+ * Resolves when the winner banner appears.
  */
 export async function autoplay(page: Page): Promise<void> {
-  const raise = page.getByRole('button', { name: /^Minimalne przebicie/ });
   const check = page.getByRole('button', { name: 'Sprawdzam' });
   const next = page.getByRole('button', { name: 'Dalej', exact: true });
+  const category = page.locator('[data-testid="picker-category"]:not([disabled])');
+  const option = page.getByTestId('picker-option');
+  const confirm = page.getByTestId('picker-confirm');
   const winner = page.getByText(/^Zwycięzca:/);
   for (;;) {
     if (await winner.isVisible()) return;
+    const pickerOpen =
+      (await category.count()) + (await option.count()) + (await confirm.count()) > 0;
     if ((await next.count()) && (await next.isEnabled())) await next.click().catch(() => {});
     else if (
       (await check.count()) &&
       (await check.isEnabled()) &&
-      (Math.random() < 0.35 || !(await raise.count()))
+      (Math.random() < 0.35 || !pickerOpen)
     )
       await check.click().catch(() => {});
-    else if (await raise.count()) await raise.click().catch(() => {});
-    await page.waitForTimeout(250);
+    else if (await confirm.count()) await confirm.click().catch(() => {});
+    else if (await option.count())
+      await option
+        .first()
+        .click()
+        .catch(() => {});
+    else if (await category.count())
+      await category
+        .first()
+        .click()
+        .catch(() => {});
+    await page.waitForTimeout(150);
   }
 }

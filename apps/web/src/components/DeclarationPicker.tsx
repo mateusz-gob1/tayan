@@ -39,6 +39,7 @@ export function DeclarationPicker({
             return (
               <button
                 key={c}
+                data-testid="picker-category"
                 className="btn-ghost justify-start text-left text-sm"
                 disabled={!available}
                 onClick={() => setCategory(c)}
@@ -67,7 +68,11 @@ export function DeclarationPicker({
         </button>
       </div>
       {step.done ? (
-        <button className="btn-primary w-full" onClick={() => onSubmit(step.declaration.id)}>
+        <button
+          data-testid="picker-confirm"
+          className="btn-primary w-full"
+          onClick={() => onSubmit(step.declaration.id)}
+        >
           <SuitText
             text={t('table.confirm', { name: formatDeclaration(step.declaration, lang) })}
           />
@@ -81,6 +86,7 @@ export function DeclarationPicker({
             {step.options.map((value) => (
               <button
                 key={value}
+                data-testid="picker-option"
                 className="btn-ghost min-w-11 px-3"
                 onClick={() => setChosen([...chosen, value])}
               >

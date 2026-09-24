@@ -4,6 +4,12 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+
+- The reveal fits on one screen without scrolling: the declared hand and everyone's cards side by side, card size chosen to fit, and a fixed bottom bar with who gets a card and the Next button
+- The last check of a game now shows the normal reveal first (Next for everyone who played the round, or 10 s), and only then the end screen with the winner
+- Removed the minimum-raise button: choosing the raise is up to the player
+
 ### Added
 
 - 8-bit sound effects synthesised in the browser (no audio files): deal, card flip, declaration, check, extra card, elimination, win/lose, button ticks, your turn; all in one table in `apps/web/src/lib/sound.ts`

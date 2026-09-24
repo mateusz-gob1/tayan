@@ -228,7 +228,6 @@ function ActionPanel({
   now: number;
 }) {
   const { t } = useTranslation();
-  const lang = useLang();
   const minDecl = declarations[view.allowedDeclarationMinOrder];
   const kickVote = room.kickVote;
   const targetNick = nickOf(view, room, view.currentTurn);
@@ -239,15 +238,6 @@ function ActionPanel({
         <p className={`text-lg font-bold ${myTurn ? 'text-gold' : 'text-stone-200'}`}>
           {myTurn ? t('table.yourTurn') : t('table.turnOf', { nick: targetNick })}
         </p>
-        {isPlayer && myTurn && minDecl && (
-          <button
-            className="btn-ghost min-w-0 flex-1 text-sm"
-            onClick={() => void declare(minDecl.id)}
-            title={formatDeclaration(minDecl, lang)}
-          >
-            <SuitText text={`${t('table.minRaise')}: ${formatDeclaration(minDecl, lang)}`} />
-          </button>
-        )}
         {isPlayer && myTurn && (
           <button
             className="btn-danger ml-auto px-8 py-2 text-lg"
