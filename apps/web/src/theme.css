@@ -49,15 +49,10 @@
 }
 
 :root {
-  /* --s is the art-pixel scale (2, 3 or 4), set from the window size in lib/scale.ts */
-  --s: 2;
-  --b: calc(var(--s) * 2px); /* border thickness */
-  --st: calc(var(--s) * 8px); /* one step of the table's stepped corners */
-}
-
-html {
-  /* pixel fonts stay on their grid because the root size moves in whole steps: 16, 24, 32 px */
-  font-size: calc(var(--s) * 8px);
+  /* one art pixel in the UI: 1/8 of the root font size, which lib/scale.ts sets from the window size */
+  --u: calc(1rem / 8);
+  --b: round(down, calc(var(--u) * 2), 1px); /* border thickness, a whole number of px */
+  --st: round(down, calc(var(--u) * 8), 2px); /* one step of the table's stepped corners */
 }
 
 html,
@@ -109,15 +104,15 @@ body {
   scrollbar-color: var(--color-gold) var(--color-ink);
 }
 ::-webkit-scrollbar {
-  width: calc(var(--s) * 7px);
-  height: calc(var(--s) * 7px);
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 7);
 }
 ::-webkit-scrollbar-track {
   background: var(--color-ink);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-gold);
-  border: var(--s) solid var(--color-ink);
+  border: round(down, var(--u), 1px) solid var(--color-ink);
 }
 
 /* buttons: thick ink border, light top-left and dark bottom-right bevel; pressed = inverted */

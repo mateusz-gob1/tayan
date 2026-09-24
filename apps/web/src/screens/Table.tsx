@@ -5,7 +5,7 @@ import { CardBack, PlayingCard } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
 import { SuitText } from '../components/SuitIcon';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
-import { seatCardScale, useArtScale } from '../lib/scale';
+import { iconZoom, seatCardScale, useArtScale, useLayoutScale } from '../lib/scale';
 import { playTurnSound, startTitleBlink, stopTitleBlink } from '../lib/sound';
 import { check, declare, voteKick } from '../net/actions';
 import type { RoomState, ServerEvent } from '../net/types';
@@ -19,11 +19,12 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const byId = (id: string) => declarations.find((d) => d.id === id);
   const now = useNow(250);
   const art = useArtScale();
+  const { rem } = useLayoutScale();
   const seatScale = seatCardScale(art);
   // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
-  const fanRem = (136 * seatScale) / (8 * art);
+  const fanRem = (136 * seatScale) / rem;
   const halfW = Math.max(4, (fanRem + 1) / 2) + 0.5;
-  const halfH = 1.75 + (5 * seatScale) / art + 0.5;
+  const halfH = 1.75 + (40 * seatScale) / rem + 0.5;
 
   const myPlayer = view.players.find((p) => p.id === view.me);
   const isPlayer = myPlayer !== undefined && !myPlayer.eliminated;
@@ -60,7 +61,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                     {t('table.lastBidBy', { nick: nickOf(view, room, lastBid.playerId) })}
                   </p>
                   <p className="text-2xl font-bold leading-tight text-gold">
-                    <SuitText text={formatDeclaration(lastDecl, lang)} size={7 * art} />
+                    <SuitText text={formatDeclaration(lastDecl, lang)} size={7 * iconZoom(rem)} />
                   </p>
                 </div>
               ) : (

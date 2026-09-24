@@ -6,7 +6,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Changed
 
-- The interface scales to the window in whole-number steps (fonts, borders and card sprites together, so pixels stay crisp); the table fills the free space
+- The interface scales to the window: text and borders smoothly (root font 16 to 28 px), card sprites in whole-number steps (2x, and 3x/4x only on very big windows) so pixels stay crisp; the table fills the free space. The tuning numbers are in `pickLayout` (apps/web/src/lib/scale.ts)
 - Table screen: your cards and the action buttons sit together in one area below the table; bid history moved to a narrow side panel
 - UI font changed to Jersey 25 (Pixelify Sans made the digit 5 look like an S)
 
