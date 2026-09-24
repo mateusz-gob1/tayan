@@ -15,7 +15,8 @@
     "dev": "pnpm -r --parallel --if-present dev",
     "e2e": "pnpm -r --if-present e2e",
     "engine:deck-table": "pnpm --filter @tayan/engine deck-table",
-    "engine:cli": "pnpm --filter @tayan/engine cli"
+    "engine:cli": "pnpm --filter @tayan/engine cli",
+    "dev:bots": "pnpm --filter @tayan/server bots"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
