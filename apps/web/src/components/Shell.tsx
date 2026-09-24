@@ -46,7 +46,6 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className="flex h-full flex-col">
       <header className="flex items-center gap-3 border-b border-white/10 bg-black/30 px-5 py-2.5">
         <span className="text-2xl font-black tracking-tight text-gold">♠ {t('app.name')}</span>
-        <span className="hidden text-sm text-stone-300 md:inline">{t('app.tagline')}</span>
         <div className="ml-auto flex items-center gap-2">
           {conn === 'reconnecting' && (
             <span className="rounded bg-amber-500/20 px-2 py-1 text-xs text-amber-200">

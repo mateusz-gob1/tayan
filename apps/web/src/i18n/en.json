@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "Tayan",
-    "tagline": "A bluffing card game with poker hands"
+    "name": "Tayan"
   },
   "nav": {
     "help": "Help (H)",
@@ -203,24 +202,5 @@
       "6": "The last player left wins. The deck and the order of hands depend on the room settings, see the other tabs."
     },
     "fullRules": "The full rules are in the project documentation."
-  },
-  "tutorial": {
-    "skip": "Skip",
-    "next": "Next",
-    "done": "Let's play",
-    "steps": {
-      "1": {
-        "title": "Declare",
-        "body": "Name a poker hand you think exists in all players' cards together. You do not need to hold it yourself."
-      },
-      "2": {
-        "title": "Raise",
-        "body": "The next player must declare a higher hand or check the last declaration. Passing is not allowed."
-      },
-      "3": {
-        "title": "Check",
-        "body": "After a check everyone shows their cards. Whoever was wrong gets an extra card, and at the card limit they are out of the game."
-      }
-    }
   }
 }

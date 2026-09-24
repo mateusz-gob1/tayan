@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "Tayan",
-    "tagline": "Karciany blef z układami pokerowymi"
+    "name": "Tayan"
   },
   "nav": {
     "help": "Pomoc (H)",
@@ -205,24 +204,5 @@
       "6": "Wygrywa ostatni gracz w grze. Talia i kolejność układów zależą od ustawień pokoju, zobacz pozostałe zakładki."
     },
     "fullRules": "Pełne zasady znajdziesz w dokumentacji projektu."
-  },
-  "tutorial": {
-    "skip": "Pomiń",
-    "next": "Dalej",
-    "done": "Zaczynamy",
-    "steps": {
-      "1": {
-        "title": "Deklaruj",
-        "body": "Podaj układ pokerowy, który Twoim zdaniem jest w kartach wszystkich graczy razem. Nie musisz mieć go u siebie."
-      },
-      "2": {
-        "title": "Przebijaj",
-        "body": "Kolejny gracz musi zadeklarować układ wyższy albo sprawdzić poprzednią deklarację. Pasować nie można."
-      },
-      "3": {
-        "title": "Sprawdzaj",
-        "body": "Po sprawdzeniu wszyscy pokazują karty. Kto się pomylił, dostaje dodatkową kartę, a przy limicie kart odpada z gry."
-      }
-    }
   }
 }

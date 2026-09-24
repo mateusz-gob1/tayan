@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Removed
+
+- The tagline under the logo and the first-visit tutorial (help stays available under "?" and the H key)
+
 ### Added
 
 - Dockerfile and Render blueprint for the game server, Cloudflare Pages setup for the client

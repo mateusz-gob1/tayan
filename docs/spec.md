@@ -337,7 +337,7 @@ Aplikacja ma pięć ekranów, projektowanych pod desktop (od 1024 px szerokości
 - **Ustawienia tej gry:** talia (od jakiej figury, ile kart), karty startowe, limit eliminacji, timer.
 - **Zasady:** krótka instrukcja w 5 do 7 punktach, z odnośnikiem do pełnych zasad w dokumentacji.
 
-Przy pierwszej wizycie gracz widzi jednorazowo krótki samouczek (3 karty z wyjaśnieniem: deklaruj, przebijaj, sprawdzaj), możliwy do pominięcia.
+~~Przy pierwszej wizycie gracz widzi jednorazowo krótki samouczek~~ *(usunięte na życzenie właściciela projektu; zasady są w panelu pomocy)*.
 
 **Wersje językowe (PL i EN):**
 
