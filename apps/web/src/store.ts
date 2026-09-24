@@ -8,6 +8,7 @@ export type LogEntry = { id: number; event: ServerEvent };
 
 const SESSION_KEY = 'tayan.session';
 const NICK_KEY = 'tayan.nick';
+const FOUR_COLORS_KEY = 'tayan.fourColors';
 
 export type StoredSession = Session & { nick: string };
 
@@ -44,6 +45,8 @@ type State = {
   /** Error code shown on the start screen (kicked, room gone, ...). */
   notice: string | null;
   helpOpen: boolean;
+  /** Show diamonds in orange and clubs in blue (easier to tell apart than red/black). */
+  fourColors: boolean;
   setConn: (c: ConnState) => void;
   setSession: (s: StoredSession | null) => void;
   setRoom: (r: RoomState | null) => void;
@@ -51,6 +54,7 @@ type State = {
   pushEvent: (e: ServerEvent) => void;
   setNotice: (n: string | null) => void;
   setHelpOpen: (open: boolean) => void;
+  setFourColors: (on: boolean) => void;
   /** Forget the current room (after leaving, being kicked, or a failed rejoin). */
   clearRoom: () => void;
 };
@@ -66,6 +70,7 @@ export const useStore = create<State>()((set) => ({
   log: [],
   notice: null,
   helpOpen: false,
+  fourColors: read<boolean>(FOUR_COLORS_KEY) === true,
   setConn: (conn) => set((s) => ({ conn, everConnected: s.everConnected || conn === 'connected' })),
   setSession: (session) => {
     saveSession(session);
@@ -76,6 +81,10 @@ export const useStore = create<State>()((set) => ({
   pushEvent: (event) => set((s) => ({ log: [...s.log.slice(-49), { id: ++logId, event }] })),
   setNotice: (notice) => set({ notice }),
   setHelpOpen: (helpOpen) => set({ helpOpen }),
+  setFourColors: (fourColors) => {
+    write(FOUR_COLORS_KEY, fourColors);
+    set({ fourColors });
+  },
   clearRoom: () => {
     saveSession(null);
     set({ session: null, room: null, view: null, log: [] });
