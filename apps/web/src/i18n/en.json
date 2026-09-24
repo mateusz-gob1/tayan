@@ -1,0 +1,226 @@
+{
+  "app": {
+    "name": "Tayan",
+    "tagline": "A bluffing card game with poker hands"
+  },
+  "nav": {
+    "help": "Help (H)",
+    "soundOn": "Sound on",
+    "soundOff": "Sound off",
+    "leave": "Leave room"
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "back": "Back"
+  },
+  "conn": {
+    "waking": "Waking the server...",
+    "wakingHint": "The free server sleeps when idle and can take up to a minute to start. We keep trying until it answers.",
+    "reconnecting": "Connection lost, reconnecting..."
+  },
+  "start": {
+    "nick": "Your nickname",
+    "nickPlaceholder": "e.g. Anna",
+    "create": "Create room",
+    "join": "Join",
+    "code": "Room code",
+    "codePlaceholder": "e.g. K7XQM",
+    "or": "or",
+    "invited": "Invitation to room {{code}}",
+    "nickRequired": "Enter a nickname (1 to 16 characters)"
+  },
+  "errors": {
+    "ROOM_NOT_FOUND": "No such room. Check the code.",
+    "ROOM_FULL": "The room is full.",
+    "GAME_IN_PROGRESS": "A game is already in progress.",
+    "NOT_YOUR_TURN": "It is not your turn.",
+    "BID_TOO_LOW": "Your declaration must be higher than the previous one.",
+    "NOTHING_TO_CHECK": "There is nothing to check yet.",
+    "NOT_HOST": "Only the host can do that.",
+    "INVALID_PAYLOAD": "Invalid data.",
+    "NICK_TAKEN": "That nickname is already taken in this room.",
+    "NOT_IN_ROOM": "You are not in a room.",
+    "NOT_ALLOWED": "That action is not available right now.",
+    "INVALID_PHASE": "That cannot be done in this phase of the game.",
+    "INVALID_SETTINGS": "These settings are not valid for this number of players.",
+    "NOT_ENOUGH_PLAYERS": "At least 2 connected players are needed.",
+    "RATE_LIMITED": "Slow down, too many actions at once.",
+    "KICKED": "The host removed you from the room.",
+    "SERVER_SHUTDOWN": "The server is restarting, try again in a moment.",
+    "INTERNAL": "Something went wrong on the server."
+  },
+  "lobby": {
+    "title": "Lobby",
+    "roomCode": "Room code",
+    "copyLink": "Copy link",
+    "linkCopied": "Copied!",
+    "players": "Players ({{count}})",
+    "host": "host",
+    "offline": "offline",
+    "spectator": "spectator",
+    "you": "you",
+    "kick": "Kick",
+    "start": "Start",
+    "needTwo": "At least 2 players are needed to start.",
+    "waitHost": "Waiting for the host to start the game.",
+    "settings": "Game settings",
+    "onlyHost": "Only the host can change settings.",
+    "deckWarning": "With this many players even the full deck often contains fours and straight flushes. Consider lowering the elimination limit to 4.",
+    "auto": "auto"
+  },
+  "settings": {
+    "deckMode": "Deck",
+    "deckModes": {
+      "AUTO": "Automatic",
+      "FULL": "Full (from 2)",
+      "CUSTOM": "Custom"
+    },
+    "lowestRank": "Lowest rank",
+    "startingCards": "Starting cards",
+    "eliminationLimit": "Elimination limit",
+    "turnTimer": "Turn time limit",
+    "inactiveTimeout": "Waiting for a disconnected player",
+    "kickVoteAfter": "Vote to kick after",
+    "off": "off",
+    "forever": "no limit",
+    "seconds": "{{count}} s",
+    "minutes": "{{count}} min",
+    "deckSummary": "from {{rank}} ({{cards}} cards)",
+    "tooSmall": "too small for this many players"
+  },
+  "table": {
+    "round": "Round {{n}}",
+    "yourTurn": "Your turn",
+    "turnOf": "Turn: {{nick}}",
+    "check": "Check",
+    "minRaise": "Minimum raise",
+    "confirm": "Confirm: {{name}}",
+    "pickCategory": "Choose a hand",
+    "noBids": "Nobody has bid yet. Start with any declaration.",
+    "lastBid": "Last declaration",
+    "lastBidBy": "{{nick}} declared",
+    "cards_one": "{{count}} card",
+    "cards_other": "{{count}} cards",
+    "offline": "offline",
+    "eliminated": "out",
+    "waiting": "Wait for your turn",
+    "spectating": "You are watching as a spectator",
+    "myCards": "Your cards",
+    "bidHistory": "Bidding history",
+    "timeLeft": "{{sec}} s",
+    "voteKick": "Vote to kick {{nick}}",
+    "voteKickWait": "Voting to kick becomes possible in {{sec}} s",
+    "votes": "Votes: {{count}}/{{needed}}",
+    "maxBid": "That is the highest possible hand, you can only check.",
+    "log": {
+      "autoPlayed": "{{nick}} ran out of time, the server made the move",
+      "eliminationReason": {
+        "VOTE": "{{nick}} was voted out by the players",
+        "INACTIVE": "{{nick}} is out for being inactive",
+        "LEFT": "{{nick}} left the game",
+        "KICKED": "{{nick}} was removed by the host"
+      }
+    },
+    "param": {
+      "rank": "Choose a rank",
+      "high": "Choose the higher pair",
+      "low": "Choose the lower pair",
+      "trips": "Choose the rank of the three",
+      "pair": "Choose the rank of the pair",
+      "top": "Choose the highest rank",
+      "suit": "Choose a suit"
+    },
+    "suits": {
+      "C": "Clubs",
+      "D": "Diamonds",
+      "H": "Hearts",
+      "S": "Spades"
+    }
+  },
+  "reveal": {
+    "title": "Cards revealed",
+    "declared": "{{nick}} declared",
+    "checkedBy": "Checked by: {{nick}}",
+    "exists": "The hand is in the pool.",
+    "missing": "The hand is not in the pool, {{missing}} of {{total}} were missing.",
+    "gets": "{{nick}} gets a card.",
+    "eliminated": "{{nick}} is out of the game!",
+    "next": "Next",
+    "waitingFor": "Ready: {{ready}}/{{total}}",
+    "autoIn": "Continuing automatically in {{sec}} s",
+    "hands": "Players' cards",
+    "hand": "The hand from the pool",
+    "emptySlot": "missing: {{what}}",
+    "owner": "from {{nick}}",
+    "pool": "Everyone's cards"
+  },
+  "gameOver": {
+    "winner": "Winner: {{nick}}",
+    "youWon": "You won!",
+    "order": "Order of elimination",
+    "place": "{{n}}. place",
+    "rematch": "Rematch",
+    "waitRematch": "Waiting for the host to offer a rematch.",
+    "leave": "Leave"
+  },
+  "help": {
+    "title": "Help",
+    "tabs": {
+      "categories": "Hands in this game",
+      "settings": "This game's settings",
+      "rules": "Rules"
+    },
+    "order": "From the lowest to the highest hand:",
+    "example": "e.g. {{name}}",
+    "howMany": "{{count}} possible declarations",
+    "params": {
+      "HIGH": "a rank",
+      "PAIR": "a rank",
+      "TWO_PAIR": "two ranks",
+      "STRAIGHT": "the highest rank",
+      "THREE": "a rank",
+      "FLUSH": "a suit only (no rank)",
+      "FULL": "the three and the pair",
+      "FOUR": "a rank",
+      "STRAIGHT_FLUSH": "the highest rank and a suit"
+    },
+    "colorOrder": "Suit order (lowest first): ♣ clubs, ♦ diamonds, ♥ hearts, ♠ spades.",
+    "settings": {
+      "deck": "Deck",
+      "startingCards": "Starting cards",
+      "eliminationLimit": "Elimination limit (you are out at this many cards)",
+      "turnTimer": "Turn time limit",
+      "players": "Players"
+    },
+    "noRoom": "You will see the settings once you are in a room. Defaults are shown below.",
+    "rules": {
+      "1": "Every player gets a few cards. You cannot see other players' cards, but you know how many each has.",
+      "2": "Take turns declaring poker hands you think exist among all the cards on the table, not only in your own hand.",
+      "3": "On your turn you must either declare a hand strictly higher than the last one, or check it. Passing is not allowed.",
+      "4": "After a check everyone shows their cards. If the hand is in the pool the checker gets a card, otherwise the declarer does.",
+      "5": "Whoever reaches the card limit after losing is out of the game. Each new round is started by the next player.",
+      "6": "The last player left wins. The deck and the order of hands depend on the room settings, see the other tabs."
+    },
+    "fullRules": "The full rules are in the project documentation."
+  },
+  "tutorial": {
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Let's play",
+    "steps": {
+      "1": {
+        "title": "Declare",
+        "body": "Name a poker hand you think exists in all players' cards together. You do not need to hold it yourself."
+      },
+      "2": {
+        "title": "Raise",
+        "body": "The next player must declare a higher hand or check the last declaration. Passing is not allowed."
+      },
+      "3": {
+        "title": "Check",
+        "body": "After a check everyone shows their cards. Whoever was wrong gets an extra card, and at the card limit they are out of the game."
+      }
+    }
+  }
+}
