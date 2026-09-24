@@ -20,7 +20,6 @@
   },
   "start": {
     "nick": "Your nickname",
-    "nickPlaceholder": "e.g. Anna",
     "create": "Create room",
     "join": "Join",
     "code": "Room code",

@@ -31,7 +31,6 @@ export function Start() {
             className="input"
             value={nick}
             maxLength={16}
-            placeholder={t('start.nickPlaceholder')}
             autoFocus
             onChange={(e) => setNick(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && void submit(invite || code ? 'join' : 'create')}

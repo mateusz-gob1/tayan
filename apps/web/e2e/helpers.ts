@@ -15,7 +15,7 @@ export async function newPlayer(browser: Browser, lang: 'pl' | 'en' = 'pl'): Pro
 
 export async function createRoom(page: Page, nick: string): Promise<string> {
   await page.goto('/');
-  await page.getByPlaceholder('np. Ania').fill(nick);
+  await page.getByLabel('Twój nick').fill(nick);
   await page.getByRole('button', { name: 'Utwórz pokój' }).click();
   const code = page.getByTestId('room-code');
   await expect(code).toHaveText(/^[A-Z0-9]{5}$/);
@@ -24,7 +24,7 @@ export async function createRoom(page: Page, nick: string): Promise<string> {
 
 export async function joinRoom(page: Page, code: string, nick: string): Promise<void> {
   await page.goto(`/r/${code}`);
-  await page.getByPlaceholder('np. Ania').fill(nick);
+  await page.getByLabel('Twój nick').fill(nick);
   await page.getByRole('button', { name: 'Dołącz' }).click();
   await expect(page.getByText('Gracze (')).toBeVisible();
 }
