@@ -103,6 +103,23 @@ export function chooseDeck(
   const tabled = DECK_TABLE[p.players];
   if (standard && tabled && !opts.forceSimulation) return { ...tabled, source: 'table' };
 
+  // Default-options results are deterministic, so memoize them (the server calls this often).
+  const memoKey = `${p.players}|${p.startingCards}|${p.eliminationLimit}`;
+  const memoizable = !opts.rng && !opts.games && !opts.forceSimulation;
+  const hit = memoizable ? choiceCache.get(memoKey) : undefined;
+  if (hit) return hit;
+
+  const choice = simulateChoice(p, opts);
+  if (memoizable) choiceCache.set(memoKey, choice);
+  return choice;
+}
+
+const choiceCache = new Map<string, DeckChoice>();
+
+function simulateChoice(
+  p: ChooseDeckParams,
+  opts: { games?: number; rng?: Rng },
+): DeckChoice {
   const rng = opts.rng ?? seededRng(1);
   const games = opts.games ?? 300;
   const maxHand = p.eliminationLimit - 1;
