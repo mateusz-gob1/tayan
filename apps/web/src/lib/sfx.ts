@@ -34,7 +34,7 @@ export function soundForEvent(event: ServerEvent, me: string | undefined): void 
       playSoundAfter('eliminated', 900);
       break;
     case 'GAME_OVER':
-      playSoundAfter(event.winner === me ? 'win' : 'lose', 1400);
+      playSoundAfter(event.winner === me ? 'win' : 'lose', 300);
       break;
   }
 }
