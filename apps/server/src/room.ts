@@ -69,6 +69,8 @@ export class Room {
   private turnStartedAt = 0;
   private turnDeadline: number | undefined;
   private revealEndsAt: number | undefined;
+  /** The last check ended the game; the reveal is still on screen before the end screen. */
+  private finalReveal = false;
   private cancelTurn: (() => void) | undefined;
   private cancelReveal: (() => void) | undefined;
   private cancelInactive: (() => void) | undefined;
@@ -262,6 +264,7 @@ export class Room {
       throw toRoomError(e);
     }
     this.phase = 'PLAYING';
+    this.finalReveal = false;
     this.ready.clear();
     this.timerKey = '';
     this.afterChange();
@@ -271,6 +274,7 @@ export class Room {
     this.requireHost(memberId);
     if (this.phase !== 'GAME_OVER') throw new RoomError('INVALID_PHASE');
     this.state = null;
+    this.finalReveal = false;
     this.phase = 'LOBBY';
     this.ready.clear();
     this.kickVotes.clear();
@@ -301,8 +305,12 @@ export class Room {
   markReady(memberId: string): void {
     const st = this.requirePlaying();
     this.requirePlayer(memberId);
-    if (st.winner || st.round.phase !== 'REVEAL' || !activePlayers(st).includes(memberId))
+    if (this.finalReveal) {
+      // everyone who was dealt cards in the last round may skip, including the player who just lost
+      if (st.round.hands[memberId] === undefined) throw new RoomError('INVALID_PHASE');
+    } else if (st.winner || st.round.phase !== 'REVEAL' || !activePlayers(st).includes(memberId)) {
       throw new RoomError('INVALID_PHASE');
+    }
     this.ready.add(memberId);
     this.afterChange();
   }
@@ -337,8 +345,14 @@ export class Room {
     try {
       const result = applyAction(this.state, action, this.ctx());
       this.state = result.state;
-      this.emitEvents(result.events);
-      if (result.state.winner) this.phase = 'GAME_OVER';
+      if (result.state.winner && action.type === 'CHECK') {
+        // show the last reveal first; GAME_OVER is announced when it ends
+        this.finalReveal = true;
+        this.emitEvents(result.events.filter((e) => e.type !== 'GAME_OVER'));
+      } else {
+        this.emitEvents(result.events);
+        if (result.state.winner) this.phase = 'GAME_OVER';
+      }
     } catch (e) {
       throw toRoomError(e);
     }
@@ -373,7 +387,7 @@ export class Room {
 
   private syncTimers(): void {
     const st = this.state;
-    if (!st || st.winner) {
+    if (!st || (st.winner && !this.finalReveal)) {
       this.clearTurnTimers();
       this.cancelInactive?.();
       this.cancelInactive = undefined;
@@ -434,7 +448,17 @@ export class Room {
 
   private nextRound(key: string): void {
     if (key !== this.timerKey || this.state?.round.phase !== 'REVEAL') return;
+    if (this.finalReveal) return this.endFinalReveal();
     this.run({ type: 'NEXT_ROUND' });
+  }
+
+  /** The last reveal is over: now show who won. */
+  private endFinalReveal(): void {
+    const winner = this.state?.winner;
+    this.finalReveal = false;
+    this.phase = 'GAME_OVER';
+    this.ready.clear();
+    if (winner) this.emitEvents([{ type: 'GAME_OVER', winner }]);
   }
 
   /** Turn timer expired: check, or the lowest declaration if this player opens the round. */
@@ -486,10 +510,12 @@ export class Room {
 
   private checkReadyAdvance(): void {
     const st = this.state;
-    if (!st || st.winner || st.round.phase !== 'REVEAL') return;
-    const waiting = activePlayers(st).filter((id) => this.member(id)?.socketId);
+    if (!st || (st.winner && !this.finalReveal) || st.round.phase !== 'REVEAL') return;
+    const candidates = this.finalReveal ? Object.keys(st.round.hands) : activePlayers(st);
+    const waiting = candidates.filter((id) => this.member(id)?.socketId);
     if (waiting.length > 0 && waiting.every((id) => this.ready.has(id))) {
-      this.run({ type: 'NEXT_ROUND' });
+      if (this.finalReveal) this.endFinalReveal();
+      else this.run({ type: 'NEXT_ROUND' });
     }
   }
 
@@ -561,7 +587,10 @@ export class Room {
     const meta = this.meta();
     for (const m of this.members) {
       if (!m.socketId) continue;
-      const view = toPlayerView(this.state, m.id, meta);
+      const full = toPlayerView(this.state, m.id, meta);
+      const view = this.finalReveal
+        ? { ...full, phase: 'REVEAL' as const, winner: undefined }
+        : full;
       transport.toSocket(m.socketId, 'game:view', {
         ...view,
         ...(this.turnDeadline !== undefined && view.phase === 'BIDDING'
