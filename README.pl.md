@@ -27,4 +27,4 @@ Inne komendy: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm en
 - `apps/server`: serwer Node.js + Socket.IO jako jedyne źródło prawdy; każdy payload przechodzi przez zod, a gracz dostaje wyłącznie własny `PlayerView`, więc cudze karty nie trafiają do klienta przed odkryciem. Zobacz [docs/protocol.md](docs/protocol.md).
 - `apps/web`: klient React + Vite + Tailwind z tłumaczeniami PL/EN.
 
-Decyzje projektowe: [docs/adr](docs/adr).
+Decyzje projektowe: [docs/adr](docs/adr). Wdrożenie (Cloudflare Pages + Render, oba darmowe) opisuje [docs/deployment.md](docs/deployment.md), a zasady gry są w serwisie dokumentacji (`pnpm docs:dev`).
