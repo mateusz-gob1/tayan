@@ -116,10 +116,7 @@ export function chooseDeck(
 
 const choiceCache = new Map<string, DeckChoice>();
 
-function simulateChoice(
-  p: ChooseDeckParams,
-  opts: { games?: number; rng?: Rng },
-): DeckChoice {
+function simulateChoice(p: ChooseDeckParams, opts: { games?: number; rng?: Rng }): DeckChoice {
   const rng = opts.rng ?? seededRng(1);
   const games = opts.games ?? 300;
   const maxHand = p.eliminationLimit - 1;
