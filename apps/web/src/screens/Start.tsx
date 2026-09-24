@@ -74,6 +74,7 @@ export function Start() {
               {t('start.or')}
               <span className="h-px flex-1 bg-white/15" />
             </div>
+            <p className="text-sm text-stone-300">{t('start.joinHint')}</p>
             <div className="flex gap-2">
               <input
                 className="input uppercase tracking-widest"

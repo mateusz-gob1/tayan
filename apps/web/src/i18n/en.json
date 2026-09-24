@@ -25,6 +25,7 @@
     "code": "Room code",
     "codePlaceholder": "e.g. K7XQM",
     "or": "or",
+    "joinHint": "Got a room code from a friend? Enter it here to join.",
     "invited": "Invitation to room {{code}}",
     "nickRequired": "Enter a nickname (1 to 16 characters)"
   },
