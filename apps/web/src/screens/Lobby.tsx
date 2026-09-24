@@ -181,11 +181,11 @@ function SettingsForm({
           disabled={!editable}
           value={String(s.eliminationLimit)}
           onChange={(v) => send({ eliminationLimit: Number(v) })}
-          options={[
-            ['3', '3'],
-            ['4', '4'],
-            ['5', '5'],
-          ]}
+          options={[3, 4, 5, 6].map((n) => {
+            // five-card hands must fit in even the full 52-card deck
+            const tooMany = (n - 1) * playerCount > deckSize(2);
+            return [String(n), String(n), tooMany] as const;
+          })}
         />
       </Field>
 

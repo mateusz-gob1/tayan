@@ -1,7 +1,7 @@
 import { deckSize } from '../src/deck';
 import {
   DECK_TABLE,
-  DEFAULT_ELIMINATION_LIMIT,
+  defaultEliminationLimit,
   chooseDeck,
   defaultStartingCards,
   simulateRates,
@@ -18,7 +18,7 @@ for (let players = 2; players <= 13; players++) {
   const params = {
     players,
     startingCards: defaultStartingCards(players),
-    eliminationLimit: DEFAULT_ELIMINATION_LIMIT,
+    eliminationLimit: defaultEliminationLimit(players),
   };
   const choice = chooseDeck(params, { games, rng, forceSimulation: true });
   const r = simulateRates({ ...params, lowestRank: choice.lowestRank as Rank, games }, rng);

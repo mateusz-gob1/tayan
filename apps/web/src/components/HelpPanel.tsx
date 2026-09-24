@@ -15,7 +15,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   deckMode: 'AUTO',
   lowestRank: 9,
   startingCards: 2,
-  eliminationLimit: 5,
+  eliminationLimit: 6,
   categoryOrder: [...DEFAULT_CATEGORY_ORDER],
   turnTimerSec: null,
   inactiveTimeoutSec: null,

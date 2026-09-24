@@ -8,7 +8,13 @@ export const DECK_THRESHOLDS = { four: 0.15, straightFlush: 0.1 };
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 13;
-export const DEFAULT_ELIMINATION_LIMIT = 5;
+/**
+ * Default elimination limit: a player is out on reaching 6 cards (holding 5 is still fine).
+ * With 11+ players five-card hands no longer fit in a 52-card deck, so the default is 5 there.
+ */
+export function defaultEliminationLimit(players: number): number {
+  return players <= 10 ? 6 : 5;
+}
 
 /** Default starting cards: 2 up to 6 players, 1 from 7. */
 export function defaultStartingCards(players: number): 1 | 2 {
@@ -17,17 +23,17 @@ export function defaultStartingCards(players: number): 1 | 2 {
 
 /**
  * Precomputed result of the auto-selection algorithm for standard settings
- * (default starting cards, elimination limit 5). Regenerate with `pnpm engine:deck-table`.
+ * (default starting cards and default elimination limit). Regenerate with `pnpm engine:deck-table`.
  */
 export const DECK_TABLE: Readonly<Record<number, { lowestRank: Rank; warning: boolean }>> = {
   2: { lowestRank: 9, warning: false },
   3: { lowestRank: 9, warning: false },
-  4: { lowestRank: 8, warning: false },
-  5: { lowestRank: 7, warning: false },
-  6: { lowestRank: 5, warning: false },
-  7: { lowestRank: 5, warning: false },
-  8: { lowestRank: 3, warning: false },
-  9: { lowestRank: 2, warning: false },
+  4: { lowestRank: 7, warning: false },
+  5: { lowestRank: 5, warning: false },
+  6: { lowestRank: 2, warning: false },
+  7: { lowestRank: 2, warning: false },
+  8: { lowestRank: 2, warning: true },
+  9: { lowestRank: 2, warning: true },
   10: { lowestRank: 2, warning: true },
   11: { lowestRank: 2, warning: true },
   12: { lowestRank: 2, warning: true },
@@ -99,7 +105,7 @@ export function chooseDeck(
 ): DeckChoice {
   const standard =
     p.startingCards === defaultStartingCards(p.players) &&
-    p.eliminationLimit === DEFAULT_ELIMINATION_LIMIT;
+    p.eliminationLimit === defaultEliminationLimit(p.players);
   const tabled = DECK_TABLE[p.players];
   if (standard && tabled && !opts.forceSimulation) return { ...tabled, source: 'table' };
 

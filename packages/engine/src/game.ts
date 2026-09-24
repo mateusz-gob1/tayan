@@ -1,10 +1,10 @@
 import { buildDeck, deckSize } from './deck';
 import { findDeclaration, getDeclarations } from './declarations';
 import {
-  DEFAULT_ELIMINATION_LIMIT,
   MAX_PLAYERS,
   MIN_PLAYERS,
   chooseDeck,
+  defaultEliminationLimit,
   defaultStartingCards,
 } from './deckSelection';
 import { existsInPool, matchDeclaration } from './pool';
@@ -27,7 +27,7 @@ export type ActionResult = { state: GameState; events: GameEvent[] };
 /** Resolves partial host settings into full settings for the given number of players. */
 export function resolveSettings(input: Partial<GameSettings>, players: number): GameSettings {
   const startingCards = input.startingCards ?? defaultStartingCards(players);
-  const eliminationLimit = input.eliminationLimit ?? DEFAULT_ELIMINATION_LIMIT;
+  const eliminationLimit = input.eliminationLimit ?? defaultEliminationLimit(players);
   const deckMode = input.deckMode ?? 'AUTO';
   let lowestRank = input.lowestRank ?? 9;
   if (deckMode === 'FULL') lowestRank = 2;
