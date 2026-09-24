@@ -1,5 +1,6 @@
 import { io, type Socket } from 'socket.io-client';
 import type { PlayerView } from '@tayan/engine';
+import { soundForEvent } from '../lib/sfx';
 import { loadSession, saveNick, useStore } from '../store';
 import type { Ack, RoomState, ServerEvent, Session } from './types';
 
@@ -61,7 +62,10 @@ export function connect(): void {
   });
   socket.on('room:state', (r: RoomState) => store().setRoom(r));
   socket.on('game:view', (v: PlayerView) => store().setView(v));
-  socket.on('game:event', (e: ServerEvent) => store().pushEvent(e));
+  socket.on('game:event', (e: ServerEvent) => {
+    store().pushEvent(e);
+    soundForEvent(e, store().session?.playerId);
+  });
   socket.on('error', (e: { code: string }) => {
     if (e.code === 'KICKED') {
       store().clearRoom();
