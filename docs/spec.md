@@ -63,7 +63,7 @@ stateDiagram-v2
     KoniecGry --> Lobby: rewanż
 ```
 
-Faza Odkrycie trwa kilka sekund (domyślnie 6 s albo do kliknięcia "Dalej" przez wszystkich), żeby gracze zdążyli zobaczyć karty i wynik.
+Faza Odkrycie trwa kilka sekund (domyślnie 10 s albo do kliknięcia "Dalej" przez wszystkich), żeby gracze zdążyli zobaczyć karty i wynik.
 
 ## Talia i automatyczny dobór talii
 
