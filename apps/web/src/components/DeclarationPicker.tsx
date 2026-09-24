@@ -33,7 +33,7 @@ export function DeclarationPicker({
     return (
       <div>
         <p className="mb-2 text-sm font-semibold text-stone-300">{t('table.pickCategory')}</p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2 lg:grid-cols-5 2xl:grid-cols-9">
           {settings.categoryOrder.map((c) => {
             const available = byCategory.has(c);
             return (
