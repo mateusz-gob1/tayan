@@ -20,7 +20,6 @@
   },
   "start": {
     "nick": "Twój nick",
-    "nickPlaceholder": "np. Ania",
     "create": "Utwórz pokój",
     "join": "Dołącz",
     "code": "Kod pokoju",
