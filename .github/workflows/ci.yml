@@ -20,3 +20,19 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+  docker:
+    name: docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t tayan-server .
+      - name: Container starts and answers /healthz
+        run: |
+          docker run -d --name tayan -p 3001:3001 tayan-server
+          for i in $(seq 1 20); do
+            curl -fsS http://localhost:3001/healthz && exit 0
+            sleep 1
+          done
+          docker logs tayan
+          exit 1

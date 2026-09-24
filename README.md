@@ -34,4 +34,4 @@ flowchart LR
 - `apps/server`: authoritative Node.js + Socket.IO server; every payload is validated with zod and each player only ever receives their own `PlayerView`, so other players' cards never reach the client before the reveal. See [docs/protocol.md](docs/protocol.md).
 - `apps/web`: React + Vite + Tailwind client with PL/EN translations.
 
-Design decisions are recorded in [docs/adr](docs/adr).
+Design decisions are recorded in [docs/adr](docs/adr). Deployment (Cloudflare Pages + Render, both free) is described in [docs/deployment.md](docs/deployment.md), and the game rules are in the documentation site (`pnpm docs:dev`).

@@ -1,0 +1,22 @@
+# Changelog
+
+All notable changes are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/).
+
+## [Unreleased]
+
+### Added
+
+- Dockerfile and Render blueprint for the game server, Cloudflare Pages setup for the client
+- Playwright end-to-end tests, Docker image check in CI, keep-alive ping workflow
+- Documentation site (VitePress, PL/EN), deployment guide, issue and pull request templates
+- Pre-commit hook (Prettier and ESLint on staged files)
+- `CLIENT_ORIGIN` accepts several comma-separated origins
+
+## [0.1.0]
+
+### Added
+
+- Game engine: deck selection, declaration ordering, pool matching, rounds, eliminations, player views
+- Server: rooms, lobby, reconnect, turn and inactivity timers, vote kick, spectators, rematch
+- Web client: start, lobby, table, reveal and game over screens, help panel, tutorial, PL/EN
+- Default elimination limit of 6 cards (5 above 10 players)

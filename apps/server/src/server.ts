@@ -4,7 +4,7 @@ import { Server, type Socket } from 'socket.io';
 import pino, { type Logger } from 'pino';
 import type { Rng } from '@tayan/engine';
 import type { ZodError } from 'zod';
-import type { ServerConfig } from './config';
+import { parseOrigins, type ServerConfig } from './config';
 import {
   clientEvents,
   RoomError,
@@ -37,6 +37,7 @@ const cryptoRng: Rng = { int: (max) => randomInt(max) };
 export function createGameServer(config: ServerConfig, deps: ServerDeps = {}): GameServer {
   const log = deps.logger ?? pino({ level: config.logLevel });
   const scheduler = deps.scheduler ?? realScheduler;
+  const origins = parseOrigins(config.clientOrigin);
 
   const httpServer = createServer((req, res) => {
     if (req.url === '/healthz') {
@@ -48,7 +49,7 @@ export function createGameServer(config: ServerConfig, deps: ServerDeps = {}): G
   });
 
   const io = new Server(httpServer, {
-    cors: { origin: config.clientOrigin },
+    cors: { origin: origins.includes('*') ? true : origins },
     // a ping every 25 s doubles as the heartbeat that keeps a free-tier host awake
     pingInterval: 25_000,
     pingTimeout: 20_000,

@@ -3,3 +3,7 @@ dist
 coverage
 pnpm-lock.yaml
 docs/spec.md
+docs/site/.vitepress/dist
+docs/site/.vitepress/cache
+playwright-report
+test-results

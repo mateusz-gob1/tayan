@@ -28,7 +28,9 @@ export function Lobby({ room }: { room: RoomState }) {
       <section className="panel space-y-4">
         <div>
           <p className="text-sm text-stone-300">{t('lobby.roomCode')}</p>
-          <p className="text-5xl font-black tracking-[0.3em] text-gold">{room.code}</p>
+          <p data-testid="room-code" className="text-5xl font-black tracking-[0.3em] text-gold">
+            {room.code}
+          </p>
           <button className="btn-ghost mt-3" onClick={() => void copy()}>
             {copied ? t('lobby.linkCopied') : t('lobby.copyLink')}
           </button>
