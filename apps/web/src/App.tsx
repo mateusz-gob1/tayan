@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shell } from './components/Shell';
-import { Tutorial } from './components/Tutorial';
 import { connect } from './net/socket';
 import { GameOver } from './screens/GameOver';
 import { Lobby } from './screens/Lobby';
@@ -41,10 +40,5 @@ export default function App() {
   else if (view.phase === 'REVEAL') screen = <Reveal view={view} room={room} />;
   else screen = <GameOver view={view} room={room} />;
 
-  return (
-    <Shell>
-      {screen}
-      <Tutorial />
-    </Shell>
-  );
+  return <Shell>{screen}</Shell>;
 }

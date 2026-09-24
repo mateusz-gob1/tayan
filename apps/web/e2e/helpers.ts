@@ -1,11 +1,10 @@
 import { expect, type Browser, type Page } from '@playwright/test';
 
-/** A fresh browser context (its own storage, like a separate player) with the tutorial skipped. */
+/** A fresh browser context (its own storage, like a separate player). */
 export async function newPlayer(browser: Browser, lang: 'pl' | 'en' = 'pl'): Promise<Page> {
   const context = await browser.newContext();
   await context.addInitScript(
     ([l]) => {
-      localStorage.setItem('tayan.tutorialSeen', '1');
       localStorage.setItem('tayan.lang', l as string);
       localStorage.setItem('tayan.muted', '1');
     },

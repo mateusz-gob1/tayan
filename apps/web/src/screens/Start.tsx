@@ -23,7 +23,6 @@ export function Start() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 pt-16">
       <h1 className="text-6xl font-black tracking-tight text-gold">♠ Tayan</h1>
-      <p className="mt-2 text-stone-300">{t('app.tagline')}</p>
 
       <div className="panel mt-10 w-full space-y-4">
         <label className="block">
