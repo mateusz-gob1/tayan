@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { Card } from '@tayan/engine';
 import { formatCard } from '@tayan/engine';
 import { CARD_H, CARD_W, backSprite, cardSprite, type BackColor } from '../lib/cards';
@@ -9,6 +10,37 @@ export type Scale = 1 | 2 | 3 | 4;
 
 // never let flexbox squeeze a sprite: a fractional width would resample the pixels unevenly
 const pixelated = { imageRendering: 'pixelated', flexShrink: 0 } as const;
+
+/** The four frames of a card turning over: back, edge of the back, edge of the face, face. */
+type FlipPhase = 'back' | 'closing' | 'opening' | 'face';
+const FLIP_HALF_MS = 65;
+
+function reducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+  );
+}
+
+/**
+ * Drives the flip with timers instead of CSS keyframes, so the card always ends up face up even if
+ * the browser pauses animations (a hidden tab, an occluded window) while it is turning.
+ */
+function useFlipPhase(delay: number | undefined): FlipPhase {
+  const [phase, setPhase] = useState<FlipPhase>(
+    delay === undefined || reducedMotion() ? 'face' : 'back',
+  );
+  useEffect(() => {
+    if (delay === undefined || reducedMotion()) return;
+    const timers = [
+      window.setTimeout(() => setPhase('closing'), delay),
+      window.setTimeout(() => setPhase('opening'), delay + FLIP_HALF_MS),
+      window.setTimeout(() => setPhase('face'), delay + 2 * FLIP_HALF_MS),
+    ];
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [delay]);
+  return phase;
+}
 
 export function PlayingCard({
   card,
@@ -26,13 +58,36 @@ export function PlayingCard({
 }) {
   const fourColors = useStore((s) => s.fourColors);
   const art = useArtScale();
+  const phase = useFlipPhase(flipDelay);
   const s = scale ?? art;
-  const face = (
+  const w = CARD_W * s;
+  const h = CARD_H * s;
+
+  if (phase !== 'face') {
+    // while turning, show the card edge-on: half the width (a whole number of pixels) and centred
+    const half = phase === 'closing' || phase === 'opening';
+    const src = phase === 'opening' ? cardSprite(card, fourColors) : backSprite('red');
+    return (
+      <div className="flex items-center justify-center" style={{ width: w, height: h }}>
+        <img
+          src={src}
+          alt=""
+          width={half ? w / 2 : w}
+          height={h}
+          draggable={false}
+          className="block select-none"
+          style={pixelated}
+        />
+      </div>
+    );
+  }
+
+  return (
     <img
       src={cardSprite(card, fourColors)}
       alt={formatCard(card)}
-      width={CARD_W * s}
-      height={CARD_H * s}
+      width={w}
+      height={h}
       draggable={false}
       className="block select-none"
       style={{
@@ -43,25 +98,6 @@ export function PlayingCard({
         filter: dim ? 'grayscale(1)' : undefined,
       }}
     />
-  );
-  if (flipDelay === undefined) return face;
-  const w = CARD_W * s;
-  const h = CARD_H * s;
-  return (
-    <div className="relative" style={{ width: w, height: h }}>
-      <img
-        src={backSprite('red')}
-        alt=""
-        width={w}
-        height={h}
-        draggable={false}
-        className="flip-out absolute inset-0 block"
-        style={{ ...pixelated, animationDelay: `${flipDelay}ms` }}
-      />
-      <div className="flip-in absolute inset-0" style={{ animationDelay: `${flipDelay + 130}ms` }}>
-        {face}
-      </div>
-    </div>
   );
 }
 
