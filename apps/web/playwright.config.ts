@@ -12,7 +12,9 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${WEB_PORT}`, trace: 'retain-on-failure' },
   webServer: [
     {
-      command: 'pnpm --filter @tayan/server exec tsx src/index.ts',
+      // plain node (no pnpm wrapper), so Playwright can stop the process when the tests end
+      command: 'node --import tsx src/index.ts',
+      cwd: '../server',
       url: `http://localhost:${SERVER_PORT}/healthz`,
       env: {
         PORT: String(SERVER_PORT),
@@ -24,11 +26,12 @@ export default defineConfig({
       timeout: 60_000,
     },
     {
-      command: `pnpm --filter @tayan/web exec vite --port ${WEB_PORT} --strictPort`,
+      command: `node node_modules/vite/bin/vite.js --port ${WEB_PORT} --strictPort`,
       url: `http://localhost:${WEB_PORT}`,
       env: { VITE_SERVER_URL: `http://localhost:${SERVER_PORT}` },
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
+      gracefulShutdown: { signal: 'SIGTERM', timeout: 5_000 },
     },
   ],
 });
