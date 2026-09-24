@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadConfig, parseOrigins } from '../src/config';
+import { loadConfig, originMatchers, parseOrigins } from '../src/config';
 
 describe('config', () => {
   it('uses local defaults', () => {
@@ -29,5 +29,19 @@ describe('config', () => {
       'https://tayan.example',
     ]);
     expect(parseOrigins('*')).toEqual(['*']);
+  });
+
+  it('supports a wildcard subdomain for preview deployments', () => {
+    const [fixed, preview] = originMatchers(
+      parseOrigins('https://tayan.pages.dev,https://*.tayan.pages.dev'),
+    );
+    expect(fixed).toBe('https://tayan.pages.dev');
+    const re = preview as RegExp;
+    expect(re.test('https://feat-pixel.tayan.pages.dev')).toBe(true);
+    expect(re.test('https://a1b2c3d4.tayan.pages.dev')).toBe(true);
+    expect(re.test('https://tayan.pages.dev')).toBe(false);
+    expect(re.test('https://evil.example.com')).toBe(false);
+    expect(re.test('https://a.b.tayan.pages.dev')).toBe(false);
+    expect(re.test('https://x.tayan.pages.dev.evil.com')).toBe(false);
   });
 });
