@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import type { PlayerView } from '@tayan/engine';
+import { TrophyMark } from '../components/Logo';
 import { RevealBoard } from '../components/RevealBoard';
+import { iconZoom, useLayoutScale } from '../lib/scale';
 import { rematch } from '../net/actions';
 import { leaveRoom } from '../net/socket';
 import type { RoomState } from '../net/types';
@@ -8,6 +10,7 @@ import { nickOf, useStore } from '../store';
 
 export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) {
   const { t } = useTranslation();
+  const { rem } = useLayoutScale();
   const me = useStore((s) => s.session?.playerId);
   const isHost = room.hostId === me;
   const winner = view.winner;
@@ -18,7 +21,9 @@ export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
       <div className="text-center">
-        <p className="text-6xl">🏆</p>
+        <div className="bounce flex justify-center">
+          <TrophyMark size={11 * iconZoom(rem) * 2} />
+        </div>
         <h2 className="mt-2 text-4xl font-black text-gold">
           {winner ? t('gameOver.winner', { nick: nick(winner) }) : ''}
         </h2>

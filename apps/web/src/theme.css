@@ -263,8 +263,102 @@ body {
   animation: pop-in 0.3s steps(4) both;
 }
 
+/* a card flies in from the middle of the table (the deck) */
+@keyframes deal-in {
+  from {
+    opacity: 0;
+    transform: translate(0, -35vh);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.deal-in {
+  animation: deal-in 0.4s steps(6) both;
+}
+
+/* turning a card over: the back squashes away, the face grows in */
+@keyframes flip-out {
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes flip-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.flip-out {
+  animation: flip-out 0.13s steps(3) both;
+}
+.flip-in {
+  animation: flip-in 0.13s steps(3) both;
+}
+
+/* the player whose turn it is blinks their frame */
+@keyframes blink-border {
+  50% {
+    border-color: var(--color-cream);
+  }
+}
+.turn-blink {
+  animation: blink-border 1s steps(1) infinite;
+}
+
+/* an eliminated player rattles once */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(calc(var(--b) * -1.5));
+  }
+  75% {
+    transform: translateX(calc(var(--b) * 1.5));
+  }
+}
+.shake {
+  animation: shake 0.4s steps(4) 2;
+}
+
+@keyframes bounce-px {
+  50% {
+    transform: translateY(calc(var(--b) * -2));
+  }
+}
+.bounce {
+  animation: bounce-px 0.8s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.blink {
+  animation: blink 0.6s steps(1) 4;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pop-in {
+  .pop-in,
+  .deal-in,
+  .turn-blink,
+  .shake,
+  .bounce,
+  .blink {
     animation: none;
+  }
+  .flip-out {
+    animation: none;
+    opacity: 0;
+  }
+  .flip-in {
+    animation: none;
+    transform: none;
   }
 }

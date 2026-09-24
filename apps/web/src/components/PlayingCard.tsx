@@ -15,16 +15,19 @@ export function PlayingCard({
   scale,
   highlight = false,
   dim = false,
+  flipDelay,
 }: {
   card: Card;
   scale?: Scale;
   highlight?: boolean;
   dim?: boolean;
+  /** If set, the card is shown face down first and turns over after this many ms. */
+  flipDelay?: number;
 }) {
   const fourColors = useStore((s) => s.fourColors);
   const art = useArtScale();
   const s = scale ?? art;
-  return (
+  const face = (
     <img
       src={cardSprite(card, fourColors)}
       alt={formatCard(card)}
@@ -40,6 +43,25 @@ export function PlayingCard({
         filter: dim ? 'grayscale(1)' : undefined,
       }}
     />
+  );
+  if (flipDelay === undefined) return face;
+  const w = CARD_W * s;
+  const h = CARD_H * s;
+  return (
+    <div className="relative" style={{ width: w, height: h }}>
+      <img
+        src={backSprite('red')}
+        alt=""
+        width={w}
+        height={h}
+        draggable={false}
+        className="flip-out absolute inset-0 block"
+        style={{ ...pixelated, animationDelay: `${flipDelay}ms` }}
+      />
+      <div className="flip-in absolute inset-0" style={{ animationDelay: `${flipDelay + 130}ms` }}>
+        {face}
+      </div>
+    </div>
   );
 }
 
