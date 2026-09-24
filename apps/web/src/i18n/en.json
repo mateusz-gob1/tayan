@@ -65,7 +65,11 @@
     "settings": "Game settings",
     "onlyHost": "Only the host can change settings.",
     "deckWarning": "With this many players even the full deck often contains fours and straight flushes. Consider lowering the elimination limit to 4.",
-    "auto": "auto"
+    "auto": "auto",
+    "addBot": "Add a bot",
+    "playWithBots": "Play with bots",
+    "botsHint": "Test mode: bots play at random.",
+    "bot": "bot"
   },
   "settings": {
     "deckMode": "Deck",

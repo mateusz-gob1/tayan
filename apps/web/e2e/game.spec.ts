@@ -63,3 +63,11 @@ test('language switch and help panel', async ({ browser }) => {
   await page.keyboard.press('h');
   await expect(page.getByRole('heading', { name: 'Help' })).toBeHidden();
 });
+
+test('a lone player can add bots in the lobby and play against them', async ({ browser }) => {
+  const host = await newPlayer(browser);
+  await createRoom(host, 'Ala');
+  await host.getByRole('button', { name: 'Graj z botami' }).click();
+  await expect(host.getByText('Twoje karty')).toBeVisible();
+  await host.getByText('Bot 1').first().waitFor();
+});

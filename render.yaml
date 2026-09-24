@@ -13,3 +13,5 @@ services:
         sync: false # set in the Render dashboard to the client URL, e.g. https://tayan.pages.dev
       - key: LOG_LEVEL
         value: info
+      - key: ENABLE_BOTS
+        value: 'true' # testing aid: lets the host add bots in the lobby; set to 'false' to hide it

@@ -20,3 +20,17 @@ export const rematch = () => act('game:rematch');
 export const kick = (playerId: string) => act('room:kick', { playerId });
 export const voteKick = (playerId: string) => act('game:voteKick', { playerId });
 export const setSettings = (settings: Partial<GameSettings>) => act('room:settings', settings);
+
+export const addBot = () => act('room:addBot');
+
+/**
+ * Testing aid: tops the room up to 3 players with bots and starts the game.
+ * Hidden with VITE_ENABLE_BOTS=false (the server can also refuse with ENABLE_BOTS=false).
+ */
+export async function playWithBots(): Promise<void> {
+  const members = useStore.getState().room?.members.length ?? 1;
+  for (let i = members; i < 3; i++) {
+    if (!(await addBot())) return;
+  }
+  await startGame();
+}

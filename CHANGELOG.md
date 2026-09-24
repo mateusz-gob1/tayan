@@ -4,6 +4,11 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+
+- Testing aid: the host can add bots in the lobby ("Add a bot", "Play with bots"); bots are driven by the server and can be switched off with `ENABLE_BOTS=false` (server) and `VITE_ENABLE_BOTS=false` (client)
+- The random bot now usually raises by small steps instead of jumping to the top hands
+
 ### Changed
 
 - Updated all dependencies (zod 4, vitest 5, vite 8, eslint 10, pino 10, i18next 26, TypeScript 6) and GitHub Actions; Dependabot now groups major and action updates into one pull request each
