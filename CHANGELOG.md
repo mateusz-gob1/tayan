@@ -4,6 +4,11 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+
+- 8-bit sound effects synthesised in the browser (no audio files): deal, card flip, declaration, check, extra card, elimination, win/lose, button ticks, your turn; all in one table in `apps/web/src/lib/sound.ts`
+- Stepped pixel animations: cards fly in when dealt, cards turn over one by one at the reveal, the active player's frame blinks, an eliminated player rattles, a pixel trophy bounces on the end screen; all disabled with `prefers-reduced-motion`
+
 ### Changed
 
 - The interface scales to the window: text and borders smoothly (root font 16 to 28 px), card sprites in whole-number steps (2x, and 3x/4x only on very big windows) so pixels stay crisp; the table fills the free space. The tuning numbers are in `pickLayout` (apps/web/src/lib/scale.ts)

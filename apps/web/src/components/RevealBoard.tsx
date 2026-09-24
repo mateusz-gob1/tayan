@@ -7,6 +7,7 @@ import {
   type RoundResult,
 } from '@tayan/engine';
 import { useDeclarations, useLang } from '../lib/hooks';
+import { FLIP_STEP_MS } from '../lib/sfx';
 import type { RoomState } from '../net/types';
 import { nickOf } from '../store';
 import { EmptySlot, PlayingCard } from './PlayingCard';
@@ -30,6 +31,9 @@ export function RevealBoard({
   const decl = declarations.find((d) => d.id === result.declarationId);
   const nick = (id: string) => nickOf(view, room, id);
   const total = result.matchedCards.length + result.missingSlots.length;
+  // cards turn over one after another: matched cards first, then everyone's hands
+  let flipIndex = 0;
+  const nextFlip = () => 250 + flipIndex++ * FLIP_STEP_MS;
 
   const isMatched = (ownerId: string, card: Card) =>
     result.matchedCards.some((m) => m.ownerId === ownerId && sameCard(m.card, card));
@@ -56,12 +60,8 @@ export function RevealBoard({
         <h3 className="mb-3 text-sm font-semibold text-stone-300">{t('reveal.hand')}</h3>
         <div className="flex flex-wrap justify-center gap-3">
           {result.matchedCards.map((m, i) => (
-            <div
-              key={i}
-              className="pop-in flex flex-col items-center gap-1"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              <PlayingCard card={m.card} scale={2} highlight />
+            <div key={i} className="flex flex-col items-center gap-1">
+              <PlayingCard card={m.card} highlight flipDelay={nextFlip()} />
               <span className="text-[0.95rem] text-stone-300">
                 {t('reveal.owner', { nick: nick(m.ownerId) })}
               </span>
@@ -69,10 +69,7 @@ export function RevealBoard({
           ))}
           {result.missingSlots.map((slot, i) => (
             <div key={`m${i}`} className="flex flex-col items-center gap-1">
-              <EmptySlot
-                scale={2}
-                label={t('reveal.emptySlot', { what: formatSlot(slot, lang) })}
-              />
+              <EmptySlot label={t('reveal.emptySlot', { what: formatSlot(slot, lang) })} />
             </div>
           ))}
         </div>
@@ -102,9 +99,9 @@ export function RevealBoard({
                     <PlayingCard
                       key={`${c.rank}${c.suit}`}
                       card={c}
-                      scale={2}
                       highlight={matched}
                       dim={!matched}
+                      flipDelay={nextFlip()}
                     />
                   );
                 })}
@@ -114,7 +111,10 @@ export function RevealBoard({
         </div>
       </div>
 
-      <p className="text-center text-lg font-bold">
+      <p
+        className="blink text-center text-lg font-bold"
+        style={{ animationDelay: `${250 + flipIndex * FLIP_STEP_MS + 200}ms` }}
+      >
         {t('reveal.gets', { nick: nick(result.loserId) })}
         {result.loserEliminated && (
           <span className="ml-2 text-red-300">

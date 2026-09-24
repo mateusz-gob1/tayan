@@ -63,3 +63,33 @@ export function Logo({ big = false }: { big?: boolean }) {
     </span>
   );
 }
+
+// 11x11 trophy for the end screen
+const TROPHY = [
+  '.#########.',
+  '##.#####.##',
+  '##.#####.##',
+  '.##.###.##.',
+  '..#######..',
+  '...#####...',
+  '....###....',
+  '.....#.....',
+  '.....#.....',
+  '...#####...',
+  '..#######..',
+];
+
+export function TrophyMark({ size = 66 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 11 11"
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+    >
+      <path d={path(TROPHY)} fill="var(--color-ink)" transform="translate(0.5 0.5)" />
+      <path d={path(TROPHY)} fill="var(--color-gold)" />
+    </svg>
+  );
+}

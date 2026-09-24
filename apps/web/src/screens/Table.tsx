@@ -82,8 +82,8 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                 <div
                   key={p.id}
                   className={`absolute flex w-max min-w-32 -translate-x-1/2 -translate-y-1/2 flex-col items-center border-4 px-2 py-1 text-center shadow-md ${
-                    active ? 'border-gold bg-wood-light' : 'border-ink bg-panel'
-                  } ${p.eliminated ? 'opacity-40 grayscale' : ''}`}
+                    active ? 'turn-blink border-gold bg-wood-light' : 'border-ink bg-panel'
+                  } ${p.eliminated ? 'shake opacity-40 grayscale' : ''}`}
                   // snap to whole pixels so the sprites are not resampled unevenly
                   style={{
                     left: `round(nearest, calc(50% + (50% - ${halfW}rem) * ${cos.toFixed(4)}), 2px)`,
@@ -97,7 +97,14 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   {p.id !== view.me && (
                     <div className="mt-1 flex justify-center">
                       {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
-                        <div key={k} style={{ marginLeft: k === 0 ? 0 : -36 * seatScale }}>
+                        <div
+                          key={`${view.roundNumber}-${k}`}
+                          className="deal-in"
+                          style={{
+                            marginLeft: k === 0 ? 0 : -36 * seatScale,
+                            animationDelay: `${(i * 2 + k) * 90}ms`,
+                          }}
+                        >
                           <CardBack scale={seatScale} />
                         </div>
                       ))}
@@ -148,8 +155,14 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
           <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
           {view.myCards.length ? (
             <div className="flex gap-3">
-              {view.myCards.map((c) => (
-                <PlayingCard key={`${c.rank}${c.suit}`} card={c} />
+              {view.myCards.map((c, idx) => (
+                <div
+                  key={`${view.roundNumber}-${c.rank}${c.suit}`}
+                  className="deal-in"
+                  style={{ animationDelay: `${idx * 130}ms` }}
+                >
+                  <PlayingCard card={c} />
+                </div>
               ))}
             </div>
           ) : (
