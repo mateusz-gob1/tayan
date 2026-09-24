@@ -1,0 +1,26 @@
+{
+  "name": "tayan",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Tayan: a real-time multiplayer bluffing card game for the browser.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "pnpm -r --if-present test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "build": "pnpm -r --if-present build",
+    "dev": "pnpm -r --parallel --if-present dev",
+    "e2e": "pnpm -r --if-present e2e",
+    "engine:deck-table": "pnpm --filter @tayan/engine deck-table",
+    "engine:cli": "pnpm --filter @tayan/engine cli"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}
