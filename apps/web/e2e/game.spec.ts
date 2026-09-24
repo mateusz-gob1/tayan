@@ -38,9 +38,8 @@ test('a refreshed page returns to the same game with the same cards', async ({ b
 
   const cards = () =>
     bob
-      .locator('[aria-label]')
-      .filter({ hasText: /[♣♦♥♠]/ })
-      .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
+      .locator('img[alt]')
+      .evaluateAll((els) => els.map((e) => e.getAttribute('alt')).filter(Boolean));
   const before = await cards();
   expect(before.length).toBeGreaterThan(0);
 

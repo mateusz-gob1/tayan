@@ -4,7 +4,7 @@ import { Server, type Socket } from 'socket.io';
 import pino, { type Logger } from 'pino';
 import type { Rng } from '@tayan/engine';
 import type { ZodError } from 'zod';
-import { parseOrigins, type ServerConfig } from './config';
+import { originMatchers, parseOrigins, type ServerConfig } from './config';
 import {
   clientEvents,
   RoomError,
@@ -49,7 +49,7 @@ export function createGameServer(config: ServerConfig, deps: ServerDeps = {}): G
   });
 
   const io = new Server(httpServer, {
-    cors: { origin: origins.includes('*') ? true : origins },
+    cors: { origin: origins.includes('*') ? true : originMatchers(origins) },
     // a ping every 25 s doubles as the heartbeat that keeps a free-tier host awake
     pingInterval: 25_000,
     pingTimeout: 20_000,

@@ -26,3 +26,18 @@ export function parseOrigins(value: string): string[] {
     .map((o) => o.trim().replace(/\/+$/, ''))
     .filter(Boolean);
 }
+
+/**
+ * Turns the parsed origins into matchers for the CORS layer. An entry like
+ * `https://*.example.pages.dev` matches a single subdomain label (Cloudflare Pages preview URLs).
+ */
+export function originMatchers(origins: string[]): (string | RegExp)[] {
+  return origins.map((o) => {
+    if (o === '*' || !o.includes('*')) return o;
+    const pattern = o
+      .split('*')
+      .map((part) => part.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
+      .join('[a-z0-9-]+');
+    return new RegExp(`^${pattern}$`, 'i');
+  });
+}

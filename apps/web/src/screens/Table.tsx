@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDeclaration, type Declaration, type PlayerView } from '@tayan/engine';
 import { CardBack, PlayingCard } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
+import { SuitText } from '../components/SuitIcon';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
 import { playTurnSound, startTitleBlink, stopTitleBlink } from '../lib/sound';
 import { check, declare, voteKick } from '../net/actions';
@@ -40,66 +41,71 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   return (
     <div className="grid gap-4 p-4 xl:grid-cols-[minmax(0,1fr)_21rem]">
       <div className="min-w-0 space-y-4">
-        <div className="relative mx-auto h-[26rem] max-w-3xl rounded-[50%] border-8 border-[#3b2a1a] bg-felt-light/60 shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]">
-          <div className="absolute left-1/2 top-1/2 w-64 -translate-x-1/2 -translate-y-1/2 text-center">
-            <p className="text-xs uppercase tracking-widest text-stone-300">
-              {t('table.round', { n: view.roundNumber })}
-            </p>
-            {lastDecl && lastBid ? (
-              <div key={lastBid.declarationId} className="pop-in mt-1">
-                <p className="text-xs text-stone-300">
-                  {t('table.lastBidBy', { nick: nickOf(view, room, lastBid.playerId) })}
-                </p>
-                <p className="text-2xl font-black leading-tight text-gold">
-                  {formatDeclaration(lastDecl, lang)}
-                </p>
-              </div>
-            ) : (
-              <p className="mt-2 text-sm text-stone-200">{t('table.noBids')}</p>
-            )}
-          </div>
-          {view.players.map((p, i) => {
-            const myIndex = Math.max(
-              0,
-              view.players.findIndex((x) => x.id === view.me),
-            );
-            const rel = (i - myIndex + view.players.length) % view.players.length;
-            const theta = ((90 + (rel * 360) / view.players.length) * Math.PI) / 180;
-            const x = 50 + 44 * Math.cos(theta);
-            const y = 50 + 42 * Math.sin(theta);
-            const active = view.currentTurn === p.id && !p.eliminated;
-            return (
-              <div
-                key={p.id}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl border px-3 py-2 text-center shadow-lg transition ${
-                  active ? 'border-gold bg-gold/25 ring-2 ring-gold' : 'border-white/15 bg-black/50'
-                } ${p.eliminated ? 'opacity-40 grayscale' : ''}`}
-                style={{ left: `${x}%`, top: `${y}%` }}
-              >
-                <p className="max-w-[7rem] truncate text-sm font-bold">
-                  {p.nick}
-                  {p.id === view.me && ' ★'}
-                </p>
-                <div className="mt-1 flex justify-center gap-0.5">
-                  {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
-                    <CardBack key={k} size="sm" />
-                  ))}
-                </div>
-                <p className="mt-0.5 text-[0.7rem] text-stone-300">
-                  {p.eliminated
-                    ? t('table.eliminated')
-                    : !p.connected
-                      ? t('table.offline')
-                      : t('table.cards', { count: p.cardCount })}
-                </p>
-                {active && secondsLeft !== null && (
-                  <p className="text-xs font-bold text-gold">
-                    {t('table.timeLeft', { sec: secondsLeft })}
+        <div className="table-shape mx-auto max-w-4xl bg-wood p-3">
+          <div className="table-shape felt-texture relative h-[34rem]">
+            <div className="absolute left-1/2 top-1/2 w-64 -translate-x-1/2 -translate-y-1/2 text-center">
+              <p className="text-xs uppercase tracking-widest text-stone-300">
+                {t('table.round', { n: view.roundNumber })}
+              </p>
+              {lastDecl && lastBid ? (
+                <div key={lastBid.declarationId} className="pop-in mt-1">
+                  <p className="text-xs text-stone-300">
+                    {t('table.lastBidBy', { nick: nickOf(view, room, lastBid.playerId) })}
                   </p>
-                )}
-              </div>
-            );
-          })}
+                  <p className="text-2xl font-bold leading-tight text-gold">
+                    <SuitText text={formatDeclaration(lastDecl, lang)} size={21} />
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-stone-200">{t('table.noBids')}</p>
+              )}
+            </div>
+            {view.players.map((p, i) => {
+              const myIndex = Math.max(
+                0,
+                view.players.findIndex((x) => x.id === view.me),
+              );
+              const rel = (i - myIndex + view.players.length) % view.players.length;
+              const theta = ((90 + (rel * 360) / view.players.length) * Math.PI) / 180;
+              const x = 50 + 44 * Math.cos(theta);
+              const y = 50 + 42 * Math.sin(theta);
+              const active = view.currentTurn === p.id && !p.eliminated;
+              return (
+                <div
+                  key={p.id}
+                  className={`absolute flex h-[156px] w-44 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center border-4 px-2 text-center shadow-md ${
+                    active ? 'border-gold bg-wood-light' : 'border-ink bg-panel'
+                  } ${p.eliminated ? 'opacity-40 grayscale' : ''}`}
+                  // snap to whole pixels (even numbers, since the box is centred), or the sprites blur
+                  style={{ left: `round(nearest, ${x}%, 2px)`, top: `round(nearest, ${y}%, 2px)` }}
+                >
+                  <p className="max-w-[7rem] truncate text-sm font-bold">
+                    {p.nick}
+                    {p.id === view.me && ' ★'}
+                  </p>
+                  <div className="mt-1 flex justify-center">
+                    {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
+                      <div key={k} style={{ marginLeft: k === 0 ? 0 : -36 }}>
+                        <CardBack scale={1} />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-0.5 text-[0.7rem] text-stone-300">
+                    {p.eliminated
+                      ? t('table.eliminated')
+                      : !p.connected
+                        ? t('table.offline')
+                        : t('table.cards', { count: p.cardCount })}
+                  </p>
+                  {active && secondsLeft !== null && (
+                    <p className="text-xs font-bold text-gold">
+                      {t('table.timeLeft', { sec: secondsLeft })}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="panel">
@@ -107,7 +113,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
           {view.myCards.length ? (
             <div className="flex flex-wrap gap-3">
               {view.myCards.map((c) => (
-                <PlayingCard key={`${c.rank}${c.suit}`} card={c} size="lg" />
+                <PlayingCard key={`${c.rank}${c.suit}`} card={c} scale={2} />
               ))}
             </div>
           ) : (
@@ -135,7 +141,9 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   <span className="shrink-0 font-semibold text-stone-300">
                     {nickOf(view, room, b.playerId)}:
                   </span>
-                  <span>{d ? formatDeclaration(d, lang) : b.declarationId}</span>
+                  <span>
+                    {d ? <SuitText text={formatDeclaration(d, lang)} /> : b.declarationId}
+                  </span>
                 </li>
               );
             })}
