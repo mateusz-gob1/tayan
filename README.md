@@ -4,7 +4,7 @@
 
 <p align="center">
   <b>Bluff, bid poker hands and call out your opponents.</b><br>
-  A card game for 2 to 13 players, right in your browser. No accounts, nothing to install.
+  A card game for 2 to 13 players, right in your browser. No accounts, nothing to install. Works on a computer, a tablet and a phone (sideways is the most comfortable).
 </p>
 
 <p align="center">

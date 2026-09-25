@@ -28,3 +28,34 @@ export function useDeclarations(
     [settings.lowestRank, settings.categoryOrder],
   );
 }
+
+/** Keeps the screen awake while `active`: a phone would dim and lock during a long wait for a turn. */
+export function useWakeLock(active: boolean): void {
+  useEffect(() => {
+    if (!active || !('wakeLock' in navigator)) return;
+    let lock: WakeLockSentinel | null = null;
+    let cancelled = false;
+    const request = () => {
+      navigator.wakeLock
+        .request('screen')
+        .then((l) => {
+          if (cancelled) void l.release();
+          else lock = l;
+        })
+        .catch(() => {
+          /* not allowed right now (for example a low battery): the game works without it */
+        });
+    };
+    request();
+    // the lock is dropped when the tab is hidden, so ask again when it comes back
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') request();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', onVisible);
+      void lock?.release();
+    };
+  }, [active]);
+}

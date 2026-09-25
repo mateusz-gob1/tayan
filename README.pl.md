@@ -4,7 +4,7 @@
 
 <p align="center">
   <b>Blefuj, licytuj układy pokerowe i zdemaskuj przeciwników.</b><br>
-  Karciana gra dla 2–13 osób, prosto w przeglądarce. Bez kont, bez instalacji.
+  Karciana gra dla 2–13 osób, prosto w przeglądarce. Bez kont, bez instalacji. Działa na komputerze, tablecie i telefonie (najwygodniej poziomo).
 </p>
 
 <p align="center">
