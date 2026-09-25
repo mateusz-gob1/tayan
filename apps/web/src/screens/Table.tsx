@@ -292,26 +292,21 @@ function KickVote({
   if (!vote) return null;
   const eligible = view.players.filter((p) => !p.eliminated && p.id !== vote.targetId).length;
   const needed = Math.floor(eligible / 2) + 1;
-  const wait = Math.ceil((vote.availableAt - now) / 1000);
+  // nothing is shown until the vote is possible; a countdown to it would only be noise
+  if (vote.availableAt > now) return null;
   const iVoted = vote.votes.includes(view.me);
   return (
     <div className="pixel-rule-top pt-4 text-center text-sm">
-      {wait > 0 ? (
-        <p className="text-xs text-stone-400">{t('table.voteKickWait', { sec: wait })}</p>
-      ) : (
-        <>
-          <button
-            className="btn-ghost w-full text-sm"
-            disabled={iVoted}
-            onClick={() => void voteKick(vote.targetId)}
-          >
-            {t('table.voteKick', { nick: targetNick })}
-          </button>
-          <p className="mt-1 text-xs text-stone-300">
-            {t('table.votes', { count: vote.votes.length, needed })}
-          </p>
-        </>
-      )}
+      <button
+        className="btn-ghost w-full text-sm"
+        disabled={iVoted}
+        onClick={() => void voteKick(vote.targetId)}
+      >
+        {t('table.voteKick', { nick: targetNick })}
+      </button>
+      <p className="mt-1 text-xs text-stone-300">
+        {t('table.votes', { count: vote.votes.length, needed })}
+      </p>
     </div>
   );
 }
