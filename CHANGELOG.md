@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Removed
+
+- The four-colour cards switch: the game plays with black and red cards only (the unused high-contrast card images are gone too)
+
 ### Changed
 
 - The reveal fits on one screen without scrolling: the declared hand and everyone's cards side by side, card size chosen to fit, and a fixed bottom bar with who gets a card and the Next button

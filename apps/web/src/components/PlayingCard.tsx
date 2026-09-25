@@ -3,7 +3,6 @@ import type { Card } from '@tayan/engine';
 import { formatCard } from '@tayan/engine';
 import { CARD_H, CARD_W, backSprite, cardSprite, type BackColor } from '../lib/cards';
 import { useArtScale } from '../lib/scale';
-import { useStore } from '../store';
 
 /** Whole-number zoom of the 56x80 sprites; fractional zoom would blur the pixels. */
 export type Scale = 1 | 2 | 3 | 4;
@@ -56,7 +55,6 @@ export function PlayingCard({
   /** If set, the card is shown face down first and turns over after this many ms. */
   flipDelay?: number;
 }) {
-  const fourColors = useStore((s) => s.fourColors);
   const art = useArtScale();
   const phase = useFlipPhase(flipDelay);
   const s = scale ?? art;
@@ -66,7 +64,7 @@ export function PlayingCard({
   if (phase !== 'face') {
     // while turning, show the card edge-on: half the width (a whole number of pixels) and centred
     const half = phase === 'closing' || phase === 'opening';
-    const src = phase === 'opening' ? cardSprite(card, fourColors) : backSprite('red');
+    const src = phase === 'opening' ? cardSprite(card) : backSprite('red');
     return (
       <div className="flex items-center justify-center" style={{ width: w, height: h }}>
         <img
@@ -84,7 +82,7 @@ export function PlayingCard({
 
   return (
     <img
-      src={cardSprite(card, fourColors)}
+      src={cardSprite(card)}
       alt={formatCard(card)}
       width={w}
       height={h}

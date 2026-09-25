@@ -83,7 +83,7 @@ Po sprawdzeniu widać dokładnie, skąd wziął się układ i czego zabrakło. K
 
 ## Ustawienia pokoju
 
-Host w poczekalni może zmienić: liczbę kart na start, limit eliminacji, limit czasu na ruch, talię i czas na powrót rozłączonego gracza. Gracze, którzy stracili połączenie, wracają do gry po odświeżeniu strony z tymi samymi kartami. Jest też przełącznik **czterech kolorów** (karo i trefl w innych barwach) dla lepszej czytelności.
+Host w poczekalni może zmienić: liczbę kart na start, limit eliminacji, limit czasu na ruch, talię i czas na powrót rozłączonego gracza. Gracze, którzy stracili połączenie, wracają do gry po odświeżeniu strony z tymi samymi kartami.
 
 ## Dla programistów
 
