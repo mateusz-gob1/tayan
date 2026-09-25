@@ -18,6 +18,7 @@
   --color-panel: #12362a;
   --color-cream: #f3ecd6;
   --color-gold: #f4c542;
+  --color-gold-dim: #9b7a2a;
   --color-wood: #5b3a22;
   --color-wood-light: #7d5434;
   --color-card-red: #d4424e;
@@ -190,6 +191,29 @@ body {
   box-shadow:
     inset var(--b) var(--b) 0 rgb(255 255 255 / 0.07),
     inset calc(var(--b) * -1) calc(var(--b) * -1) 0 rgb(0 0 0 / 0.35);
+}
+
+/* a panel with a double frame (start screen) */
+@utility panel-deco {
+  @apply panel;
+  position: relative;
+  padding: 1rem 1.25rem 1.25rem;
+  /* a second, golden frame outside the dark one */
+  box-shadow:
+    inset var(--b) var(--b) 0 rgb(255 255 255 / 0.07),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 rgb(0 0 0 / 0.35),
+    0 0 0 var(--b) var(--color-gold-dim),
+    0 0 0 calc(var(--b) * 2) var(--color-ink);
+}
+
+/* dashed pixel rule used as a divider */
+@utility pixel-rule {
+  height: var(--b);
+  background: repeating-linear-gradient(
+    90deg,
+    rgb(243 236 214 / 0.35) 0 var(--b),
+    transparent var(--b) calc(var(--b) * 3)
+  );
 }
 
 /* the table: a wooden frame and felt, both with stepped corners */
