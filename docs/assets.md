@@ -17,3 +17,7 @@ The code is MIT-licensed; artwork keeps its own license. Every asset used in the
 ## Everything else
 
 The logo (pixel spade), suit icons and the table are drawn in code (`apps/web/src/components/Logo.tsx`, `SuitIcon.tsx`, `theme.css`); sounds are synthesised at runtime.
+
+## Logo and favicon
+
+The logo (`apps/web/src/assets/logo.png`, 155×62 px, 6 colours) was generated in Midjourney and then converted to a real pixel grid (block-majority downscale, a fixed palette, and a uniform one-pixel outline redrawn around the shapes), so it scales by whole numbers like the cards. The favicon (`apps/web/public/favicon.png`, 32×32) is an ace of spades drawn for the project. `docs/social-preview.png` (1280×640) is the image for the repository's social preview (Settings → General → Social preview).
