@@ -58,6 +58,8 @@ export type GameSettings = {
   turnTimerSec: number | null; // null = no limit
   inactiveTimeoutSec: number | null; // null = wait forever (default)
   kickVoteAfterSec: number; // default 120
+  /** Eliminated players and late joiners may see the cards of the players still in the game. */
+  spectatorsSeeCards: boolean; // default true
 };
 
 export type Bid = { playerId: PlayerId; declarationId: string; at: number };
@@ -110,6 +112,9 @@ export type PlayerView = {
   canCheck: boolean;
   phase: 'BIDDING' | 'REVEAL' | 'GAME_OVER';
   lastResult?: RoundResult; // only in REVEAL and GAME_OVER
+  /** The hands of all players in the current round: only for someone who is not playing (eliminated
+   * or not seated) and only when the room allows it (`settings.spectatorsSeeCards`). */
+  spectatedHands?: Record<PlayerId, Card[]>;
   turnDeadline?: number; // timestamp ms, set by the server
   settings: GameSettings;
   roundNumber: number;

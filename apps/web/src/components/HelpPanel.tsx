@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   turnTimerSec: null,
   inactiveTimeoutSec: null,
   kickVoteAfterSec: 120,
+  spectatorsSeeCards: true,
 };
 
 type Tab = 'categories' | 'settings' | 'rules';
@@ -118,6 +119,9 @@ export function HelpPanel() {
                 {settings.turnTimerSec
                   ? t('settings.seconds', { count: settings.turnTimerSec })
                   : t('settings.off')}
+              </Row>
+              <Row label={t('help.settings.spectatorsSeeCards')}>
+                {settings.spectatorsSeeCards ? t('settings.yes') : t('settings.no')}
               </Row>
               {players !== undefined && <Row label={t('help.settings.players')}>{players}</Row>}
             </dl>

@@ -255,6 +255,18 @@ function SettingsForm({
           options={[60, 120, 300].map((n) => [String(n), seconds(n)] as const)}
         />
       </Field>
+
+      <Field label={t('settings.spectatorsSeeCards')}>
+        <Select
+          disabled={!editable}
+          value={String(s.spectatorsSeeCards)}
+          onChange={(v) => send({ spectatorsSeeCards: v === 'true' })}
+          options={[
+            ['true', t('settings.yes')],
+            ['false', t('settings.no')],
+          ]}
+        />
+      </Field>
     </div>
   );
 }

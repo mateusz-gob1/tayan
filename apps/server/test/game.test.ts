@@ -169,6 +169,33 @@ describe('spectators, reveal and rematch', () => {
     expect(spec.view!.myCards.length).toBeGreaterThan(0);
   });
 
+  it('a late joiner sees every hand while the option is on, and the players never do', async () => {
+    const { clients, host, code } = await room(['Ala', 'Bob']);
+    await host.ok('game:start');
+    await inPhase(clients, 'BIDDING');
+
+    const spec = await TestClient.connect(ts.url);
+    open.push(spec);
+    await spec.ok('room:join', { code, nick: 'Cyd' });
+    await spec.until(() => spec.view !== undefined);
+    const hands = Object.fromEntries(clients.map((c) => [c.id, c.view!.myCards]));
+    expect(spec.view!.spectatedHands).toEqual(hands);
+    for (const c of clients) expect(c.view!.spectatedHands).toBeUndefined();
+  });
+
+  it('a late joiner sees no hands when the host turned the option off', async () => {
+    const { clients, host, code } = await room(['Ala', 'Bob'], { spectatorsSeeCards: false });
+    await host.ok('game:start');
+    await inPhase(clients, 'BIDDING');
+
+    const spec = await TestClient.connect(ts.url);
+    open.push(spec);
+    await spec.ok('room:join', { code, nick: 'Cyd' });
+    await spec.until(() => spec.view !== undefined);
+    expect(spec.view!.spectatedHands).toBeUndefined();
+    expect(JSON.stringify(spec.view)).not.toContain('spectatedHands');
+  });
+
   it('advances the reveal when all connected players click Next, or after the timeout', async () => {
     const { clients, host } = await room(['Ala', 'Bob']);
     await host.ok('game:start');

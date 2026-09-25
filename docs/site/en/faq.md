@@ -6,7 +6,7 @@
 
 **Why does the game say "Waking the server..."?** The free server sleeps when nobody has played for a while and wakes up on the first visit. It can take up to a minute.
 
-**Can I join a game in progress?** Yes, as a spectator. You see the public information and join the game at the rematch.
+**Can I join a game in progress?** Yes, as a spectator. You see the public information and join the game at the rematch. If the host left “Eliminated players and spectators see the players' cards” on (it is on by default), you also see the players' cards. Players who have been eliminated see them too.
 
 **Can I play on my phone?** Not yet. The interface is designed for desktop browsers; a mobile version is planned.
 
