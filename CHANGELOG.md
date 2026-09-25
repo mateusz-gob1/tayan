@@ -16,6 +16,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Added
 
+- Link preview tags (Open Graph and Twitter card) with the 1280x640 logo image, so a link to the game shows a proper card in chats and social networks
 - The game works on phones and tablets: a sideways phone layout (table on the left, hand and actions on the right), an upright phone layout, the smallest 1x card size, a full-screen help, touch-friendly buttons, the screen stays awake during a game, and end-to-end tests for both phone orientations
 - 8-bit sound effects synthesised in the browser (no audio files): deal, card flip, declaration, check, extra card, elimination, win/lose, button ticks, your turn; all in one table in `apps/web/src/lib/sound.ts`
 - Stepped pixel animations: cards fly in when dealt, cards turn over one by one at the reveal, the active player's frame blinks, an eliminated player rattles, a pixel trophy bounces on the end screen; all disabled with `prefers-reduced-motion`
