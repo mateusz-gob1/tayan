@@ -1,37 +1,92 @@
-# Tayan
+<p align="center">
+  <img src="docs/media/logo.png" alt="Tayan" width="620">
+</p>
 
-A real-time multiplayer bluffing card game for the browser, based on the rules of Bluff: players bid poker hands they believe exist among the pooled cards of everyone at the table. Create a room, share the link, play. No accounts, just a nickname. Available in Polish and English.
+<p align="center">
+  <b>Bluff, bid poker hands and call out your opponents.</b><br>
+  A card game for 2 to 13 players, right in your browser. No accounts, nothing to install.
+</p>
 
-Polish version: [README.pl.md](README.pl.md). Full requirements: [docs/spec.md](docs/spec.md) (Polish).
+<p align="center">
+  <a href="https://tayan.pages.dev"><b>▶ Play now</b></a>
+  &nbsp;·&nbsp;
+  <a href="README.pl.md">Polski</a>
+</p>
 
-## Run locally
+<p align="center">
+  <img src="docs/media/gameplay-en.gif" alt="Tayan gameplay" width="720">
+</p>
 
-Requires Node.js 22+ and pnpm.
+## What it is
 
-```bash
-pnpm install
-pnpm dev
-```
+Everyone gets a few cards and sees only their own. On your turn you either **announce a poker hand** you believe can be built from all the cards on the table together, or you **call** the player before you. Holding a pair of queens? Or just pretending? That is up to you.
 
-Open http://localhost:5173, create a room and invite others with the link. To try a game alone, add bots to your room (they are ordinary WebSocket clients):
+Rounds are short and the tension grows with every card the loser has to take. The last player standing wins.
 
-```bash
-pnpm dev:bots ROOMCODE 2
-```
+## Getting started
 
-Other commands: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm engine:deck-table`, `pnpm engine:cli`.
+1. Open **[tayan.pages.dev](https://tayan.pages.dev)**, type a nickname and click **Create room**.
+2. Send your friends the **room code** or the link. They just open it and enter a nickname.
+3. When everyone is in, click **Start**. Nobody to play with? Add **bots** in the lobby and try the rules out.
 
-## How it works
+<p align="center">
+  <img src="docs/media/lobby-en.png" alt="The lobby" width="720">
+</p>
 
-```mermaid
-flowchart LR
-  Web[apps/web<br/>React client] <-- Socket.IO --> Server[apps/server<br/>rooms, validation, timers]
-  Server --> Engine[packages/engine<br/>pure game logic]
-  Web --> Engine
-```
+## How to play
 
-- `packages/engine`: pure functions and no I/O; the same code validates moves on the server and lists legal declarations in the UI.
-- `apps/server`: authoritative Node.js + Socket.IO server; every payload is validated with zod and each player only ever receives their own `PlayerView`, so other players' cards never reach the client before the reveal. See [docs/protocol.md](docs/protocol.md).
-- `apps/web`: React + Vite + Tailwind client with PL/EN translations.
+1. **The deal.** Everyone starts with 2 cards (1 with many players). You only see your own.
+2. **Bidding.** The first player announces any hand, for example "a pair of queens". The next player must do one of two things:
+   - **raise**: announce a hand that is _higher_ than the previous one, or
+   - **call**: decide the previous player is bluffing.
 
-Design decisions are recorded in [docs/adr](docs/adr). Deployment (Cloudflare Pages + Render, both free) is described in [docs/deployment.md](docs/deployment.md), and the game rules are in the documentation site (`pnpm docs:dev`).
+   There is no passing. If someone announces the highest possible hand, the next player can only call.
+
+3. **The call.** Everyone turns their cards over and we see whether the announced hand can be built from **all the players' cards together**. It does not have to be in the announcer's own hand!
+   - The hand **is there**: whoever called takes a card.
+   - The hand **is not there**: whoever announced it takes a card.
+4. **Next round.** The loser now holds one more card and the cards are reshuffled. Anyone who reaches the limit (**6 cards** by default) is out. The last player in the game wins.
+
+<p align="center">
+  <img src="docs/media/table-en.png" alt="The table during bidding" width="720">
+</p>
+
+### Hands from lowest to highest
+
+|     | Hand            | Example                                 |
+| --- | --------------- | --------------------------------------- |
+| 1   | High card       | a jack                                  |
+| 2   | Pair            | two queens                              |
+| 3   | Two pairs       | kings and nines                         |
+| 4   | Straight        | five consecutive ranks, e.g. 6-7-8-9-10 |
+| 5   | Three of a kind | three aces                              |
+| 6   | Flush           | five spades                             |
+| 7   | Full house      | three kings and two nines               |
+| 8   | Four of a kind  | four jacks                              |
+| 9   | Straight flush  | a straight in one suit                  |
+
+Note: a **straight ranks below three of a kind**, unlike in classic poker, because with the cards of many players a straight turns up much more easily. You can open the in-game help at any time (the **?** button or the **H** key).
+
+### The reveal
+
+After a call you see exactly where the hand came from and what was missing. The cards turn over one by one and it is clear who takes the extra card. It is the best moment to draw conclusions before the next round.
+
+<p align="center">
+  <img src="docs/media/reveal-en.png" alt="The reveal after a call" width="720">
+</p>
+
+## A few tips
+
+- **Do not be afraid to bluff.** Your announcement does not have to rest on your own cards, the whole pool counts.
+- **Count the cards you cannot see.** The more cards in play, the easier a pair, three of a kind or a straight is to find, so announce high hands carefully.
+- **Watch your opponents.** Who always raises, and who calls quickly? Remember it for the next round.
+
+## Room settings
+
+In the lobby the host can change the number of starting cards, the elimination limit, the turn time limit, the deck and how long the game waits for a disconnected player. Players who lose their connection rejoin by refreshing the page and get the same cards back. There is also a **four-colour** switch (diamonds and clubs in different colours) for easier reading.
+
+## For developers
+
+Running locally, architecture and deployment: [docs/development.md](docs/development.md). The full rules specification (in Polish): [docs/spec.md](docs/spec.md).
+
+Card art: [Pixel Art Playing Cards](https://kerenel.itch.io/pixelart-cards) by Kerenel (CC0). More in [docs/assets.md](docs/assets.md).
