@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BackdropSuits, SuitStrip } from '../components/Ornaments';
 import { MAX_PLAYERS, deckSize, rankLabel, type GameSettings, type Rank } from '@tayan/engine';
 import { addBot, kick, playWithBots, setSettings, startGame } from '../net/actions';
 
@@ -27,8 +28,10 @@ export function Lobby({ room }: { room: RoomState }) {
   };
 
   return (
-    <div className="mx-auto grid max-w-5xl gap-5 p-6 lg:grid-cols-2">
-      <section className="panel space-y-4">
+    <div className="relative mx-auto grid max-w-5xl gap-6 p-6 lg:grid-cols-2">
+      <BackdropSuits />
+      <section className="panel-deco space-y-4">
+        <SuitStrip />
         <div>
           <p className="text-sm text-stone-300">{t('lobby.roomCode')}</p>
           <p data-testid="room-code" className="text-5xl font-black tracking-[0.3em] text-gold">
@@ -116,7 +119,8 @@ export function Lobby({ room }: { room: RoomState }) {
         )}
       </section>
 
-      <section className="panel space-y-3">
+      <section className="panel-deco space-y-3">
+        <SuitStrip />
         <h2 className="text-lg font-bold">{t('lobby.settings')}</h2>
         {room.deckWarning && (
           <p className="rounded-lg bg-amber-500/20 px-3 py-2 text-sm text-amber-100">
