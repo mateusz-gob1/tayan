@@ -16,3 +16,7 @@ docs/site/.vitepress/cache/
 # raw downloads of third-party assets (only the files we use live in apps/web/src/assets)
 *.zip
 kerenel_Cards.png
+
+# working files for the logo (raw Midjourney render and conversion scratch)
+.work/
+tayan_logo.png

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Logo } from '../components/Logo';
+import { LogoImage } from '../components/Logo';
 import { codeFromUrl, createRoom, joinRoom } from '../net/socket';
 import { loadNick, useStore } from '../store';
 
@@ -22,12 +22,12 @@ export function Start() {
   };
 
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center px-4 pt-16">
+    <div className="mx-auto flex max-w-md flex-col items-center px-4 pt-10">
       <h1>
-        <Logo big />
+        <LogoImage />
       </h1>
 
-      <div className="panel mt-10 w-full space-y-4">
+      <div className="panel mt-8 w-full space-y-4">
         <label className="block">
           <span className="mb-1 block text-sm text-stone-300">{t('start.nick')}</span>
           <input
