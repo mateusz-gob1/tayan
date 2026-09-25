@@ -53,6 +53,8 @@
   "lobby": {
     "title": "Poczekalnia",
     "roomCode": "Kod pokoju",
+    "copyCode": "Kopiuj kod",
+    "codeCopied": "Skopiowano!",
     "copyLink": "Kopiuj link",
     "linkCopied": "Skopiowano!",
     "players": "Gracze ({{count}})",
