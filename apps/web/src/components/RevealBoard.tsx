@@ -9,7 +9,7 @@ import {
 } from '@tayan/engine';
 import { useDeclarations, useLang } from '../lib/hooks';
 import { CARD_H, CARD_W } from '../lib/cards';
-import { useArtScale, useLayoutScale } from '../lib/scale';
+import { useArtScale, useLayoutMode, useLayoutScale } from '../lib/scale';
 import { FLIP_STEP_MS } from '../lib/sfx';
 import type { RoomState } from '../net/types';
 import { nickOf } from '../store';
@@ -69,6 +69,7 @@ export function RevealBoard({
   const { t } = useTranslation();
   const lang = useLang();
   const art = useArtScale();
+  const mode = useLayoutMode();
   const { rem } = useLayoutScale();
   const declarations = useDeclarations(view.settings);
   const decl = declarations.find((d) => d.id === result.declarationId);
@@ -103,10 +104,18 @@ export function RevealBoard({
     result.matchedCards.some((m) => m.ownerId === ownerId && sameCard(m.card, card));
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div className="text-center">
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
+      <div
+        className={
+          mode === 'short'
+            ? 'flex flex-wrap items-baseline justify-center gap-x-4 text-center'
+            : 'text-center'
+        }
+      >
         <p className="text-xs uppercase tracking-widest text-stone-300">{t('reveal.title')}</p>
-        <p className="text-3xl font-bold leading-tight text-gold">
+        <p
+          className={`${mode === 'short' ? 'text-2xl' : 'text-3xl'} font-bold leading-tight text-gold`}
+        >
           {decl ? (
             <SuitText text={formatDeclaration(decl, lang)} size={21} />
           ) : (
@@ -119,8 +128,19 @@ export function RevealBoard({
         </p>
       </div>
 
-      <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[auto_minmax(0,1fr)]">
-        <section className="panel flex min-h-0 min-w-64 flex-col gap-3 overflow-y-auto">
+      <div
+        className={`grid min-h-0 flex-1 gap-3 ${
+          mode === 'short'
+            ? 'grid-cols-[auto_minmax(0,1fr)]'
+            : mode === 'portrait'
+              ? 'grid-rows-[auto_minmax(0,1fr)]'
+              : 'lg:grid-cols-[auto_minmax(0,1fr)]'
+        }`}
+      >
+        <section
+          className="panel flex min-h-0 min-w-64 flex-col gap-3 overflow-y-auto"
+          style={mode === 'wide' ? undefined : { padding: '0.5rem' }}
+        >
           <h3 className="text-sm font-semibold text-stone-300">{t('reveal.hand')}</h3>
           <div className="flex flex-wrap justify-center gap-3">
             {result.matchedCards.map((m, i) => (
@@ -148,9 +168,19 @@ export function RevealBoard({
           </p>
         </section>
 
-        <section ref={poolRef} className="panel min-h-0 overflow-y-auto">
-          <h3 className="mb-3 text-sm font-semibold text-stone-300">{t('reveal.pool')}</h3>
-          <div className="flex flex-wrap gap-x-8 gap-y-4">
+        <section
+          ref={poolRef}
+          className="panel min-h-0 overflow-y-auto"
+          style={mode === 'wide' ? undefined : { padding: '0.5rem' }}
+        >
+          <h3
+            className={`${mode === 'wide' ? 'mb-3' : 'mb-1'} text-sm font-semibold text-stone-300`}
+          >
+            {t('reveal.pool')}
+          </h3>
+          <div
+            className={`flex flex-wrap ${mode === 'wide' ? 'gap-x-8 gap-y-4' : 'gap-x-3 gap-y-2'}`}
+          >
             {Object.entries(result.allHands).map(([ownerId, cards]) => (
               <div key={ownerId} className="flex flex-col gap-1">
                 <span

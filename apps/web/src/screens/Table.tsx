@@ -25,6 +25,15 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const [historyOpen, setHistoryOpen] = useState(false);
   // held upright there is room for two big cards; otherwise the smallest size that fits
   const handScale: Scale = mode === 'portrait' && view.myCards.length <= 2 ? 2 : art;
+  // with many cards on a small screen they overlap, each showing at least its corner
+  const cardW = 56 * handScale;
+  const handRoom = mode === 'short' ? 200 : 300;
+  const handStep = compact
+    ? Math.max(
+        24,
+        Math.min(cardW + 8, Math.floor((handRoom - cardW) / Math.max(1, view.myCards.length - 1))),
+      )
+    : cardW + 12;
   const seatScale = seatCardScale(art);
   // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
   const fanRem = (136 * seatScale) / rem;
@@ -90,7 +99,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   </p>
                   <p
                     className="font-bold leading-tight text-gold"
-                    style={{ fontSize: 'clamp(1rem, min(9cqh, 6cqw), var(--text-2xl))' }}
+                    style={{ fontSize: 'clamp(1rem, min(9cqh, 5cqw), var(--text-2xl))' }}
                   >
                     <SuitText text={formatDeclaration(lastDecl, lang)} size={7 * iconZoom(rem)} />
                   </p>
@@ -202,12 +211,15 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
           <div>
             <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
             {view.myCards.length ? (
-              <div className={`flex ${compact ? 'gap-2' : 'gap-3'}`}>
+              <div className="flex">
                 {view.myCards.map((c, idx) => (
                   <div
                     key={`${view.roundNumber}-${c.rank}${c.suit}`}
                     className="deal-in"
-                    style={{ animationDelay: `${idx * 130}ms` }}
+                    style={{
+                      animationDelay: `${idx * 130}ms`,
+                      marginLeft: idx === 0 ? 0 : handStep - cardW,
+                    }}
                   >
                     <PlayingCard card={c} scale={handScale} />
                   </div>
@@ -293,6 +305,7 @@ function ActionPanel({
   handSlot?: ReactNode;
 }) {
   const { t } = useTranslation();
+  const compact = useLayoutMode() !== 'wide';
   const minDecl = declarations[view.allowedDeclarationMinOrder];
   const kickVote = room.kickVote;
   const targetNick = nickOf(view, room, view.currentTurn);
@@ -304,7 +317,7 @@ function ActionPanel({
       </p>
       {isPlayer && myTurn && (
         <button
-          className="btn-danger ml-auto px-8 py-2 text-lg"
+          className={`btn-danger ml-auto ${compact ? 'px-3 py-1 text-base' : 'px-8 py-2 text-lg'}`}
           disabled={!view.canCheck}
           onClick={() => void check()}
         >
