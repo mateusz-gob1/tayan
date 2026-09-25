@@ -117,7 +117,6 @@
     "bidHistory": "Historia licytacji",
     "timeLeft": "{{sec}} s",
     "voteKick": "Zagłosuj za wyrzuceniem {{nick}}",
-    "voteKickWait": "Głosowanie za wyrzuceniem będzie możliwe za {{sec}} s",
     "votes": "Głosy: {{count}}/{{needed}}",
     "maxBid": "To najwyższy możliwy układ, możesz tylko sprawdzić.",
     "log": {

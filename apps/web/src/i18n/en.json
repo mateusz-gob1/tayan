@@ -115,7 +115,6 @@
     "bidHistory": "Bidding history",
     "timeLeft": "{{sec}} s",
     "voteKick": "Vote to kick {{nick}}",
-    "voteKickWait": "Voting to kick becomes possible in {{sec}} s",
     "votes": "Votes: {{count}}/{{needed}}",
     "maxBid": "That is the highest possible hand, you can only check.",
     "log": {
