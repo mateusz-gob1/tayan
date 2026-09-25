@@ -110,7 +110,7 @@ export function CardBack({ scale = 1, color = 'red' }: { scale?: Scale; color?: 
       height={CARD_H * scale}
       draggable={false}
       className="block select-none"
-      style={pixelated}
+      style={{ ...pixelated, boxShadow: '2px 2px 0 rgb(0 0 0 / 0.4)' }}
     />
   );
 }

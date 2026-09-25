@@ -78,7 +78,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
         }
       >
         <div
-          className={`table-shape flex bg-wood ${compact ? 'h-full min-h-[14rem] p-2' : 'min-h-[16rem] p-3'}`}
+          className={`table-shape wood-frame flex ${compact ? 'h-full min-h-[14rem] p-2' : 'min-h-[16rem] p-3'}`}
         >
           <div
             className="table-shape felt-texture relative flex-1"
@@ -92,6 +92,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
               <p className="text-xs uppercase tracking-widest text-stone-300">
                 {t('table.round', { n: view.roundNumber })}
               </p>
+              <span className="pixel-rule mx-auto mt-1 block w-24" aria-hidden="true" />
               {lastDecl && lastBid ? (
                 <div key={lastBid.declarationId} className="pop-in mt-1">
                   <p className="text-xs text-stone-300">
@@ -99,7 +100,10 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   </p>
                   <p
                     className="font-bold leading-tight text-gold"
-                    style={{ fontSize: 'clamp(1rem, min(9cqh, 5cqw), var(--text-2xl))' }}
+                    style={{
+                      fontSize: 'clamp(1rem, min(9cqh, 5cqw), var(--text-2xl))',
+                      textShadow: '2px 2px 0 var(--color-ink)',
+                    }}
                   >
                     <SuitText text={formatDeclaration(lastDecl, lang)} size={7 * iconZoom(rem)} />
                   </p>
@@ -121,8 +125,10 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
               return (
                 <div
                   key={p.id}
-                  className={`absolute flex w-max ${compact ? 'min-w-24' : 'min-w-32'} -translate-x-1/2 -translate-y-1/2 flex-col items-center border-4 px-2 py-1 text-center shadow-md ${
-                    active ? 'turn-blink border-gold bg-wood-light' : 'border-ink bg-panel'
+                  className={`absolute flex w-max ${compact ? 'min-w-24' : 'min-w-32'} -translate-x-1/2 -translate-y-1/2 flex-col items-center border-4 px-2 py-1 text-center ${
+                    active
+                      ? 'plaque-active turn-blink border-gold bg-wood-light'
+                      : 'plaque border-ink bg-panel'
                   } ${p.eliminated ? 'shake opacity-40 grayscale' : ''}`}
                   // snap to whole pixels so the sprites are not resampled unevenly
                   style={{
@@ -182,7 +188,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
           className={
             compact
               ? `panel absolute bottom-14 right-3 z-10 max-h-[70%] w-56 overflow-y-auto ${historyOpen ? '' : 'hidden'}`
-              : 'panel min-h-0 overflow-y-auto'
+              : 'panel max-h-40 min-h-0 overflow-y-auto xl:max-h-none'
           }
         >
           <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.bidHistory')}</h3>
