@@ -22,9 +22,9 @@ export function Start() {
   };
 
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center px-4 pt-10">
+    <div className="mx-auto flex max-w-md flex-col items-center px-4 pt-6">
       <h1>
-        <LogoImage />
+        <LogoImage big />
       </h1>
 
       <div className="panel mt-8 w-full space-y-4">

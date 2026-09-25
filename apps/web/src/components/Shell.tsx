@@ -4,7 +4,7 @@ import { leaveRoom } from '../net/socket';
 import { isMuted, setMuted } from '../lib/sound';
 import { useStore } from '../store';
 import { HelpPanel } from './HelpPanel';
-import { Logo } from './Logo';
+import { LogoImage } from './Logo';
 import { SuitIcon } from './SuitIcon';
 
 /** Header, global notice banner and the collapsible help column shared by all screens. */
@@ -48,8 +48,8 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center gap-3 border-b border-white/10 bg-black/30 px-5 py-2.5">
-        <Logo />
+      <header className="flex items-center gap-3 border-b border-white/10 bg-black/30 px-5 py-1">
+        <LogoImage />
         <div className="ml-auto flex items-center gap-2">
           {conn === 'reconnecting' && (
             <span className="rounded bg-amber-500/20 px-2 py-1 text-xs text-amber-200">
