@@ -4,7 +4,7 @@ import { expect, test, type Page } from '@playwright/test';
 // without scrolling the table or the reveal, and the buttons a player needs must be on screen.
 const PHONES = [
   { name: 'sideways', width: 812, height: 375 },
-  { name: 'upright', width: 390, height: 844 },
+  { name: 'upright', width: 390, height: 664 }, // what iOS Safari leaves of an 844 px screen
 ] as const;
 
 /**
@@ -58,7 +58,8 @@ for (const phone of PHONES) {
       'lobby: sideways scroll',
     ).toBe(true);
     await page.getByRole('button', { name: 'Graj z botami' }).click();
-    await expect(page.getByText('Twoje karty')).toBeVisible();
+    // on a phone the hand has no caption, so wait for the first card
+    await expect(page.locator('img[alt]:not([alt=""])').first()).toBeVisible();
 
     const check = page.getByRole('button', { name: 'Sprawdzam' });
     const next = page.getByRole('button', { name: 'Dalej', exact: true });

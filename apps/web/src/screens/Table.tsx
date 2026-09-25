@@ -23,11 +23,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const mode = useLayoutMode();
   const compact = mode !== 'wide';
   const [historyOpen, setHistoryOpen] = useState(false);
-  // held upright there is room for two big cards; otherwise the smallest size that fits
-  const handScale: Scale = mode === 'portrait' && view.myCards.length <= 2 ? 2 : art;
+  // on a phone the smallest cards: the browser's own bars leave little height
+  const handScale: Scale = art;
   // with many cards on a small screen they overlap, each showing at least its corner
   const cardW = 56 * handScale;
-  const handRoom = mode === 'short' ? 200 : 300;
+  const handRoom = 200; // the hand shares its row with the turn status
   const handStep = compact
     ? Math.max(
         24,
@@ -36,9 +36,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
     : cardW + 12;
   const seatScale = seatCardScale(art);
   // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
-  const fanRem = (136 * seatScale) / rem;
+  // held upright the seats have no card fan, only the number of cards, to leave room in the middle
+  const showFan = mode !== 'portrait';
+  const fanRem = showFan ? (136 * seatScale) / rem : 0;
   const halfW = Math.max(4, (fanRem + 1) / 2) + 0.5;
-  const halfH = 1.75 + (40 * seatScale) / rem + 0.5;
+  const halfH = 1.75 + (showFan ? (40 * seatScale) / rem : 0) + 0.5;
 
   const myPlayer = view.players.find((p) => p.id === view.me);
   const isPlayer = myPlayer !== undefined && !myPlayer.eliminated;
@@ -78,7 +80,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
         }
       >
         <div
-          className={`table-shape flex bg-wood ${compact ? 'h-full min-h-[14rem] p-2' : 'min-h-[16rem] p-3'}`}
+          className={`table-shape flex bg-wood ${
+            compact
+              ? `h-full p-2 ${mode === 'portrait' ? 'min-h-[17rem]' : 'min-h-[14rem]'}`
+              : 'min-h-[16rem] p-3'
+          }`}
         >
           <div
             className="table-shape felt-texture relative flex-1"
@@ -134,7 +140,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                     {p.nick}
                     {p.id === view.me && ' ★'}
                   </p>
-                  {p.id !== view.me && (
+                  {p.id !== view.me && showFan && (
                     <div className="mt-1 flex justify-center">
                       {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
                         <div
@@ -209,7 +215,9 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
       {(() => {
         const hand = (
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
+            {!compact && (
+              <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
+            )}
             {view.myCards.length ? (
               <div className="flex">
                 {view.myCards.map((c, idx) => (
@@ -241,8 +249,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             handSlot={withHand ? hand : undefined}
           />
         );
-        return mode === 'short' ? (
-          <div className="panel w-[26rem] shrink-0 overflow-y-auto" style={{ padding: '0.5rem' }}>
+        return compact ? (
+          <div
+            className={`panel shrink-0 ${mode === 'short' ? 'w-[26rem] overflow-y-auto' : ''}`}
+            style={{ padding: '0.5rem' }}
+          >
             {actions(true)}
           </div>
         ) : (
