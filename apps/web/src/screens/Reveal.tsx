@@ -13,18 +13,16 @@ export function Reveal({ view, room }: { view: PlayerView; room: RoomState }) {
   const result = view.lastResult;
   if (!result) return null;
 
-  // Everyone who was dealt cards this round can skip, including the player who just lost. In the
-  // last reveal of the game (one player left) the end screen follows once they all skipped.
-  const inRound = result.allHands[view.me] !== undefined;
+  // Who can skip the reveal: the players still in the game. In the last reveal of the game (one
+  // player left) it is everyone who was dealt cards, including the player who just lost, and the
+  // end screen follows once they all skipped. A player who has just dropped out otherwise has no
+  // button, because the server would refuse the click.
   const isFinal = view.players.filter((p) => !p.eliminated).length <= 1;
-  const waiting = room.members.filter(
-    (m) =>
-      !m.bot &&
-      m.connected &&
-      (isFinal
-        ? result.allHands[m.id] !== undefined
-        : view.players.some((p) => p.id === m.id && !p.eliminated)),
-  );
+  const canSkip = (id: string) =>
+    isFinal
+      ? result.allHands[id] !== undefined
+      : view.players.some((p) => p.id === id && !p.eliminated);
+  const waiting = room.members.filter((m) => !m.bot && m.connected && canSkip(m.id));
   const iAmReady = room.readyIds.includes(view.me);
   const secondsLeft = room.revealEndsAt
     ? Math.max(0, Math.ceil((room.revealEndsAt - now) / 1000))
@@ -49,7 +47,7 @@ export function Reveal({ view, room }: { view: PlayerView; room: RoomState }) {
             {t('reveal.waitingFor', { ready: room.readyIds.length, total: waiting.length })}
             {secondsLeft !== null && ` · ${t('reveal.autoIn', { sec: secondsLeft })}`}
           </span>
-          {inRound && (
+          {canSkip(view.me) && (
             <button
               className="btn-primary px-10 py-2 text-lg"
               disabled={iAmReady}
