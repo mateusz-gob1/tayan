@@ -1,4 +1,6 @@
-> This is a game my friends and I played a ton back in school and university. It surely exists somewhere under another name, and probably with slightly different rules, but I don't care :). Once we all grew up it got much harder to get everyone in one room, so I vibe-coded an online version. Enjoy!
+<p align="center">
+  <i>This is a game my friends and I played a ton back in school and university. It surely exists somewhere under another name, and probably with slightly different rules, but I don't care :). Once we all grew up it got much harder to get everyone in one room, so I vibe-coded an online version. Enjoy!</i>
+</p>
 
 <p align="center">
   <img src="docs/media/logo.png" alt="Tayan" width="620">
