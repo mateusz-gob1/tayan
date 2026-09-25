@@ -1,5 +1,4 @@
 import type { Suit } from '@tayan/engine';
-import { useStore } from '../store';
 
 // 7x7 bitmaps; '#' is a filled pixel. Drawn as SVG rects, so they stay crisp at any whole-number size.
 const BITMAPS: Record<Suit, string[]> = {
@@ -24,16 +23,12 @@ const PATHS = Object.fromEntries(
 
 const SYMBOL_TO_SUIT: Record<string, Suit> = { '♣': 'C', '♦': 'D', '♥': 'H', '♠': 'S' };
 
-/** Colour of a suit on the dark UI: red hearts/diamonds; orange/blue in four-colour mode. */
-function suitColor(suit: Suit, fourColors: boolean): string {
-  if (suit === 'H') return 'var(--color-card-red)';
-  if (suit === 'D') return fourColors ? 'var(--color-card-orange)' : 'var(--color-card-red)';
-  if (suit === 'C') return fourColors ? 'var(--color-card-blue)' : 'currentColor';
-  return 'currentColor';
+/** Colour of a suit on the dark UI: red hearts and diamonds, light spades and clubs. */
+function suitColor(suit: Suit): string {
+  return suit === 'H' || suit === 'D' ? 'var(--color-card-red)' : 'currentColor';
 }
 
 export function SuitIcon({ suit, size = 14 }: { suit: Suit; size?: number }) {
-  const fourColors = useStore((s) => s.fourColors);
   return (
     <svg
       width={size}
@@ -44,7 +39,7 @@ export function SuitIcon({ suit, size = 14 }: { suit: Suit; size?: number }) {
       className="inline-block align-[-0.15em]"
       style={{ color: undefined }}
     >
-      <path d={PATHS[suit]} fill={suitColor(suit, fourColors)} />
+      <path d={PATHS[suit]} fill={suitColor(suit)} />
     </svg>
   );
 }

@@ -20,14 +20,13 @@ const copy = (i, name) => {
   copyFileSync(file(i), join(out, name));
 };
 
-// rows: hearts, spades, diamonds, clubs, then the high-contrast diamonds (orange) and clubs (blue)
+// rows: hearts, spades, diamonds, clubs (the sheet also has high-contrast diamonds and clubs after
+// these, which the game does not use)
 const rows = [
   { suit: 'H', suffix: '' },
   { suit: 'S', suffix: '' },
   { suit: 'D', suffix: '' },
   { suit: 'C', suffix: '' },
-  { suit: 'D', suffix: '-hc' },
-  { suit: 'C', suffix: '-hc' },
 ];
 // ranks as used by the engine (11=J ... 14=A): the file order is A, 2..10, J, Q, K
 const ranks = [14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];

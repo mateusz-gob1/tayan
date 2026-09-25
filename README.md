@@ -83,7 +83,7 @@ After a call you see exactly where the hand came from and what was missing. The 
 
 ## Room settings
 
-In the lobby the host can change the number of starting cards, the elimination limit, the turn time limit, the deck and how long the game waits for a disconnected player. Players who lose their connection rejoin by refreshing the page and get the same cards back. There is also a **four-colour** switch (diamonds and clubs in different colours) for easier reading.
+In the lobby the host can change the number of starting cards, the elimination limit, the turn time limit, the deck and how long the game waits for a disconnected player. Players who lose their connection rejoin by refreshing the page and get the same cards back.
 
 ## For developers
 

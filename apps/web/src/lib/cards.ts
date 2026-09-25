@@ -19,10 +19,9 @@ const urls = new Map(
 
 export type BackColor = 'red' | 'blue' | 'orange' | 'green';
 
-/** File name (without extension) of a card face; four-colour mode swaps diamonds and clubs. */
-export function spriteName(card: Card, fourColors: boolean): string {
-  const highContrast = fourColors && (card.suit === 'D' || card.suit === 'C');
-  return `${card.rank}${card.suit}${highContrast ? '-hc' : ''}`;
+/** File name (without extension) of a card face. */
+export function spriteName(card: Card): string {
+  return `${card.rank}${card.suit}`;
 }
 
 function url(name: string): string {
@@ -31,8 +30,7 @@ function url(name: string): string {
   return found;
 }
 
-export const cardSprite = (card: Card, fourColors: boolean): string =>
-  url(spriteName(card, fourColors));
+export const cardSprite = (card: Card): string => url(spriteName(card));
 export const backSprite = (color: BackColor = 'red'): string => url(`back-${color}`);
 
 /** Loads every sprite up front so cards never pop in when they are first shown. */

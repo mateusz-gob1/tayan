@@ -6,7 +6,6 @@ import { useLayoutMode } from '../lib/scale';
 import { useStore } from '../store';
 import { HelpPanel } from './HelpPanel';
 import { LogoImage } from './Logo';
-import { SuitIcon } from './SuitIcon';
 
 /** Header, global notice banner and the collapsible help column shared by all screens. */
 export function Shell({ children }: { children: ReactNode }) {
@@ -16,8 +15,6 @@ export function Shell({ children }: { children: ReactNode }) {
   const notice = useStore((s) => s.notice);
   const setNotice = useStore((s) => s.setNotice);
   const conn = useStore((s) => s.conn);
-  const fourColors = useStore((s) => s.fourColors);
-  const setFourColors = useStore((s) => s.setFourColors);
   const inRoom = useStore((s) => s.session !== null);
   const [muted, setMutedState] = useState(isMuted());
   const mode = useLayoutMode();
@@ -67,16 +64,6 @@ export function Shell({ children }: { children: ReactNode }) {
             aria-label="Language"
           >
             {lang === 'pl' ? 'PL' : 'EN'}
-          </button>
-          <button
-            className={`btn-ghost px-2.5 py-1 text-sm ${fourColors ? 'brightness-125' : ''}`}
-            title={t('nav.fourColors')}
-            aria-label={t('nav.fourColors')}
-            aria-pressed={fourColors}
-            onClick={() => setFourColors(!fourColors)}
-          >
-            <SuitIcon suit="D" size={14} />
-            <SuitIcon suit="C" size={14} />
           </button>
           <button
             className="btn-ghost px-2.5 py-1 text-sm"
