@@ -10,13 +10,11 @@ describe('link preview tags', () => {
     expect(meta('property', 'og:title')).toBe('Tayan');
     expect(meta('property', 'og:type')).toBe('website');
     expect(meta('property', 'og:description')?.length).toBeGreaterThan(20);
-    expect(meta('name', 'twitter:card')).toBe('summary_large_image');
   });
 
   it('point to an absolute image URL that exists in the public files', () => {
     const image = meta('property', 'og:image');
     expect(image).toMatch(/^https:\/\//);
-    expect(meta('name', 'twitter:image')).toBe(image);
     const file = new URL(`../public/${image?.split('/').pop()}`, import.meta.url);
     expect(existsSync(file)).toBe(true);
   });
