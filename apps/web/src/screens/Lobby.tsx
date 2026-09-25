@@ -13,18 +13,18 @@ export function Lobby({ room }: { room: RoomState }) {
   const { t } = useTranslation();
   const me = useStore((s) => s.session?.playerId);
   const isHost = room.hostId === me;
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<'code' | 'link' | null>(null);
   const players = room.members.filter((m) => !m.spectator);
   const link = `${window.location.origin}/r/${room.code}`;
 
-  const copy = async () => {
+  const copy = async (what: 'code' | 'link') => {
     try {
-      await navigator.clipboard.writeText(link);
+      await navigator.clipboard.writeText(what === 'code' ? room.code : link);
     } catch {
-      /* clipboard may be blocked; the link is visible anyway */
+      /* clipboard may be blocked; the code and the link are visible anyway */
     }
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+    setCopied(what);
+    window.setTimeout(() => setCopied(null), 2000);
   };
 
   return (
@@ -37,9 +37,14 @@ export function Lobby({ room }: { room: RoomState }) {
           <p data-testid="room-code" className="text-5xl font-black tracking-[0.3em] text-gold">
             {room.code}
           </p>
-          <button className="btn-ghost mt-3" onClick={() => void copy()}>
-            {copied ? t('lobby.linkCopied') : t('lobby.copyLink')}
-          </button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button className="btn-ghost" onClick={() => void copy('code')}>
+              {copied === 'code' ? t('lobby.codeCopied') : t('lobby.copyCode')}
+            </button>
+            <button className="btn-ghost" onClick={() => void copy('link')}>
+              {copied === 'link' ? t('lobby.linkCopied') : t('lobby.copyLink')}
+            </button>
+          </div>
           <p className="mt-2 break-all text-xs text-stone-400">{link}</p>
         </div>
 

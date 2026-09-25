@@ -53,6 +53,8 @@
   "lobby": {
     "title": "Lobby",
     "roomCode": "Room code",
+    "copyCode": "Copy code",
+    "codeCopied": "Copied!",
     "copyLink": "Copy link",
     "linkCopied": "Copied!",
     "players": "Players ({{count}})",
