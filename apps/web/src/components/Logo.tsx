@@ -1,23 +1,8 @@
 import logoUrl from '../assets/logo.png';
-import { iconZoom, useArtScale, useLayoutScale } from '../lib/scale';
+import { useArtScale } from '../lib/scale';
 
 const LOGO_W = 155;
 const LOGO_H = 62;
-
-// 11x11 spade, drawn as SVG rects so it is exactly the same pixel art at any whole-number size.
-const SPADE = [
-  '.....#.....',
-  '....###....',
-  '...#####...',
-  '..#######..',
-  '.#########.',
-  '###########',
-  '###########',
-  '###########',
-  '.##.###.##.',
-  '....###....',
-  '...#####...',
-];
 
 function path(rows: string[]): string {
   let d = '';
@@ -28,49 +13,13 @@ function path(rows: string[]): string {
   return d;
 }
 
-export const SPADE_PATH = path(SPADE);
-
-export function SpadeMark({
-  size = 33,
-  color = 'var(--color-gold)',
-}: {
-  size?: number;
-  color?: string;
-}) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 11 11"
-      shapeRendering="crispEdges"
-      aria-hidden="true"
-    >
-      <path d={SPADE_PATH} fill="var(--color-ink)" transform="translate(0.5 0.5)" />
-      <path d={SPADE_PATH} fill={color} />
-    </svg>
-  );
-}
-
-/** Small logo for the header: pixel spade and the name in the display font. */
-export function Logo() {
-  const { rem } = useLayoutScale();
-  const zoom = iconZoom(rem);
-  return (
-    <span className="inline-flex items-center gap-3">
-      <SpadeMark size={11 * zoom} />
-      <span
-        className="font-display text-base uppercase text-gold"
-        style={{ textShadow: '2px 2px 0 var(--color-ink)' }}
-      >
-        Tayan
-      </span>
-    </span>
-  );
-}
-
-/** The full pixel-art logo for the start screen, always at a whole-number zoom. */
-export function LogoImage() {
-  const zoom = useArtScale();
+/**
+ * The pixel-art logo, always at a whole-number zoom. `big` (the start screen) is one step larger
+ * than the cards, so a logo pixel is as thick as the borders around it; the header uses 1x.
+ */
+export function LogoImage({ big = false }: { big?: boolean }) {
+  const art = useArtScale();
+  const zoom = big ? art + 1 : art >= 4 ? 2 : 1;
   return (
     <img
       src={logoUrl}
