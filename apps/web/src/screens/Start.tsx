@@ -6,6 +6,33 @@ import { useLayoutMode } from '../lib/scale';
 import { codeFromUrl, createRoom, joinRoom } from '../net/socket';
 import { loadNick, useStore } from '../store';
 
+const REPO_URL = 'https://github.com/mateusz-gob1/tayan';
+const AUTHOR = { name: 'mateusz-gob1', url: 'https://github.com/mateusz-gob1' };
+
+/** A small credit in the corner: the source code and the author. */
+function Credit({ sideways }: { sideways: boolean }) {
+  const { t } = useTranslation();
+  const link = 'underline decoration-dotted underline-offset-2 hover:text-gold';
+  return (
+    <p
+      className={`fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-10 text-xs text-stone-400 ${
+        sideways
+          ? 'left-[max(0.75rem,env(safe-area-inset-left))]'
+          : 'right-[max(0.75rem,env(safe-area-inset-right))]'
+      }`}
+    >
+      <a className={link} href={REPO_URL} target="_blank" rel="noopener noreferrer">
+        {t('start.source')}
+      </a>
+      {' · '}
+      {t('start.author')}:{' '}
+      <a className={link} href={AUTHOR.url} target="_blank" rel="noopener noreferrer">
+        {AUTHOR.name}
+      </a>
+    </p>
+  );
+}
+
 export function Start() {
   const { t } = useTranslation();
   const sideways = useLayoutMode() === 'short';
@@ -33,6 +60,7 @@ export function Start() {
       }`}
     >
       <BackdropSuits />
+      <Credit sideways={sideways} />
       <h1>
         <LogoImage big />
       </h1>
