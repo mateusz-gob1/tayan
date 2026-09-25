@@ -121,8 +121,9 @@ export function EmptySlot({ label, scale }: { label: string; scale?: Scale }) {
   const s = scale ?? art;
   return (
     <div
-      className="flex items-center justify-center p-1 text-center font-label text-[0.9rem] leading-tight text-cream/70"
+      className={`flex items-center justify-center text-center font-label leading-tight text-cream/70 ${s === 1 ? 'break-all' : 'p-1 text-[0.9rem]'}`}
       style={{
+        fontSize: s === 1 ? 8 : undefined,
         width: CARD_W * s,
         height: CARD_H * s,
         border: 'var(--b) dashed var(--color-cream)',

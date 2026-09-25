@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDeclaration, type Declaration, type PlayerView } from '@tayan/engine';
-import { CardBack, PlayingCard } from '../components/PlayingCard';
+import { CardBack, PlayingCard, type Scale } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
 import { SuitText } from '../components/SuitIcon';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
-import { iconZoom, seatCardScale, useArtScale, useLayoutScale } from '../lib/scale';
+import { iconZoom, seatCardScale, useArtScale, useLayoutMode, useLayoutScale } from '../lib/scale';
 import { playTurnSound, startTitleBlink, stopTitleBlink } from '../lib/sound';
 import { check, declare, voteKick } from '../net/actions';
 import type { RoomState, ServerEvent } from '../net/types';
@@ -20,6 +20,20 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const now = useNow(250);
   const art = useArtScale();
   const { rem } = useLayoutScale();
+  const mode = useLayoutMode();
+  const compact = mode !== 'wide';
+  const [historyOpen, setHistoryOpen] = useState(false);
+  // held upright there is room for two big cards; otherwise the smallest size that fits
+  const handScale: Scale = mode === 'portrait' && view.myCards.length <= 2 ? 2 : art;
+  // with many cards on a small screen they overlap, each showing at least its corner
+  const cardW = 56 * handScale;
+  const handRoom = mode === 'short' ? 200 : 300;
+  const handStep = compact
+    ? Math.max(
+        24,
+        Math.min(cardW + 8, Math.floor((handRoom - cardW) / Math.max(1, view.myCards.length - 1))),
+      )
+    : cardW + 12;
   const seatScale = seatCardScale(art);
   // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
   const fanRem = (136 * seatScale) / rem;
@@ -47,11 +61,34 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   }, [myTurn, t]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 p-4">
-      <div className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="table-shape flex min-h-[16rem] bg-wood p-3">
-          <div className="table-shape felt-texture relative flex-1">
-            <div className="absolute left-1/2 top-[40%] w-72 -translate-x-1/2 -translate-y-1/2 text-center">
+    <div
+      className={
+        mode === 'short'
+          ? 'flex h-full min-h-0 gap-2 p-2'
+          : mode === 'portrait'
+            ? 'flex h-full min-h-0 flex-col gap-2 overflow-y-auto p-2'
+            : 'flex h-full min-h-0 flex-col gap-4 p-4'
+      }
+    >
+      <div
+        className={
+          compact
+            ? 'relative min-h-0 min-w-0 flex-1'
+            : 'grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]'
+        }
+      >
+        <div
+          className={`table-shape flex bg-wood ${compact ? 'h-full min-h-[14rem] p-2' : 'min-h-[16rem] p-3'}`}
+        >
+          <div
+            className="table-shape felt-texture relative flex-1"
+            style={{
+              containerType: 'size',
+              ['--centre-w' as string]: mode === 'short' ? '42%' : '80%',
+              ['--centre-top' as string]: mode === 'portrait' ? '52%' : '40%',
+            }}
+          >
+            <div className="absolute left-1/2 top-[var(--centre-top,40%)] w-[min(18rem,var(--centre-w,80%))] -translate-x-1/2 -translate-y-1/2 text-center">
               <p className="text-xs uppercase tracking-widest text-stone-300">
                 {t('table.round', { n: view.roundNumber })}
               </p>
@@ -60,7 +97,10 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   <p className="text-xs text-stone-300">
                     {t('table.lastBidBy', { nick: nickOf(view, room, lastBid.playerId) })}
                   </p>
-                  <p className="text-2xl font-bold leading-tight text-gold">
+                  <p
+                    className="font-bold leading-tight text-gold"
+                    style={{ fontSize: 'clamp(1rem, min(9cqh, 5cqw), var(--text-2xl))' }}
+                  >
                     <SuitText text={formatDeclaration(lastDecl, lang)} size={7 * iconZoom(rem)} />
                   </p>
                 </div>
@@ -81,7 +121,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
               return (
                 <div
                   key={p.id}
-                  className={`absolute flex w-max min-w-32 -translate-x-1/2 -translate-y-1/2 flex-col items-center border-4 px-2 py-1 text-center shadow-md ${
+                  className={`absolute flex w-max ${compact ? 'min-w-24' : 'min-w-32'} -translate-x-1/2 -translate-y-1/2 flex-col items-center border-4 px-2 py-1 text-center shadow-md ${
                     active ? 'turn-blink border-gold bg-wood-light' : 'border-ink bg-panel'
                   } ${p.eliminated ? 'shake opacity-40 grayscale' : ''}`}
                   // snap to whole pixels so the sprites are not resampled unevenly
@@ -128,7 +168,23 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
           </div>
         </div>
 
-        <aside className="panel min-h-0 overflow-y-auto">
+        {compact && (
+          <button
+            className="btn-ghost absolute bottom-3 right-3 px-2 py-0.5 text-sm"
+            aria-label={t('table.bidHistory')}
+            aria-expanded={historyOpen}
+            onClick={() => setHistoryOpen(!historyOpen)}
+          >
+            ≡
+          </button>
+        )}
+        <aside
+          className={
+            compact
+              ? `panel absolute bottom-14 right-3 z-10 max-h-[70%] w-56 overflow-y-auto ${historyOpen ? '' : 'hidden'}`
+              : 'panel min-h-0 overflow-y-auto'
+          }
+        >
           <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.bidHistory')}</h3>
           <ol className="space-y-1 text-sm">
             {view.bids.map((b, i) => {
@@ -150,34 +206,52 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
       </div>
 
       {/* the player's area: cards and actions next to each other */}
-      <div className="panel grid shrink-0 gap-x-6 gap-y-3 lg:grid-cols-[auto_minmax(0,1fr)]">
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
-          {view.myCards.length ? (
-            <div className="flex gap-3">
-              {view.myCards.map((c, idx) => (
-                <div
-                  key={`${view.roundNumber}-${c.rank}${c.suit}`}
-                  className="deal-in"
-                  style={{ animationDelay: `${idx * 130}ms` }}
-                >
-                  <PlayingCard card={c} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-stone-400">{isPlayer ? '' : t('table.spectating')}</p>
-          )}
-        </div>
-        <ActionPanel
-          view={view}
-          room={room}
-          declarations={declarations}
-          myTurn={myTurn}
-          isPlayer={isPlayer}
-          now={now}
-        />
-      </div>
+      {(() => {
+        const hand = (
+          <div>
+            <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.myCards')}</h3>
+            {view.myCards.length ? (
+              <div className="flex">
+                {view.myCards.map((c, idx) => (
+                  <div
+                    key={`${view.roundNumber}-${c.rank}${c.suit}`}
+                    className="deal-in"
+                    style={{
+                      animationDelay: `${idx * 130}ms`,
+                      marginLeft: idx === 0 ? 0 : handStep - cardW,
+                    }}
+                  >
+                    <PlayingCard card={c} scale={handScale} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-stone-400">{isPlayer ? '' : t('table.spectating')}</p>
+            )}
+          </div>
+        );
+        const actions = (withHand: boolean) => (
+          <ActionPanel
+            view={view}
+            room={room}
+            declarations={declarations}
+            myTurn={myTurn}
+            isPlayer={isPlayer}
+            now={now}
+            handSlot={withHand ? hand : undefined}
+          />
+        );
+        return mode === 'short' ? (
+          <div className="panel w-[26rem] shrink-0 overflow-y-auto" style={{ padding: '0.5rem' }}>
+            {actions(true)}
+          </div>
+        ) : (
+          <div className="panel grid shrink-0 gap-x-6 gap-y-3 lg:grid-cols-[auto_minmax(0,1fr)]">
+            {hand}
+            {actions(false)}
+          </div>
+        );
+      })()}
     </div>
   );
 }
@@ -219,6 +293,7 @@ function ActionPanel({
   myTurn,
   isPlayer,
   now,
+  handSlot,
 }: {
   view: PlayerView;
   room: RoomState;
@@ -226,33 +301,47 @@ function ActionPanel({
   myTurn: boolean;
   isPlayer: boolean;
   now: number;
+  /** The player's cards, shown next to the turn status (used when height is scarce). */
+  handSlot?: ReactNode;
 }) {
   const { t } = useTranslation();
+  const compact = useLayoutMode() !== 'wide';
   const minDecl = declarations[view.allowedDeclarationMinOrder];
   const kickVote = room.kickVote;
   const targetNick = nickOf(view, room, view.currentTurn);
 
+  const statusRow = (
+    <div className="flex flex-wrap items-center gap-3">
+      <p className={`text-lg font-bold ${myTurn ? 'text-gold' : 'text-stone-200'}`}>
+        {myTurn ? t('table.yourTurn') : t('table.turnOf', { nick: targetNick })}
+      </p>
+      {isPlayer && myTurn && (
+        <button
+          className={`btn-danger ml-auto ${compact ? 'px-3 py-1 text-base' : 'px-8 py-2 text-lg'}`}
+          disabled={!view.canCheck}
+          onClick={() => void check()}
+        >
+          {t('table.check')}
+        </button>
+      )}
+    </div>
+  );
+
   return (
-    <div className="flex min-w-0 flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <p className={`text-lg font-bold ${myTurn ? 'text-gold' : 'text-stone-200'}`}>
-          {myTurn ? t('table.yourTurn') : t('table.turnOf', { nick: targetNick })}
-        </p>
-        {isPlayer && myTurn && (
-          <button
-            className="btn-danger ml-auto px-8 py-2 text-lg"
-            disabled={!view.canCheck}
-            onClick={() => void check()}
-          >
-            {t('table.check')}
-          </button>
-        )}
-      </div>
+    <div className={`flex min-w-0 flex-col ${handSlot ? 'gap-2' : 'gap-3'}`}>
+      {handSlot ? (
+        <div className="flex items-start gap-3">
+          {handSlot}
+          <div className="min-w-0 flex-1">{statusRow}</div>
+        </div>
+      ) : (
+        statusRow
+      )}
 
       {!isPlayer && <p className="text-sm text-stone-300">{t('table.spectating')}</p>}
 
       {isPlayer && myTurn && (
-        <div className="border-t-4 border-ink pt-3">
+        <div className="border-t-4 border-ink pt-2">
           {minDecl ? (
             <DeclarationPicker
               key={view.bids.length}

@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LogoImage } from '../components/Logo';
 import { BackdropSuits, SuitStrip } from '../components/Ornaments';
+import { useLayoutMode } from '../lib/scale';
 import { codeFromUrl, createRoom, joinRoom } from '../net/socket';
 import { loadNick, useStore } from '../store';
 
 export function Start() {
   const { t } = useTranslation();
+  const sideways = useLayoutMode() === 'short';
   const [invite, setInvite] = useState(codeFromUrl());
   const [nick, setNick] = useState(loadNick());
   const [code, setCode] = useState(invite ?? '');
@@ -23,13 +25,19 @@ export function Start() {
   };
 
   return (
-    <div className="relative mx-auto flex max-w-md flex-col items-center px-4 pt-6">
+    <div
+      className={`relative mx-auto flex px-4 ${
+        sideways
+          ? 'max-w-3xl items-center justify-center gap-6 py-2'
+          : 'max-w-md flex-col items-center pt-6'
+      }`}
+    >
       <BackdropSuits />
       <h1>
         <LogoImage big />
       </h1>
 
-      <div className="panel-deco mt-8 w-full space-y-4">
+      <div className={`panel-deco w-full space-y-4 ${sideways ? 'max-w-sm' : 'mt-8'}`}>
         <SuitStrip />
         <label className="block">
           <span className="mb-1 block text-sm text-stone-300">{t('start.nick')}</span>

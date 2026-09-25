@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import type { PlayerView } from '@tayan/engine';
 import { RevealBoard, revealSettledMs } from '../components/RevealBoard';
 import { useNow } from '../lib/hooks';
+import { useLayoutMode } from '../lib/scale';
 import { ready } from '../net/actions';
 import type { RoomState } from '../net/types';
 import { nickOf } from '../store';
@@ -10,6 +11,7 @@ import { nickOf } from '../store';
 export function Reveal({ view, room }: { view: PlayerView; room: RoomState }) {
   const { t } = useTranslation();
   const now = useNow(250);
+  const compact = useLayoutMode() !== 'wide';
   const result = view.lastResult;
   if (!result) return null;
 
@@ -30,9 +32,12 @@ export function Reveal({ view, room }: { view: PlayerView; room: RoomState }) {
   const loser = nickOf(view, room, result.loserId);
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 p-4">
+    <div className={`flex h-full min-h-0 flex-col ${compact ? 'gap-2 p-2' : 'gap-3 p-4'}`}>
       <RevealBoard view={view} room={room} result={result} />
-      <div className="panel flex shrink-0 flex-wrap items-center justify-between gap-x-6 gap-y-2">
+      <div
+        className="panel flex shrink-0 flex-wrap items-center justify-between gap-x-6 gap-y-2"
+        style={compact ? { padding: '0.5rem 0.75rem' } : undefined}
+      >
         <p
           className="blink text-lg font-bold"
           style={{ animationDelay: `${revealSettledMs(result)}ms` }}

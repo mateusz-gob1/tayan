@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shell } from './components/Shell';
+import { useWakeLock } from './lib/hooks';
 import { connect } from './net/socket';
 import { GameOver } from './screens/GameOver';
 import { Lobby } from './screens/Lobby';
@@ -30,6 +31,8 @@ export default function App() {
   useEffect(() => {
     connect();
   }, []);
+
+  useWakeLock(Boolean(room && view && room.phase !== 'LOBBY'));
 
   if (!everConnected) return <Waking />;
 

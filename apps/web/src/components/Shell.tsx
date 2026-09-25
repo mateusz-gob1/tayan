@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { leaveRoom } from '../net/socket';
 import { isMuted, setMuted } from '../lib/sound';
+import { useLayoutMode } from '../lib/scale';
 import { useStore } from '../store';
 import { HelpPanel } from './HelpPanel';
 import { LogoImage } from './Logo';
@@ -19,6 +20,8 @@ export function Shell({ children }: { children: ReactNode }) {
   const setFourColors = useStore((s) => s.setFourColors);
   const inRoom = useStore((s) => s.session !== null);
   const [muted, setMutedState] = useState(isMuted());
+  const mode = useLayoutMode();
+  const compact = mode !== 'wide';
 
   // H toggles help, unless the user is typing.
   useEffect(() => {
@@ -48,8 +51,10 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center gap-3 border-b border-white/10 bg-black/30 px-5 py-1">
-        {inRoom && <LogoImage />}
+      <header
+        className={`flex items-center gap-3 border-b border-white/10 bg-black/30 ${compact ? 'px-3 py-1' : 'px-5 py-1'}`}
+      >
+        {inRoom && !compact && <LogoImage />}
         <div className="ml-auto flex items-center gap-2">
           {conn === 'reconnecting' && (
             <span className="rounded bg-amber-500/20 px-2 py-1 text-xs text-amber-200">
@@ -95,7 +100,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </button>
           {inRoom && (
             <button className="btn-ghost px-3 py-1 text-sm" onClick={() => void leaveRoom()}>
-              {t('nav.leave')}
+              {compact ? t('nav.leaveShort') : t('nav.leave')}
             </button>
           )}
         </div>

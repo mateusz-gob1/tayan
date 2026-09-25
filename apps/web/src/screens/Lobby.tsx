@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BackdropSuits, SuitStrip } from '../components/Ornaments';
+import { useLayoutMode } from '../lib/scale';
 import { MAX_PLAYERS, deckSize, rankLabel, type GameSettings, type Rank } from '@tayan/engine';
 import { addBot, kick, playWithBots, setSettings, startGame } from '../net/actions';
 
@@ -11,6 +12,7 @@ import { useStore } from '../store';
 
 export function Lobby({ room }: { room: RoomState }) {
   const { t } = useTranslation();
+  const sideways = useLayoutMode() === 'short';
   const me = useStore((s) => s.session?.playerId);
   const isHost = room.hostId === me;
   const [copied, setCopied] = useState<'code' | 'link' | null>(null);
@@ -28,7 +30,9 @@ export function Lobby({ room }: { room: RoomState }) {
   };
 
   return (
-    <div className="relative mx-auto grid max-w-5xl gap-6 p-6 lg:grid-cols-2">
+    <div
+      className={`relative mx-auto grid max-w-5xl gap-6 p-6 lg:grid-cols-2 ${sideways ? 'grid-cols-2 gap-3 p-3' : ''}`}
+    >
       <BackdropSuits />
       <section className="panel-deco space-y-4">
         <SuitStrip />
