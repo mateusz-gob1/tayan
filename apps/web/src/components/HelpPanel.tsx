@@ -40,7 +40,7 @@ export function HelpPanel() {
 
   return (
     <aside
-      className="flex w-[22rem] shrink-0 flex-col border-l border-white/10 bg-black/35 backdrop-blur"
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-felt-deep pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] lg:static lg:pb-0 lg:pt-0 lg:z-auto lg:w-[22rem] lg:shrink-0 lg:overflow-visible lg:border-l lg:border-white/10 lg:bg-black/35 lg:backdrop-blur"
       aria-label={t('help.title')}
     >
       <div className="flex items-center justify-between px-4 pt-3">
