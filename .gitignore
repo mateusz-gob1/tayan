@@ -5,6 +5,8 @@ coverage/
 .env.*
 *.log
 .DS_Store
+# local notes for the coding assistant, not part of the published project
+CLAUDE.md
 .claude/settings.local.json
 .claude/launch.json
 !.env.example
