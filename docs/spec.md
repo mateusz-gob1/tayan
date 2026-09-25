@@ -20,8 +20,6 @@ Tayan to przeglądarkowa gra karciana multiplayer w czasie rzeczywistym, oparta 
 
 **Poza MVP (później):** wersja na telefon, bot AI, ranking układów liczony symulacją Monte Carlo, konta i statystyki, prosty czat tekstowy w pokoju (bez czatu głosowego).
 
-**Wskazówki dla Claude Code:** realizuj kamienie milowe po kolei (sekcja Testy i kamienie milowe). Zacznij od czystego silnika gry z testami, zanim powstanie serwer i UI. Reguły opisane jako konfigurowalne implementuj jako ustawienia z podaną wartością domyślną, a przy niejasnościach pytaj zamiast zgadywać.
-
 ## Zasady gry
 
 Każda runda kończy się sprawdzeniem, po którym dokładnie jeden gracz dostaje dodatkową kartę; gracz, który osiągnie 5 kart, odpada, a wygrywa ostatni gracz w grze.
@@ -348,13 +346,12 @@ Aplikacja ma pięć ekranów, projektowanych pod desktop (od 1024 px szerokości
 - Test w CI sprawdza, że oba pliki językowe mają identyczny zestaw kluczy.
 - Zasady gry w dokumentacji repozytorium również w dwóch językach.
 
-## Repozytorium, dokumentacja i praca z Claude Code
+## Repozytorium i dokumentacja
 
-Publiczne repozytorium `tayan` na GitHubie (licencja MIT) zawiera kod, tę specyfikację, dokumentację gry publikowaną jako strona na GitHub Pages oraz plik `CLAUDE.md`, który daje Claude Code stały kontekst w każdej sesji.
+Publiczne repozytorium `tayan` na GitHubie (licencja MIT) zawiera kod, tę specyfikację oraz dokumentację gry publikowaną jako strona na GitHub Pages.
 
 ```
 tayan/
-  CLAUDE.md                # kontekst i zasady dla Claude Code
   README.md                # EN, z linkiem do README.pl.md
   README.pl.md
   LICENSE                  # MIT
@@ -377,18 +374,10 @@ tayan/
     pull_request_template.md
 ```
 
-**Plik CLAUDE.md powinien zawierać:**
-
-- Jednoakapitowy opis projektu i odnośnik do `docs/spec.md` jako źródła prawdy.
-- Komendy: `pnpm dev`, `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm e2e`, `pnpm build`.
-- Zasady nienaruszalne: silnik bez I/O i bez zależności; klient nigdy nie dostaje cudzych kart przed odkryciem; każdy payload przez zod; brak tekstów UI poza plikami i18n.
-- Konwencje: kod, komentarze i commity po angielsku; Conventional Commits; TypeScript w trybie `strict`.
-- Definition of Done dla każdej zmiany: testy, lint i typecheck zielone, zaktualizowana dokumentacja, jeśli zmieniło się zachowanie.
-
-**Sposób pracy z Claude Code:**
+**Sposób pracy:**
 
 1. Jeden kamień milowy to jedna gałąź i jeden PR, podzielony na małe commity.
-2. Na początku każdego kamienia milowego Claude Code najpierw przedstawia plan (plan mode), a implementuje po Twojej akceptacji.
+2. Na początku każdego kamienia milowego powstaje plan, a implementacja rusza po jego akceptacji.
 3. Testy silnika pisane przed implementacją lub razem z nią, z tabelą referencyjną talii jako wyrocznią.
 4. Niejasności w specyfikacji kończą się pytaniem albo wpisem do `docs/adr/`, a nie cichą decyzją w kodzie.
 
