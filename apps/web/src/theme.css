@@ -216,6 +216,22 @@ body {
   );
 }
 
+/* the same dashed rule drawn on the top edge of an element */
+@utility pixel-rule-top {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: var(--b);
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(243 236 214 / 0.35) 0 var(--b),
+      transparent var(--b) calc(var(--b) * 3)
+    );
+  }
+}
+
 /* the table: a wooden frame and felt, both with stepped corners */
 @utility table-shape {
   clip-path: polygon(

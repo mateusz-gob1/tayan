@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { PlayerView } from '@tayan/engine';
 import { TrophyMark } from '../components/Logo';
+import { BackdropSuits, SuitStrip } from '../components/Ornaments';
 import { iconZoom, useLayoutScale } from '../lib/scale';
 import { rematch } from '../net/actions';
 import { leaveRoom } from '../net/socket';
@@ -18,7 +19,8 @@ export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) 
   const ranking = winner ? [winner, ...[...view.eliminatedOrder].reverse()] : [];
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-6">
+    <div className="relative mx-auto max-w-4xl space-y-6 p-6">
+      <BackdropSuits />
       <div className="text-center">
         <div className="bounce flex justify-center">
           <TrophyMark size={11 * iconZoom(rem) * 2} />
@@ -29,7 +31,8 @@ export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) 
         {winner === view.me && <p className="mt-1 text-lg">{t('gameOver.youWon')}</p>}
       </div>
 
-      <div className="panel mx-auto max-w-sm">
+      <div className="panel-deco mx-auto max-w-sm space-y-2">
+        <SuitStrip />
         <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('gameOver.order')}</h3>
         <ol className="space-y-1">
           {ranking.map((id, i) => (
@@ -39,6 +42,7 @@ export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) 
             </li>
           ))}
         </ol>
+        <SuitStrip />
       </div>
 
       <div className="flex flex-col items-center gap-2">

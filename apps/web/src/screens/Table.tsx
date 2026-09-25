@@ -197,7 +197,7 @@ function EventLog({
     .slice(-3);
   if (!lines.length) return null;
   return (
-    <ul className="mt-3 space-y-1 border-t border-white/10 pt-2 text-xs text-amber-200">
+    <ul className="pixel-rule-top mt-3 space-y-1 pt-3 text-xs text-amber-200">
       {lines.map(({ id, event }) => {
         const nick = nickOf(view, room, String(event.playerId));
         return (
@@ -295,7 +295,7 @@ function KickVote({
   const wait = Math.ceil((vote.availableAt - now) / 1000);
   const iVoted = vote.votes.includes(view.me);
   return (
-    <div className="border-t border-white/10 pt-3 text-center text-sm">
+    <div className="pixel-rule-top pt-4 text-center text-sm">
       {wait > 0 ? (
         <p className="text-xs text-stone-400">{t('table.voteKickWait', { sec: wait })}</p>
       ) : (
