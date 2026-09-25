@@ -29,6 +29,11 @@ export async function joinRoom(page: Page, code: string, nick: string): Promise<
   await expect(page.getByText('Gracze (')).toBeVisible();
 }
 
+// The screen can change between looking for a button and clicking it (for example the last reveal
+// ends and the winner appears). Without a timeout Playwright waits for the vanished button until
+// the whole test times out, so every click in the loop below gives up quickly and the loop retries.
+const CLICK = { timeout: 1000 };
+
 /**
  * Plays for a player until the game is over: sometimes checks, otherwise picks the first
  * available declaration in the picker (a small raise), and clicks "Next" on every reveal.
@@ -45,23 +50,24 @@ export async function autoplay(page: Page): Promise<void> {
     if (await winner.isVisible()) return;
     const pickerOpen =
       (await category.count()) + (await option.count()) + (await confirm.count()) > 0;
-    if ((await next.count()) && (await next.isEnabled())) await next.click().catch(() => {});
+    if ((await next.count()) && (await next.isEnabled(CLICK).catch(() => false)))
+      await next.click(CLICK).catch(() => {});
     else if (
       (await check.count()) &&
-      (await check.isEnabled()) &&
+      (await check.isEnabled(CLICK).catch(() => false)) &&
       (Math.random() < 0.35 || !pickerOpen)
     )
-      await check.click().catch(() => {});
-    else if (await confirm.count()) await confirm.click().catch(() => {});
+      await check.click(CLICK).catch(() => {});
+    else if (await confirm.count()) await confirm.click(CLICK).catch(() => {});
     else if (await option.count())
       await option
         .first()
-        .click()
+        .click(CLICK)
         .catch(() => {});
     else if (await category.count())
       await category
         .first()
-        .click()
+        .click(CLICK)
         .catch(() => {});
     await page.waitForTimeout(150);
   }

@@ -9,7 +9,12 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
-  use: { baseURL: `http://localhost:${WEB_PORT}`, trace: 'retain-on-failure' },
+  use: {
+    baseURL: `http://localhost:${WEB_PORT}`,
+    trace: 'retain-on-failure',
+    // no action may wait for longer than this; a vanished element must fail fast, not hang
+    actionTimeout: 10_000,
+  },
   webServer: [
     {
       // plain node (no pnpm wrapper), so Playwright can stop the process when the tests end
