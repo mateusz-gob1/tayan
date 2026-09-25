@@ -6,7 +6,9 @@ export type PlayerMeta = Record<PlayerId, { nick: string; connected: boolean }>;
 /**
  * The ONLY place deciding what a given player may see. Other players' cards appear
  * only through `lastResult.allHands`, and only once the round has been revealed.
- * Spectators (ids not seated) get an empty hand.
+ * The one exception: someone who is not playing (eliminated, or not seated at all) also gets
+ * every hand in `spectatedHands` while `settings.spectatorsSeeCards` is on. A player still in the
+ * game never does. Spectators get an empty hand of their own.
  */
 export function toPlayerView(
   state: GameState,
@@ -40,6 +42,8 @@ export function toPlayerView(
     roundNumber: round.number,
     eliminatedOrder: state.eliminated,
   };
+  const playing = state.seating.includes(playerId) && !state.eliminated.includes(playerId);
+  if (state.settings.spectatorsSeeCards && !playing) view.spectatedHands = round.hands;
   if (revealed && round.result) view.lastResult = round.result;
   if (state.winner) view.winner = state.winner;
   return view;

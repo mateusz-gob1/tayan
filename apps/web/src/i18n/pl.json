@@ -90,6 +90,9 @@
     "turnTimer": "Limit czasu tury",
     "inactiveTimeout": "Czekanie na rozłączonego",
     "kickVoteAfter": "Głosowanie na wyrzucenie po",
+    "spectatorsSeeCards": "Odpadli i obserwatorzy widzą karty graczy",
+    "yes": "tak",
+    "no": "nie",
     "off": "wyłączony",
     "forever": "bez limitu",
     "seconds": "{{count}} s",
@@ -199,6 +202,7 @@
       "startingCards": "Karty na start",
       "eliminationLimit": "Limit eliminacji (odpadasz przy tylu kartach)",
       "turnTimer": "Limit czasu tury",
+      "spectatorsSeeCards": "Obserwatorzy widzą karty",
       "players": "Liczba graczy"
     },
     "noRoom": "Ustawienia zobaczysz po wejściu do pokoju. Poniżej wartości domyślne.",

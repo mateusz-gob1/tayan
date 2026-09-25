@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDeclaration, type Declaration, type PlayerView } from '@tayan/engine';
+import { formatDeclaration, type Card, type Declaration, type PlayerView } from '@tayan/engine';
 import { CardBack, PlayingCard, type Scale } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
 import { SuitText } from '../components/SuitIcon';
@@ -37,7 +37,13 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const seatScale = seatCardScale(art);
   // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
   // held upright the seats have no card fan, only the number of cards, to leave room in the middle
-  const showFan = mode !== 'portrait';
+  const spectating = view.spectatedHands !== undefined; // an eliminated player or a late joiner
+  const showFan = mode !== 'portrait' || spectating;
+  /** What to draw for a seat: the real cards for someone watching, otherwise card backs. */
+  const seatCards = (id: string, count: number): (Card | undefined)[] =>
+    view.spectatedHands
+      ? (view.spectatedHands[id] ?? []).slice(0, 5)
+      : Array.from({ length: Math.min(count, 5) }, () => undefined);
   const fanRem = showFan ? (136 * seatScale) / rem : 0;
   const halfW = Math.max(4, (fanRem + 1) / 2) + 0.5;
   const halfH = 1.75 + (showFan ? (40 * seatScale) / rem : 0) + 0.5;
@@ -148,7 +154,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   </p>
                   {p.id !== view.me && showFan && (
                     <div className="mt-1 flex justify-center">
-                      {Array.from({ length: Math.min(p.cardCount, 5) }).map((_, k) => (
+                      {seatCards(p.id, p.cardCount).map((card, k) => (
                         <div
                           key={`${view.roundNumber}-${k}`}
                           className="deal-in"
@@ -157,7 +163,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                             animationDelay: `${(i * 2 + k) * 90}ms`,
                           }}
                         >
-                          <CardBack scale={seatScale} />
+                          {card ? (
+                            <PlayingCard card={card} scale={seatScale} />
+                          ) : (
+                            <CardBack scale={seatScale} />
+                          )}
                         </div>
                       ))}
                     </div>

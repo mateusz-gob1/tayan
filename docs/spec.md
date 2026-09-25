@@ -197,6 +197,7 @@ type GameSettings = {
   turnTimerSec: number | null; // null = bez limitu
   inactiveTimeoutSec: number | null; // null = czekamy bez końca (domyślnie)
   kickVoteAfterSec: number;  // domyślnie 120
+  spectatorsSeeCards: boolean; // domyślnie true: odpadli gracze i widzowie widzą karty grających
 };
 
 type PlayerId = string;
@@ -245,7 +246,7 @@ type PlayerView = {
 };
 ```
 
-Funkcja `toPlayerView(state, playerId)` w silniku jest jedynym miejscem, które decyduje, co widzi gracz. Test musi potwierdzać, że w fazie BIDDING widok nie zawiera cudzych kart.
+Funkcja `toPlayerView(state, playerId)` w silniku jest jedynym miejscem, które decyduje, co widzi gracz. Test musi potwierdzać, że w fazie BIDDING widok gracza, który nadal gra, nie zawiera cudzych kart. Jedyny wyjątek: gracz, który odpadł, albo widz (osoba niesiedząca przy stole) dostaje w `spectatedHands` ręce wszystkich, gdy host zostawił włączone ustawienie `spectatorsSeeCards` (domyślnie włączone; patrz `docs/adr/0006-spectators-see-cards.md`).
 
 ## Protokół WebSocket: zdarzenia klient/serwer
 
@@ -289,7 +290,7 @@ Pokój identyfikuje 5-znakowy kod, dołącza się linkiem `/r/KOD`, a tożsamoś
 - Kod: 5 znaków z alfabetu bez mylących się znaków (bez 0/O, 1/I/L), np. `K7XQM`.
 - Twórca pokoju zostaje hostem. Gdy host wyjdzie, host przechodzi na najdłużej obecnego gracza.
 - Maksymalnie 13 graczy. Nick: 1 do 16 znaków, unikalny w pokoju.
-- Dołączenie w trakcie gry: nowa osoba trafia do poczekalni jako widz i wchodzi do gry przy rewanżu. Widz widzi tylko publiczne informacje (liczniki kart, licytację, odkrycia).
+- Dołączenie w trakcie gry: nowa osoba trafia do poczekalni jako widz i wchodzi do gry przy rewanżu. Widz widzi informacje publiczne (liczniki kart, licytację, odkrycia) oraz, gdy włączone jest ustawienie `spectatorsSeeCards` (domyślnie tak), karty graczy. To samo dotyczy graczy, którzy odpadli.
 - Pusty pokój jest usuwany po 10 minutach.
 
 **Lobby:** host widzi ustawienia z wartościami domyślnymi wyliczonymi dla aktualnej liczby graczy (najniższa figura, karty startowe). Wartości automatyczne przeliczają się na żywo przy dołączaniu graczy, dopóki host ich ręcznie nie nadpisze.

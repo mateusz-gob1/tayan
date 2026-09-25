@@ -354,3 +354,41 @@ describe('random simulation', () => {
     }
   });
 });
+
+describe('spectators seeing the cards', () => {
+  it('is on by default', () => {
+    expect(resolveSettings({}, 4).spectatorsSeeCards).toBe(true);
+  });
+
+  it('a player still in the game never gets the other hands, even when the option is on', () => {
+    const s = newGame(4);
+    expect(s.settings.spectatorsSeeCards).toBe(true);
+    for (const me of s.seating) expect(toPlayerView(s, me).spectatedHands).toBeUndefined();
+  });
+
+  it('someone who is not seated (a late joiner) gets every hand while the option is on', () => {
+    const s = newGame(3);
+    const view = toPlayerView(s, 'late-joiner');
+    expect(view.myCards).toEqual([]);
+    expect(view.spectatedHands).toEqual(s.round.hands);
+  });
+
+  it('an eliminated player gets every hand of the next rounds while the option is on', () => {
+    const s = newGame(3);
+    const [a, b, c] = s.seating as [string, string, string];
+    const out: GameState = { ...s, eliminated: [c] };
+    expect(toPlayerView(out, c).spectatedHands).toEqual(out.round.hands);
+    // the players who are still in the game see nothing more than before
+    expect(toPlayerView(out, a).spectatedHands).toBeUndefined();
+    expect(toPlayerView(out, b).spectatedHands).toBeUndefined();
+  });
+
+  it('nobody sees the hands when the option is off', () => {
+    const s = newGame(3, { spectatorsSeeCards: false });
+    const c = s.seating[2] as string;
+    const out: GameState = { ...s, eliminated: [c] };
+    expect(toPlayerView(out, c).spectatedHands).toBeUndefined();
+    expect(toPlayerView(out, 'late-joiner').spectatedHands).toBeUndefined();
+    expect(JSON.stringify(toPlayerView(out, c))).not.toContain('"spectatedHands"');
+  });
+});

@@ -90,6 +90,9 @@
     "turnTimer": "Turn time limit",
     "inactiveTimeout": "Waiting for a disconnected player",
     "kickVoteAfter": "Vote to kick after",
+    "spectatorsSeeCards": "Eliminated players and spectators see the players' cards",
+    "yes": "yes",
+    "no": "no",
     "off": "off",
     "forever": "no limit",
     "seconds": "{{count}} s",
@@ -197,6 +200,7 @@
       "startingCards": "Starting cards",
       "eliminationLimit": "Elimination limit (you are out at this many cards)",
       "turnTimer": "Turn time limit",
+      "spectatorsSeeCards": "Spectators see the cards",
       "players": "Players"
     },
     "noRoom": "You will see the settings once you are in a room. Defaults are shown below.",

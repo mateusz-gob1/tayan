@@ -88,6 +88,7 @@ export const settingsSchema = z
     turnTimerSec: z.number().int().min(10).max(600).nullable(),
     inactiveTimeoutSec: z.number().int().min(60).max(3600).nullable(),
     kickVoteAfterSec: z.number().int().min(30).max(600),
+    spectatorsSeeCards: z.boolean(),
   })
   .partial()
   .strict();

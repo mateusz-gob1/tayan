@@ -42,6 +42,7 @@ export function resolveSettings(input: Partial<GameSettings>, players: number): 
     turnTimerSec: input.turnTimerSec ?? null,
     inactiveTimeoutSec: input.inactiveTimeoutSec ?? null,
     kickVoteAfterSec: input.kickVoteAfterSec ?? 120,
+    spectatorsSeeCards: input.spectatorsSeeCards ?? true,
   };
 }
 
