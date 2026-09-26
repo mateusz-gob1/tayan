@@ -18,11 +18,11 @@ Tayan to przeglądarkowa gra karciana multiplayer w czasie rzeczywistym, oparta 
 - Pomoc dostępna w każdej chwili: zasady gry oraz ranking układów obowiązujący w bieżącej grze
 - Darmowy hosting i publiczne repozytorium GitHub z dokumentacją gry
 
-**Poza MVP (później):** wersja na telefon, bot AI, ranking układów liczony symulacją Monte Carlo, konta i statystyki, prosty czat tekstowy w pokoju (bez czatu głosowego).
+**Poza MVP (później):** bot AI, ranking układów liczony symulacją Monte Carlo, konta i statystyki, prosty czat tekstowy w pokoju (bez czatu głosowego).
 
 ## Zasady gry
 
-Każda runda kończy się sprawdzeniem, po którym dokładnie jeden gracz dostaje dodatkową kartę; gracz, który osiągnie 5 kart, odpada, a wygrywa ostatni gracz w grze.
+Każda runda kończy się sprawdzeniem, po którym dokładnie jeden gracz dostaje dodatkową kartę; gracz, który osiągnie limit eliminacji (domyślnie 6 kart), odpada, a wygrywa ostatni gracz w grze.
 
 **Przygotowanie**
 
@@ -320,13 +320,13 @@ Aplikacja ma pięć ekranów, projektowanych pod desktop (od 1024 px szerokości
 
 - Duży przycisk **Sprawdzam**, aktywny tylko w mojej turze i gdy jest już deklaracja.
 - Wybór deklaracji w dwóch krokach: najpierw kategoria (niedostępne kategorie wyszarzone), potem parametry (figury, kolor). Przycisk potwierdzenia pokazuje pełną nazwę, np. "Full: damy na dziewiątkach".
-- Skrót "Minimalne przebicie" deklaruje najniższy dozwolony układ.
+~~Skrót "Minimalne przebicie" deklaruje najniższy dozwolony układ.~~ *(usunięte na życzenie właściciela projektu: wybór przebicia zostaje po stronie gracza)*
 - Ostatnia deklaracja jest zawsze widoczna dużym tekstem na środku stołu.
 
 **Czytelność:**
 
 - Nazwy układów po polsku, generowane z jednej funkcji `formatDeclaration(decl, 'pl')`, obsługującej języki pl i en.
-- Karty rysowane w SVG/CSS (bez zewnętrznych grafik), kolory czerwony i czarny, czytelne także w mniejszym oknie przeglądarki.
+- Karty w pixel arcie (talia Kerenel, CC0; patrz `docs/assets.md`), kolory czerwony i czarny, skalowane wyłącznie całkowitą wielokrotnością, żeby piksele pozostały ostre; czytelne także w małym oknie i na telefonie.
 - Wyraźny wskaźnik czyja tura i odliczanie, jeśli timer jest włączony.
 - Dyskretny dźwięk i migający tytuł karty przeglądarki, gdy zaczyna się moja tura. Możliwość wyciszenia.
 
@@ -431,12 +431,7 @@ Silnik powstaje pierwszy i ma największe pokrycie testami, bo błąd w ocenie u
 2. **M2 Serwer:** pokoje, protokół, walidacja, reconnect, timer, testy integracyjne.
 3. **M3 Klient:** pięć ekranów, wybór deklaracji, ekran odkrycia z niepełnym układem, proste przejścia CSS zamiast animacji.
 4. **M4 Deployment:** Docker, CI, publiczny adres, test z prawdziwymi znajomymi.
-5. **M5 Po MVP:** dopracowane animacje i efekty (rozdawanie, odkrycie kart, przyznanie karty, eliminacja), wersja na telefon (responsywny układ, obsługa dotyku, wibracja przy turze), integracja bota z osobnego repozytorium badawczego (patrz sekcja Bot i badania), statystyki graczy.
-
-   |  |  |  |
-   | --- | --- | --- |
-   |  |  |  |
-   |  |  |  |
+5. **M5 Po MVP:** dopracowane animacje i efekty (rozdawanie, odkrycie kart, przyznanie karty, eliminacja), wersja na telefon (zrobione: osobne układy dla telefonu poziomo i pionowo, przyciski pod dotyk, ekran nie wygasa w trakcie gry; wibracji przy turze nie ma), integracja bota z osobnego repozytorium badawczego (patrz sekcja Bot i badania), statystyki graczy.
 
 ## Bot i badania
 

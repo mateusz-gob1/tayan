@@ -8,6 +8,6 @@
 
 **Can I join a game in progress?** Yes, as a spectator. You see the public information and join the game at the rematch. If the host left “Eliminated players and spectators see the players' cards” on (it is on by default), you also see the players' cards. Players who have been eliminated see them too.
 
-**Can I play on my phone?** Not yet. The interface is designed for desktop browsers; a mobile version is planned.
+**Can I play on my phone?** Yes. The game works in a phone browser and on a tablet. A phone held sideways is the most comfortable, but upright works too. Nothing to install.
 
 **Where do I report a bug?** In the [issue tracker](https://github.com/mateusz-gob1/tayan/issues).
