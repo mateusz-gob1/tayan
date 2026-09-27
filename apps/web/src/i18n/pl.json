@@ -68,7 +68,10 @@
     "start": "Start",
     "needTwo": "Do startu potrzeba co najmniej 2 graczy.",
     "waitHost": "Czekamy, aż host rozpocznie grę.",
-    "settings": "Ustawienia gry",
+    "settings": "Ustawienia pokoju",
+    "settingsGeneral": "Ustawienia ogólne",
+    "settingsGame": "Ustawienia gry",
+    "settingsGameNote": "Wartości domyślne (talia, karty na start, limit eliminacji) są dobrane matematycznie tak, żeby żaden układ nie był zbyt oczywisty ani nie do zdobycia. Możesz je zmienić dowolnie, ale nie polecamy tego bez powodu.",
     "onlyHost": "Ustawienia zmienia tylko host.",
     "deckWarning": "Przy tylu graczach nawet pełna talia często daje karety i pokery. Rozważ obniżenie limitu eliminacji do 4.",
     "auto": "auto",
@@ -101,6 +104,7 @@
     "tooSmall": "za mała dla tylu graczy"
   },
   "table": {
+    "ranking": "Ranking układów",
     "round": "Runda {{n}}",
     "yourTurn": "Twoja tura",
     "turnOf": "Tura: {{nick}}",

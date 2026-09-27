@@ -4,6 +4,15 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+
+- The default hand ranking (the order in which players may raise) is now computed once per game from the exact probability of each hand, instead of a fixed guessed order; it no longer changes during a game. The standard-settings deck table and the default starting-cards threshold (now 7, was 6) also come from this research. See `docs/adr/0007-mathematical-category-ranking.md`
+- The lobby's game settings are split into two collapsible sections, "General settings" and "Game settings" (deck, starting cards, elimination limit), the latter with a note that its defaults are recommended
+
+### Added
+
+- A compact hand ranking, always visible next to the table (not only in the help panel)
+
 ### Removed
 
 - The four-colour cards switch: the game plays with black and red cards only (the unused high-contrast card images are gone too)

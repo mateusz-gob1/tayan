@@ -131,11 +131,6 @@ export function Lobby({ room }: { room: RoomState }) {
       <section className="panel-deco space-y-3">
         <SuitStrip />
         <h2 className="text-lg font-bold">{t('lobby.settings')}</h2>
-        {room.deckWarning && (
-          <p className="rounded-lg bg-amber-500/20 px-3 py-2 text-sm text-amber-100">
-            {t('lobby.deckWarning')}
-          </p>
-        )}
         <SettingsForm room={room} editable={isHost} playerCount={Math.max(2, players.length)} />
         {!isHost && <p className="text-xs text-stone-400">{t('lobby.onlyHost')}</p>}
         <p className="text-xs text-stone-500">max {MAX_PLAYERS}</p>
@@ -165,108 +160,147 @@ function SettingsForm({
     n === null ? t('settings.forever') : t('settings.minutes', { count: n / 60 });
 
   return (
-    <div className="space-y-3">
-      <Field
-        label={`${t('settings.deckMode')}${s.deckMode === 'AUTO' ? ` (${t('lobby.auto')})` : ''}`}
-      >
-        <Select
-          disabled={!editable}
-          value={s.deckMode}
-          onChange={(v) => send({ deckMode: v as GameSettings['deckMode'] })}
-          options={(['AUTO', 'FULL', 'CUSTOM'] as const).map((m) => [
-            m,
-            t(`settings.deckModes.${m}`),
-          ])}
-        />
-        <p className="mt-1 text-xs text-stone-300">
-          {t('settings.deckSummary', {
-            rank: rankLabel(s.lowestRank),
-            cards: deckSize(s.lowestRank),
-          })}
-        </p>
-      </Field>
-
-      {s.deckMode === 'CUSTOM' && (
-        <Field label={t('settings.lowestRank')}>
+    <div className="space-y-2">
+      <Accordion title={t('lobby.settingsGeneral')} defaultOpen>
+        <Field label={t('settings.turnTimer')}>
           <Select
             disabled={!editable}
-            value={String(s.lowestRank)}
-            onChange={(v) => send({ lowestRank: Number(v) as Rank })}
-            options={[9, 8, 7, 6, 5, 4, 3, 2].map((r) => {
-              const tooSmall = (s.eliminationLimit - 1) * playerCount > deckSize(r as Rank);
-              return [
-                String(r),
-                `${rankLabel(r as Rank)} (${deckSize(r as Rank)})${tooSmall ? ` - ${t('settings.tooSmall')}` : ''}`,
-                tooSmall,
-              ] as const;
+            value={String(s.turnTimerSec)}
+            onChange={(v) => send({ turnTimerSec: v === 'null' ? null : Number(v) })}
+            options={[null, 15, 30, 60, 120].map((n) => [String(n), seconds(n)] as const)}
+          />
+        </Field>
+
+        <Field label={t('settings.inactiveTimeout')}>
+          <Select
+            disabled={!editable}
+            value={String(s.inactiveTimeoutSec)}
+            onChange={(v) => send({ inactiveTimeoutSec: v === 'null' ? null : Number(v) })}
+            options={[null, 120, 300, 600].map((n) => [String(n), minutes(n)] as const)}
+          />
+        </Field>
+
+        <Field label={t('settings.kickVoteAfter')}>
+          <Select
+            disabled={!editable}
+            value={String(s.kickVoteAfterSec)}
+            onChange={(v) => send({ kickVoteAfterSec: Number(v) })}
+            options={[60, 120, 300].map((n) => [String(n), seconds(n)] as const)}
+          />
+        </Field>
+
+        <Field label={t('settings.spectatorsSeeCards')}>
+          <Select
+            disabled={!editable}
+            value={String(s.spectatorsSeeCards)}
+            onChange={(v) => send({ spectatorsSeeCards: v === 'true' })}
+            options={[
+              ['true', t('settings.yes')],
+              ['false', t('settings.no')],
+            ]}
+          />
+        </Field>
+      </Accordion>
+
+      <Accordion title={t('lobby.settingsGame')}>
+        <p className="text-xs text-stone-300">{t('lobby.settingsGameNote')}</p>
+
+        {room.deckWarning && (
+          <p className="rounded-lg bg-amber-500/20 px-3 py-2 text-sm text-amber-100">
+            {t('lobby.deckWarning')}
+          </p>
+        )}
+
+        <Field
+          label={`${t('settings.deckMode')}${s.deckMode === 'AUTO' ? ` (${t('lobby.auto')})` : ''}`}
+        >
+          <Select
+            disabled={!editable}
+            value={s.deckMode}
+            onChange={(v) => send({ deckMode: v as GameSettings['deckMode'] })}
+            options={(['AUTO', 'FULL', 'CUSTOM'] as const).map((m) => [
+              m,
+              t(`settings.deckModes.${m}`),
+            ])}
+          />
+          <p className="mt-1 text-xs text-stone-300">
+            {t('settings.deckSummary', {
+              rank: rankLabel(s.lowestRank),
+              cards: deckSize(s.lowestRank),
+            })}
+          </p>
+        </Field>
+
+        {s.deckMode === 'CUSTOM' && (
+          <Field label={t('settings.lowestRank')}>
+            <Select
+              disabled={!editable}
+              value={String(s.lowestRank)}
+              onChange={(v) => send({ lowestRank: Number(v) as Rank })}
+              options={[9, 8, 7, 6, 5, 4, 3, 2].map((r) => {
+                const tooSmall = (s.eliminationLimit - 1) * playerCount > deckSize(r as Rank);
+                return [
+                  String(r),
+                  `${rankLabel(r as Rank)} (${deckSize(r as Rank)})${tooSmall ? ` - ${t('settings.tooSmall')}` : ''}`,
+                  tooSmall,
+                ] as const;
+              })}
+            />
+          </Field>
+        )}
+
+        <Field label={`${t('settings.startingCards')}${auto('startingCards')}`}>
+          <Select
+            disabled={!editable}
+            value={String(s.startingCards)}
+            onChange={(v) => send({ startingCards: Number(v) as 1 | 2 })}
+            options={[
+              ['1', '1'],
+              ['2', '2'],
+            ]}
+          />
+        </Field>
+
+        <Field label={t('settings.eliminationLimit')}>
+          <Select
+            disabled={!editable}
+            value={String(s.eliminationLimit)}
+            onChange={(v) => send({ eliminationLimit: Number(v) })}
+            options={[3, 4, 5, 6].map((n) => {
+              // five-card hands must fit in even the full 52-card deck
+              const tooMany = (n - 1) * playerCount > deckSize(2);
+              return [String(n), String(n), tooMany] as const;
             })}
           />
         </Field>
-      )}
+      </Accordion>
+    </div>
+  );
+}
 
-      <Field label={`${t('settings.startingCards')}${auto('startingCards')}`}>
-        <Select
-          disabled={!editable}
-          value={String(s.startingCards)}
-          onChange={(v) => send({ startingCards: Number(v) as 1 | 2 })}
-          options={[
-            ['1', '1'],
-            ['2', '2'],
-          ]}
-        />
-      </Field>
-
-      <Field label={t('settings.eliminationLimit')}>
-        <Select
-          disabled={!editable}
-          value={String(s.eliminationLimit)}
-          onChange={(v) => send({ eliminationLimit: Number(v) })}
-          options={[3, 4, 5, 6].map((n) => {
-            // five-card hands must fit in even the full 52-card deck
-            const tooMany = (n - 1) * playerCount > deckSize(2);
-            return [String(n), String(n), tooMany] as const;
-          })}
-        />
-      </Field>
-
-      <Field label={t('settings.turnTimer')}>
-        <Select
-          disabled={!editable}
-          value={String(s.turnTimerSec)}
-          onChange={(v) => send({ turnTimerSec: v === 'null' ? null : Number(v) })}
-          options={[null, 15, 30, 60, 120].map((n) => [String(n), seconds(n)] as const)}
-        />
-      </Field>
-
-      <Field label={t('settings.inactiveTimeout')}>
-        <Select
-          disabled={!editable}
-          value={String(s.inactiveTimeoutSec)}
-          onChange={(v) => send({ inactiveTimeoutSec: v === 'null' ? null : Number(v) })}
-          options={[null, 120, 300, 600].map((n) => [String(n), minutes(n)] as const)}
-        />
-      </Field>
-
-      <Field label={t('settings.kickVoteAfter')}>
-        <Select
-          disabled={!editable}
-          value={String(s.kickVoteAfterSec)}
-          onChange={(v) => send({ kickVoteAfterSec: Number(v) })}
-          options={[60, 120, 300].map((n) => [String(n), seconds(n)] as const)}
-        />
-      </Field>
-
-      <Field label={t('settings.spectatorsSeeCards')}>
-        <Select
-          disabled={!editable}
-          value={String(s.spectatorsSeeCards)}
-          onChange={(v) => send({ spectatorsSeeCards: v === 'true' })}
-          options={[
-            ['true', t('settings.yes')],
-            ['false', t('settings.no')],
-          ]}
-        />
-      </Field>
+/** A collapsible section with a pixel-rule under its clickable header. */
+function Accordion({
+  title,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border-t border-white/10 pt-2 first:border-t-0 first:pt-0">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between py-1 text-left text-sm font-semibold text-stone-200"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+      >
+        {title}
+        <span aria-hidden="true">{open ? '▾' : '▸'}</span>
+      </button>
+      {open && <div className="mt-2 space-y-3">{children}</div>}
     </div>
   );
 }

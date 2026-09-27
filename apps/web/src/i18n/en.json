@@ -68,7 +68,10 @@
     "start": "Start",
     "needTwo": "At least 2 players are needed to start.",
     "waitHost": "Waiting for the host to start the game.",
-    "settings": "Game settings",
+    "settings": "Room settings",
+    "settingsGeneral": "General settings",
+    "settingsGame": "Game settings",
+    "settingsGameNote": "The default values (deck, starting cards, elimination limit) are worked out mathematically so that no hand is too obvious or too hard to reach. You can change them freely, but we do not recommend it without a reason.",
     "onlyHost": "Only the host can change settings.",
     "deckWarning": "With this many players even the full deck often contains fours and straight flushes. Consider lowering the elimination limit to 4.",
     "auto": "auto",
@@ -101,6 +104,7 @@
     "tooSmall": "too small for this many players"
   },
   "table": {
+    "ranking": "Hand ranking",
     "round": "Round {{n}}",
     "yourTurn": "Your turn",
     "turnOf": "Turn: {{nick}}",

@@ -11,7 +11,10 @@ test('three players play a whole game and start a rematch', async ({ browser }) 
   await joinRoom(cyd, code, 'Cyd');
   await expect(host.getByText('Gracze (3)')).toBeVisible();
 
-  // a short game: elimination at 3 cards
+  // a short game: elimination at 3 cards (the elimination limit lives in the collapsed
+  // "Game settings" section)
+  await host.getByRole('button', { name: 'Ustawienia gry' }).click();
+  await bob.getByRole('button', { name: 'Ustawienia gry' }).click();
   await host.getByLabel('Limit eliminacji').selectOption('3');
   await expect(bob.getByLabel('Limit eliminacji')).toHaveValue('3');
 

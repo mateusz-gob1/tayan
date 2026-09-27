@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDeclaration, type Card, type Declaration, type PlayerView } from '@tayan/engine';
 import { CardBack, PlayingCard, type Scale } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
+import { HandRanking } from '../components/HandRanking';
 import { SuitText } from '../components/SuitIcon';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
 import { iconZoom, seatCardScale, useArtScale, useLayoutMode, useLayoutScale } from '../lib/scale';
@@ -200,31 +201,45 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             ≡
           </button>
         )}
-        <aside
-          className={
-            compact
-              ? `panel absolute bottom-14 right-3 z-10 max-h-[70%] w-56 overflow-y-auto ${historyOpen ? '' : 'hidden'}`
-              : 'panel max-h-40 min-h-0 overflow-y-auto xl:max-h-none'
-          }
-        >
-          <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.bidHistory')}</h3>
-          <ol className="space-y-1 text-sm">
-            {view.bids.map((b, i) => {
-              const d = byId(b.declarationId);
-              return (
-                <li key={i} className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-stone-300">
-                    {nickOf(view, room, b.playerId)}:
-                  </span>
-                  <span>
-                    {d ? <SuitText text={formatDeclaration(d, lang)} /> : b.declarationId}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-          <EventLog log={log} view={view} room={room} />
-        </aside>
+        {(() => {
+          const history = (
+            <>
+              <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('table.bidHistory')}</h3>
+              <ol className="space-y-1 text-sm">
+                {view.bids.map((b, i) => {
+                  const d = byId(b.declarationId);
+                  return (
+                    <li key={i} className="flex gap-2">
+                      <span className="shrink-0 font-semibold text-stone-300">
+                        {nickOf(view, room, b.playerId)}:
+                      </span>
+                      <span>
+                        {d ? <SuitText text={formatDeclaration(d, lang)} /> : b.declarationId}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+              <EventLog log={log} view={view} room={room} />
+            </>
+          );
+          const ranking = <HandRanking categoryOrder={view.settings.categoryOrder} />;
+          return compact ? (
+            <aside
+              className={`panel absolute bottom-14 right-3 z-10 max-h-[70%] w-56 overflow-y-auto ${historyOpen ? '' : 'hidden'}`}
+            >
+              {ranking}
+              <div className="mt-3 border-t border-white/10 pt-2">{history}</div>
+            </aside>
+          ) : (
+            <aside className="flex min-h-0 flex-col gap-4">
+              <section className="panel shrink-0">{ranking}</section>
+              <section className="panel max-h-40 min-h-0 overflow-y-auto xl:max-h-none xl:flex-1">
+                {history}
+              </section>
+            </aside>
+          );
+        })()}
       </div>
 
       {/* the player's area: cards and actions next to each other */}
