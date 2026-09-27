@@ -12,15 +12,16 @@ Rooms live in the server's memory. Restarting or redeploying the server ends gam
 
 ## Environment variables
 
-| Variable             | Where                           | Meaning                                                                                                              |
-| -------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `VITE_SERVER_URL`    | client build (Cloudflare Pages) | Server address, e.g. `https://tayan-server.onrender.com`. Baked in at build time.                                    |
-| `CLIENT_ORIGIN`      | server (Render)                 | Address(es) of the client allowed to connect, comma separated, e.g. `https://tayan.pages.dev,https://tayan.example`. |
-| `PORT`               | server                          | Set by the host; defaults to 3001.                                                                                   |
-| `LOG_LEVEL`          | server                          | `info` by default.                                                                                                   |
-| `ENABLE_BOTS`        | server                          | `true` by default: the host can add bots in the lobby (testing aid). Set to `false` to disable.                      |
-| `VITE_ENABLE_BOTS`   | client build                    | Set to `false` to hide the bot buttons in the lobby.                                                                 |
-| `RATE_LIMIT_PER_SEC` | server                          | Events per second per connection, 10 by default.                                                                     |
+| Variable                | Where                           | Meaning                                                                                                              |
+| ----------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `VITE_SERVER_URL`       | client build (Cloudflare Pages) | Server address, e.g. `https://tayan-server.onrender.com`. Baked in at build time.                                    |
+| `CLIENT_ORIGIN`         | server (Render)                 | Address(es) of the client allowed to connect, comma separated, e.g. `https://tayan.pages.dev,https://tayan.example`. |
+| `PORT`                  | server                          | Set by the host; defaults to 3001.                                                                                   |
+| `LOG_LEVEL`             | server                          | `info` by default.                                                                                                   |
+| `ENABLE_BOTS`           | server                          | `true` by default: the host can add bots in the lobby (testing aid). Set to `false` to disable.                      |
+| `VITE_ENABLE_BOTS`      | client build                    | Set to `false` to hide the bot buttons in the lobby.                                                                 |
+| `RATE_LIMIT_PER_SEC`    | server                          | Events per second per connection, 10 by default.                                                                     |
+| `GAME_LOG_DATABASE_URL` | server                          | Optional Postgres connection string; see "Logging finished games" below. Unset by default (feature off).             |
 
 ## Server on Render
 
@@ -45,6 +46,22 @@ Every merge to `main` redeploys automatically.
 The free Render plan stops the server after 15 minutes without traffic and needs about a minute to start again. The client shows "Waking the server..." meanwhile and connects by itself, so friends can start it just by opening the page.
 
 To avoid the wait, `.github/workflows/keepalive.yml` pings `/healthz` every 10 minutes. Enable it by adding a repository variable `SERVER_URL` (Settings > Secrets and variables > Actions > Variables). Limits: GitHub pauses scheduled workflows after 60 days without repository activity, and the free plan has 750 instance hours per month, enough for one always-on service. The paid Starter plan (7 USD/month) removes the sleeping altogether without any code change.
+
+## Logging finished games
+
+The free Render plan has no persistent disk: any file the server writes locally is gone on the next
+redeploy or restart, so game logs need a separate, durable store. When `GAME_LOG_DATABASE_URL` is
+set, every game that finishes with no bots among its players is recorded to a Postgres `games` table
+(the server creates it on first use): players, settings, the winner, and the full round-by-round
+transcript (every declaration, check and reveal — the same data seen over the wire, replayable). This
+is play-activity data (who played, how much) and, eventually, training data for a bot. Games with
+bots are skipped. Leaving the variable unset disables the feature entirely; a failed write is logged
+and otherwise ignored, never affecting the game itself.
+
+A free [Neon](https://neon.tech) Postgres project works well for this (serverless, no server to run,
+free tier is enough for a hobby-scale room count): create a project, copy its connection string
+(`postgresql://...`) into `GAME_LOG_DATABASE_URL` on Render's Environment tab. Any other Postgres
+works the same way; the server only needs `CREATE TABLE IF NOT EXISTS` and `INSERT` privileges.
 
 ## Custom domain
 

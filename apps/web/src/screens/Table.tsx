@@ -13,6 +13,7 @@ import { DeclarationPicker } from '../components/DeclarationPicker';
 import { FinalDuelSplash } from '../components/FinalDuelSplash';
 import { HandRanking } from '../components/HandRanking';
 import { SuitText } from '../components/SuitIcon';
+import { backSprite } from '../lib/cards';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
 import { iconZoom, seatCardScale, useArtScale, useLayoutMode, useLayoutScale } from '../lib/scale';
 import { playTurnSound, startTitleBlink, stopTitleBlink } from '../lib/sound';
@@ -141,7 +142,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
         }
       >
         {!compact && (
-          <aside className="panel self-start">
+          <aside className="panel min-h-0 overflow-y-auto">
             <HandRanking categoryOrder={view.settings.categoryOrder} />
           </aside>
         )}
@@ -240,18 +241,26 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             {showVsSplash && duellists.length === 2 && (
               <FinalDuelSplash left={duellists[0]!.nick} right={duellists[1]!.nick} />
             )}
-            <p
-              className="absolute bottom-1 text-right text-[0.7rem] leading-tight text-stone-400"
+            <div
+              className="plaque absolute bottom-1 flex items-center gap-1.5 border-4 border-ink bg-panel px-1.5 py-1"
               // the felt's stepped corner notch eats the bottom-right ~3*--st square; clearing it on
               // the right axis alone is enough to stay off the cut, whichever axis the cut favours
               style={{ right: 'calc(var(--st) * 3.5)' }}
             >
-              {t('table.deckInfo', {
-                rank: rankLabel(view.settings.lowestRank),
-                total: deckTotal,
-                undealt: undealtCards,
-              })}
-            </p>
+              <img
+                src={backSprite('red')}
+                alt=""
+                width={28}
+                height={40}
+                draggable={false}
+                className="block select-none"
+                style={{ imageRendering: 'pixelated' }}
+              />
+              <div className="text-left text-xs leading-tight text-stone-300">
+                <p>{t('table.deckFrom', { rank: rankLabel(view.settings.lowestRank) })}</p>
+                <p>{t('table.deckUndealt', { count: undealtCards })}</p>
+              </div>
+            </div>
           </div>
         </div>
 

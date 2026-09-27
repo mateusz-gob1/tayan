@@ -3,7 +3,7 @@ import { io as connect, type Socket } from 'socket.io-client';
 import { seededRng, type PlayerView } from '@tayan/engine';
 import type { Ack, RoomStatePayload, SessionPayload } from '../src/protocol';
 import { ManualScheduler } from '../src/scheduler';
-import { createGameServer, type GameServer } from '../src/server';
+import { createGameServer, type GameServer, type ServerDeps } from '../src/server';
 import type { ServerConfig } from '../src/config';
 
 export type TestServer = {
@@ -13,7 +13,10 @@ export type TestServer = {
   stop: () => Promise<void>;
 };
 
-export async function startTestServer(config: Partial<ServerConfig> = {}): Promise<TestServer> {
+export async function startTestServer(
+  config: Partial<ServerConfig> = {},
+  deps: Partial<ServerDeps> = {},
+): Promise<TestServer> {
   const scheduler = new ManualScheduler();
   const server = createGameServer(
     {
@@ -24,7 +27,7 @@ export async function startTestServer(config: Partial<ServerConfig> = {}): Promi
       enableBots: true,
       ...config,
     },
-    { scheduler, rng: seededRng(42), logger: pino({ level: 'silent' }) },
+    { scheduler, rng: seededRng(42), logger: pino({ level: 'silent' }), ...deps },
   );
   const port = await server.listen(0);
   return { server, scheduler, url: `http://localhost:${port}`, stop: () => server.close() };
