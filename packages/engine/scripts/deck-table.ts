@@ -12,6 +12,9 @@ import type { Rank } from '../src/types';
 const games = Number(process.argv[2] ?? 1000);
 const rng = seededRng(2026);
 
+// `DECK_TABLE`'s rows now come from tayan-lab's research (docs/adr/0007-...), not from this
+// simulation. This script is a diagnostic: it shows what the old four/straight-flush-rate method
+// would have picked, for comparison against the `table` column (the value actually in use).
 console.log(`Deck table (${games} games per variant)\n`);
 console.log('players | lowest | cards | avg in play | four % | straight flush % | table');
 for (let players = 2; players <= 13; players++) {

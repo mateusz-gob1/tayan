@@ -8,9 +8,9 @@ import {
   defaultStartingCards,
 } from './deckSelection';
 import { existsInPool, matchDeclaration } from './pool';
+import { rankCategoriesStatic } from './ranking';
 import { shuffle, type Rng } from './rng';
 import {
-  DEFAULT_CATEGORY_ORDER,
   EngineError,
   type Action,
   type Card,
@@ -38,7 +38,12 @@ export function resolveSettings(input: Partial<GameSettings>, players: number): 
     lowestRank,
     startingCards,
     eliminationLimit,
-    categoryOrder: input.categoryOrder ?? [...DEFAULT_CATEGORY_ORDER],
+    // Computed once here, from the deck and player count already decided for this game, never
+    // recomputed mid-game (docs/adr/0007-mathematical-category-ranking.md). `rankCategoriesStatic`
+    // is memoized, so calling this from a lobby preview on every settings change is cheap.
+    categoryOrder:
+      input.categoryOrder ??
+      rankCategoriesStatic(lowestRank, players, startingCards, eliminationLimit),
     turnTimerSec: input.turnTimerSec ?? null,
     inactiveTimeoutSec: input.inactiveTimeoutSec ?? null,
     kickVoteAfterSec: input.kickVoteAfterSec ?? 120,

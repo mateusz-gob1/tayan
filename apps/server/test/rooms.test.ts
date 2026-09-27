@@ -112,7 +112,7 @@ describe('rooms and lobby', () => {
       await c.ok('room:join', { code, nick });
     }
     await host.until(() => host.state?.members.length === 4);
-    expect(host.state!.settings.lowestRank).toBe(7); // auto: 4 players use a deck from 7
+    expect(host.state!.settings.lowestRank).toBe(9); // auto: 4 players use a deck from 9
     expect(host.state!.settings.eliminationLimit).toBe(6);
     await host.ok('room:settings', { deckMode: 'FULL' });
     await host.until(() => host.state?.settings.lowestRank === 2);
