@@ -16,6 +16,7 @@ import {
 } from '@tayan/engine';
 import { chooseDeck } from '@tayan/engine';
 import type { Logger } from 'pino';
+import type { GameLogSink, ServerLogEvent } from './gameLog';
 import { RoomError, toRoomError, type RoomPhase, type RoomStatePayload } from './protocol';
 import type { Scheduler } from './scheduler';
 
@@ -48,6 +49,7 @@ export type RoomDeps = {
   scheduler: Scheduler;
   rng: Rng;
   log: Logger;
+  gameLog: GameLogSink;
 };
 
 type Reason = 'VOTE' | 'INACTIVE' | 'LEFT' | 'KICKED';
@@ -76,6 +78,12 @@ export class Room {
   private cancelInactive: (() => void) | undefined;
   private cancelBot: (() => void) | undefined;
   private botTimerKey = '';
+
+  // completed-game log (docs/deployment.md): only for games with no bots among the players
+  private gameStartedAt = 0;
+  private gameHasBots = false;
+  private gamePlayers: { id: string; nick: string }[] = [];
+  private transcript: ServerLogEvent[] = [];
 
   constructor(
     readonly code: string,
@@ -252,6 +260,10 @@ export class Room {
     if (players.length < 2) throw new RoomError('NOT_ENOUGH_PLAYERS');
     // players who are offline sit out until the rematch
     for (const m of this.members) if (!players.includes(m)) m.role = 'spectator';
+    this.gameStartedAt = this.deps.scheduler.now();
+    this.gameHasBots = players.some((p) => p.bot === true);
+    this.gamePlayers = players.map((p) => ({ id: p.id, nick: p.nick }));
+    this.transcript = [];
     try {
       const result = createGame(
         players.map((p) => p.id),
@@ -351,7 +363,10 @@ export class Room {
         this.emitEvents(result.events.filter((e) => e.type !== 'GAME_OVER'));
       } else {
         this.emitEvents(result.events);
-        if (result.state.winner) this.phase = 'GAME_OVER';
+        if (result.state.winner) {
+          this.phase = 'GAME_OVER';
+          this.finishGameLog(result.state.winner);
+        }
       }
     } catch (e) {
       throw toRoomError(e);
@@ -361,11 +376,7 @@ export class Room {
   private forceEliminate(playerId: string, reason: Reason): void {
     try {
       this.run({ type: 'ELIMINATE', playerId });
-      this.deps.transport.toRoom(this.code, 'game:event', {
-        type: 'ELIMINATION_REASON',
-        playerId,
-        reason,
-      });
+      this.emitEvent({ type: 'ELIMINATION_REASON', playerId, reason });
     } catch (e) {
       this.deps.log.warn({ err: e, playerId, reason }, 'forced elimination failed');
     }
@@ -374,7 +385,27 @@ export class Room {
   }
 
   private emitEvents(events: GameEvent[]): void {
-    for (const event of events) this.deps.transport.toRoom(this.code, 'game:event', event);
+    for (const event of events) this.emitEvent(event);
+  }
+
+  private emitEvent(event: ServerLogEvent): void {
+    this.transcript.push(event);
+    this.deps.transport.toRoom(this.code, 'game:event', event);
+  }
+
+  /** Records a finished game (no bots among its players) for play-activity stats and, eventually,
+   * bot training data (docs/deployment.md). A no-op unless `GAME_LOG_DATABASE_URL` is configured. */
+  private finishGameLog(winnerId: string): void {
+    if (this.gameHasBots || !this.state) return;
+    this.deps.gameLog.record({
+      code: this.code,
+      startedAt: this.gameStartedAt,
+      endedAt: this.deps.scheduler.now(),
+      players: this.gamePlayers,
+      winnerId,
+      settings: this.state.settings,
+      events: this.transcript,
+    });
   }
 
   // ---- timers -----------------------------------------------------------
@@ -458,7 +489,10 @@ export class Room {
     this.finalReveal = false;
     this.phase = 'GAME_OVER';
     this.ready.clear();
-    if (winner) this.emitEvents([{ type: 'GAME_OVER', winner }]);
+    if (winner) {
+      this.emitEvents([{ type: 'GAME_OVER', winner }]);
+      this.finishGameLog(winner);
+    }
   }
 
   /** Turn timer expired: check, or the lowest declaration if this player opens the round. */
@@ -470,7 +504,7 @@ export class Room {
     const first = st.declarations[0];
     if (opening && first) this.run({ type: 'DECLARE', playerId, declarationId: first.id });
     else this.run({ type: 'CHECK', playerId });
-    this.deps.transport.toRoom(this.code, 'game:event', { type: 'AUTO_PLAYED', playerId });
+    this.emitEvent({ type: 'AUTO_PLAYED', playerId });
   }
 
   /** Schedules the move of a bot whose turn it is, after a human-like pause. */

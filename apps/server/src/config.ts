@@ -7,6 +7,8 @@ export type ServerConfig = {
   rateLimitPerSec: number;
   /** Lets the host add server-driven bots to a room (testing aid; set ENABLE_BOTS=false to hide). */
   enableBots: boolean;
+  /** Postgres connection string for the completed-game log (see docs/deployment.md); unset = off. */
+  gameLogDatabaseUrl?: string;
 };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
@@ -16,6 +18,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
     logLevel: env.LOG_LEVEL ?? 'info',
     rateLimitPerSec: Number(env.RATE_LIMIT_PER_SEC ?? 10),
     enableBots: env.ENABLE_BOTS !== 'false',
+    gameLogDatabaseUrl: env.GAME_LOG_DATABASE_URL,
   };
 }
 

@@ -5,6 +5,7 @@ import pino, { type Logger } from 'pino';
 import type { Rng } from '@tayan/engine';
 import type { ZodError } from 'zod';
 import { originMatchers, parseOrigins, type ServerConfig } from './config';
+import { createGameLogSink, type GameLogSink } from './gameLog';
 import {
   clientEvents,
   RoomError,
@@ -30,7 +31,13 @@ export type GameServer = {
   close(): Promise<void>;
 };
 
-export type ServerDeps = { scheduler?: Scheduler; rng?: Rng; logger?: Logger };
+export type ServerDeps = {
+  scheduler?: Scheduler;
+  rng?: Rng;
+  logger?: Logger;
+  /** Overrides the log sink built from `config.gameLogDatabaseUrl` (tests only). */
+  gameLog?: GameLogSink;
+};
 
 const cryptoRng: Rng = { int: (max) => randomInt(max) };
 
@@ -63,7 +70,8 @@ export function createGameServer(config: ServerConfig, deps: ServerDeps = {}): G
     drop: (id) => void io.sockets.sockets.get(id)?.disconnect(true),
   };
 
-  const rooms = new RoomManager({ transport, scheduler, rng: deps.rng ?? cryptoRng, log });
+  const gameLog = deps.gameLog ?? createGameLogSink(config.gameLogDatabaseUrl, log);
+  const rooms = new RoomManager({ transport, scheduler, rng: deps.rng ?? cryptoRng, log, gameLog });
 
   function bind(socket: AppSocket, room: Room, member: Member): SessionPayload {
     socket.data.roomCode = room.code;
@@ -224,6 +232,7 @@ export function createGameServer(config: ServerConfig, deps: ServerDeps = {}): G
     async close() {
       rooms.closeAll();
       await io.close();
+      await gameLog.close();
     },
   };
 }
