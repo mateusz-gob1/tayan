@@ -53,7 +53,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
     0,
     view.players.findIndex((x) => x.id === view.me),
   );
-  /** Where seat `i` sits around the table, shared by the seat itself and the final-duel spotlight. */
+  /** Where seat `i` sits around the table. */
   const seatPos = (i: number) => {
     const rel = (i - myIndex + view.players.length) % view.players.length;
     const theta = ((90 + (rel * 360) / view.players.length) * Math.PI) / 180;
@@ -68,8 +68,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const myPlayer = view.players.find((p) => p.id === view.me);
   const isPlayer = myPlayer !== undefined && !myPlayer.eliminated;
   const myTurn = isPlayer && view.currentTurn === view.me;
-  // the decisive duel: the rest of the felt dims, a spotlight left on the two players still
-  // standing — whole game long if it started with just the two of them
+  // the decisive duel: whole game long if it started with just the two of them
   const isFinal = view.players.filter((p) => !p.eliminated).length === 2;
   const lastBid = view.bids[view.bids.length - 1];
   const lastDecl = lastBid ? byId(lastBid.declarationId) : undefined;
@@ -167,29 +166,6 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                 <p className="mt-2 text-sm text-stone-200">{t('table.noBids')}</p>
               )}
             </div>
-            {isFinal &&
-              (() => {
-                const holes = view.players
-                  .map((p, i) => (p.eliminated ? null : seatPos(i)))
-                  .filter((s): s is ReturnType<typeof seatPos> => s !== null)
-                  .map(
-                    ({ left, top }) =>
-                      // a clear halo of felt beyond the plaque's own edge, not just barely past it
-                      `radial-gradient(ellipse ${halfW + 2.5}rem ${halfH + 3}rem at ${left} ${top}, transparent 0 100%, black 100%)`,
-                  );
-                // the declared hand is game state the player needs to read, not part of the
-                // "who's still standing" spotlight — never dim it
-                holes.push(
-                  'radial-gradient(ellipse 9.5rem 4.5rem at 50% var(--centre-top, 40%), transparent 0 100%, black 100%)',
-                );
-                return (
-                  <div
-                    aria-hidden="true"
-                    className="spotlight-mask pointer-events-none absolute inset-0"
-                    style={{ maskImage: holes.join(', '), maskComposite: 'intersect' }}
-                  />
-                );
-              })()}
             {view.players.map((p, i) => {
               const { left, top } = seatPos(i);
               const active = view.currentTurn === p.id && !p.eliminated;
