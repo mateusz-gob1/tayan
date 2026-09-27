@@ -19,7 +19,7 @@ export function FinalDuelSplash({ left, right }: { left: string; right: string }
       <div className="flex items-center gap-4">
         <span
           key={`l-${left}`}
-          className="deal-in max-w-[10rem] truncate font-display text-base text-gold"
+          className="deal-in font-display text-base text-gold"
           style={{ textShadow: '2px 2px 0 var(--color-ink)' }}
         >
           {left}
@@ -29,7 +29,7 @@ export function FinalDuelSplash({ left, right }: { left: string; right: string }
         </span>
         <span
           key={`r-${right}`}
-          className="deal-in max-w-[10rem] truncate font-display text-base text-gold"
+          className="deal-in font-display text-base text-gold"
           style={{ textShadow: '2px 2px 0 var(--color-ink)', animationDelay: '90ms' }}
         >
           {right}

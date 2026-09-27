@@ -51,7 +51,7 @@ export function toRoomError(e: unknown): unknown {
   return e instanceof EngineError ? new RoomError(ENGINE_TO_ROOM[e.code], e.message) : e;
 }
 
-const nick = z.string().trim().min(1).max(16);
+const nick = z.string().trim().min(1).max(12);
 const code = z
   .string()
   .trim()

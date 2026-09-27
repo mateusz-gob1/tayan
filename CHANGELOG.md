@@ -6,6 +6,8 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Changed
 
+- Nicknames are now 1 to 12 characters (was 1 to 16), and are no longer truncated with "…" wherever they are shown (the seat plaque, the final-duel splash)
+
 - The default hand ranking (the order in which players may raise) is now computed once per game from the exact probability of each hand, instead of a fixed guessed order; it no longer changes during a game. The standard-settings deck table and the default starting-cards threshold (now 7, was 6) also come from this research. See `docs/adr/0007-mathematical-category-ranking.md`
 - The lobby's game settings are split into two collapsible sections, "General settings" and "Game settings" (deck, starting cards, elimination limit), the latter with a note that its defaults are recommended
 

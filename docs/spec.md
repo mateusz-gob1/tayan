@@ -289,7 +289,7 @@ Pokój identyfikuje 5-znakowy kod, dołącza się linkiem `/r/KOD`, a tożsamoś
 
 - Kod: 5 znaków z alfabetu bez mylących się znaków (bez 0/O, 1/I/L), np. `K7XQM`.
 - Twórca pokoju zostaje hostem. Gdy host wyjdzie, host przechodzi na najdłużej obecnego gracza.
-- Maksymalnie 13 graczy. Nick: 1 do 16 znaków, unikalny w pokoju.
+- Maksymalnie 13 graczy. Nick: 1 do 12 znaków, unikalny w pokoju.
 - Dołączenie w trakcie gry: nowa osoba trafia do poczekalni jako widz i wchodzi do gry przy rewanżu. Widz widzi informacje publiczne (liczniki kart, licytację, odkrycia) oraz, gdy włączone jest ustawienie `spectatorsSeeCards` (domyślnie tak), karty graczy. To samo dotyczy graczy, którzy odpadli.
 - Pusty pokój jest usuwany po 10 minutach.
 

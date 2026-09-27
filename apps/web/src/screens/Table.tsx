@@ -97,8 +97,15 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
     if (isFinal && !wasFinal.current) {
       setShowVsSplash(true);
       const id = window.setTimeout(() => setShowVsSplash(false), 2600);
-      wasFinal.current = isFinal;
-      return () => window.clearTimeout(id);
+      wasFinal.current = true;
+      // Undoes the `wasFinal.current` write too, not just the timeout: React's StrictMode
+      // replays every effect once in development (mount, clean up, mount again), and without
+      // this the replay would see "already seen" from the first pass, skip rescheduling, and the
+      // clean-up would have already cancelled the one timeout that was going to hide the splash.
+      return () => {
+        window.clearTimeout(id);
+        wasFinal.current = false;
+      };
     }
     wasFinal.current = isFinal;
   }, [isFinal]);
@@ -167,8 +174,14 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   .filter((s): s is ReturnType<typeof seatPos> => s !== null)
                   .map(
                     ({ left, top }) =>
-                      `radial-gradient(ellipse ${halfW}rem ${halfH}rem at ${left} ${top}, transparent 0 100%, black 100%)`,
+                      // a clear halo of felt beyond the plaque's own edge, not just barely past it
+                      `radial-gradient(ellipse ${halfW + 2.5}rem ${halfH + 3}rem at ${left} ${top}, transparent 0 100%, black 100%)`,
                   );
+                // the declared hand is game state the player needs to read, not part of the
+                // "who's still standing" spotlight — never dim it
+                holes.push(
+                  'radial-gradient(ellipse 9.5rem 4.5rem at 50% var(--centre-top, 40%), transparent 0 100%, black 100%)',
+                );
                 return (
                   <div
                     aria-hidden="true"
@@ -191,7 +204,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   // snap to whole pixels so the sprites are not resampled unevenly
                   style={{ left, top }}
                 >
-                  <p className="max-w-[8rem] truncate text-sm font-bold">
+                  <p className="max-w-[14rem] text-sm font-bold">
                     {p.nick}
                     {p.id === view.me && ' ★'}
                   </p>

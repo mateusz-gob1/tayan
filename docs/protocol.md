@@ -24,4 +24,4 @@ Every client event takes a payload and an `ack` callback: `ack({ ok: true, data?
 | `game:event`    | engine events (`DECLARED`, `CHECKED`, `REVEALED`, `PLAYER_ELIMINATED`, `GAME_OVER`, `ROUND_STARTED`) plus `AUTO_PLAYED` and `ELIMINATION_REASON` |
 | `error`         | `{ code }` for things not tied to an ack (`KICKED`, `SERVER_SHUTDOWN`)                                                                           |
 
-Error codes: see `ERROR_CODES` in `protocol.ts` and [ADR 0004](adr/0004-vote-kick-and-server-events.md). Limits: 10 events per second per connection, 13 members per room, nick 1–16 characters and unique per room. `GET /healthz` returns `{ ok: true }`.
+Error codes: see `ERROR_CODES` in `protocol.ts` and [ADR 0004](adr/0004-vote-kick-and-server-events.md). Limits: 10 events per second per connection, 13 members per room, nick 1–12 characters and unique per room. `GET /healthz` returns `{ ok: true }`.
