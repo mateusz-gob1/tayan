@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Fixed
+
+- A stale saved session (from a room that no longer exists, e.g. after the server restarted) no longer flashes a misleading "no such room, check the code" banner on load; the app just quietly returns to the start screen
+
 ### Changed
 
 - On the table, the hand ranking panel moved to the left of the table (narrower, and now the same height as the bidding history) and only the bidding history stays on the right, so the history has the full height to itself instead of sharing it with the ranking
