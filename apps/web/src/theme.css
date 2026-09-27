@@ -419,3 +419,15 @@ body {
     animation: none;
   }
 }
+
+/*
+ * The last two players: the rest of the felt dims, static, so the two who are left stand out.
+ * `mask-image` in Table.tsx cuts two flat, hard-edged holes (no blur) over their seats; the dark
+ * wash itself lives here, gated behind `@supports` so a browser without `mask-composite` just
+ * shows nothing instead of an opaque rectangle hiding the whole table.
+ */
+@supports (mask-composite: intersect) {
+  .spotlight-mask {
+    background: rgb(0 0 0 / 0.55);
+  }
+}
