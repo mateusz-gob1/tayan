@@ -23,10 +23,10 @@ describe('setup', () => {
   it('resolves default settings from the player count', () => {
     expect(resolveSettings({}, 4)).toMatchObject({
       startingCards: 2,
-      lowestRank: 7,
+      lowestRank: 9,
       eliminationLimit: 6,
     });
-    expect(resolveSettings({}, 8)).toMatchObject({ startingCards: 1, lowestRank: 2 });
+    expect(resolveSettings({}, 8)).toMatchObject({ startingCards: 1, lowestRank: 5 });
     expect(resolveSettings({}, 12).eliminationLimit).toBe(5); // 5-card hands would not fit
     expect(resolveSettings({ eliminationLimit: 4 }, 4).eliminationLimit).toBe(4);
     expect(resolveSettings({ deckMode: 'FULL' }, 3).lowestRank).toBe(2);

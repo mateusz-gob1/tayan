@@ -1,23 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import {
-  DECK_TABLE,
-  chooseDeck,
-  defaultEliminationLimit,
-  defaultStartingCards,
-  simulateRates,
-} from '../src/deckSelection';
+import { chooseDeck, defaultEliminationLimit, simulateRates } from '../src/deckSelection';
 import { seededRng } from '../src/rng';
 
 describe('deck selection', () => {
   it('uses the precomputed table for standard settings', () => {
     const c = chooseDeck({ players: 6, startingCards: 2, eliminationLimit: 6 });
-    expect(c).toEqual({ lowestRank: 2, warning: false, source: 'table' });
-    expect(chooseDeck({ players: 12, startingCards: 1, eliminationLimit: 5 }).warning).toBe(true);
+    expect(c).toEqual({ lowestRank: 7, warning: false, source: 'table' });
+    // DECK_TABLE's rows come from tayan-lab's own criteria now (docs/adr/0007-...), not from the
+    // four/straight-flush simulation below, so `warning` is always false here by design.
+    expect(chooseDeck({ players: 12, startingCards: 1, eliminationLimit: 5 }).warning).toBe(false);
     expect(defaultEliminationLimit(10)).toBe(6);
     expect(defaultEliminationLimit(11)).toBe(5);
   });
 
-  // Reference table from the original spec, computed for elimination limit 5.
+  // Reference table from the original spec, computed for elimination limit 5 with the historical
+  // starting-cards default (<=6 players: 2 cards, from 7: 1) — not today's `defaultStartingCards`,
+  // which changed (docs/adr/0007-...) and would no longer match these numbers for 7 players.
+  const historicalStartingCards = (players: number): 1 | 2 => (players <= 6 ? 2 : 1);
   const SPEC_TABLE_LIMIT_5: Record<number, number> = {
     2: 9,
     3: 9,
@@ -37,7 +36,7 @@ describe('deck selection', () => {
     const rng = seededRng(7);
     for (let players = 2; players <= 13; players++) {
       const c = chooseDeck(
-        { players, startingCards: defaultStartingCards(players), eliminationLimit: 5 },
+        { players, startingCards: historicalStartingCards(players), eliminationLimit: 5 },
         { games: 400, rng, forceSimulation: true },
       );
       expect(
@@ -47,23 +46,10 @@ describe('deck selection', () => {
     }
   });
 
-  it('the shipped table matches a fresh simulation with the default limit, within one rank', () => {
-    const rng = seededRng(11);
-    for (let players = 2; players <= 13; players++) {
-      const c = chooseDeck(
-        {
-          players,
-          startingCards: defaultStartingCards(players),
-          eliminationLimit: defaultEliminationLimit(players),
-        },
-        { games: 400, rng, forceSimulation: true },
-      );
-      expect(
-        Math.abs(c.lowestRank - DECK_TABLE[players]!.lowestRank),
-        `players=${players}`,
-      ).toBeLessThanOrEqual(1);
-    }
-  });
+  // There used to be a test asserting DECK_TABLE stays close to a fresh simulation. It is gone on
+  // purpose: DECK_TABLE now comes from a different, unrelated criterion (docs/adr/0007-...), so
+  // the two are expected to diverge, sometimes by more than one rank — that was the whole point
+  // of adopting the new table, not a regression to guard against.
 
   it('simulates non-standard settings and respects the hard deck limit', () => {
     const c = chooseDeck({ players: 4, startingCards: 1, eliminationLimit: 5 }, { games: 200 });

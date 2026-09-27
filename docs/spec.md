@@ -27,7 +27,7 @@ Każda runda kończy się sprawdzeniem, po którym dokładnie jeden gracz dostaj
 **Przygotowanie**
 
 - Liczba graczy: od 2 do 13 (górna granica wynika z talii, patrz Talia).
-- Startowa liczba kart na gracza: 1 lub 2, ustawiana przez hosta. Domyślnie 2 przy maksymalnie 6 graczach, 1 przy 7 i więcej.
+- Startowa liczba kart na gracza: 1 lub 2, ustawiana przez hosta. Domyślnie 2 przy maksymalnie 7 graczach, 1 przy 8 i więcej. *(Zmiana wobec pierwotnego progu 6/7; patrz `docs/adr/0007-mathematical-category-ranking.md`.)*
 - Limit eliminacji: 6 kart (konfigurowalny, domyślnie 6; przy 11 i więcej graczach domyślnie 5, bo ręce po 5 kart nie mieszczą się w talii 52 kart). Gracz, który po przegranej rundzie ma tyle kart, odpada, a z limitem-1 kartami jeszcze gra. *(Zmiana wobec pierwotnej wersji specyfikacji, która zakładała 5; patrz `docs/adr/0005-elimination-limit-6.md`.)*
 - Kolejność graczy przy stole jest losowana na starcie gry i stała przez całą grę.
 
@@ -69,7 +69,7 @@ Talia zawsze kończy się na asie, a w trybie automatycznym jej najniższa figur
 
 **Uzasadnienie:** wzór "tyle figur, ilu graczy" gwarantował tylko, że kart wystarczy. Przy 6 graczach i talii od 9 w grze jest średnio ponad połowa talii, więc kareta występuje w ok. 49% rund, a poker w ok. 32%, i licytacja szybko ucieka w najwyższe układy. O trudności decyduje stosunek kart w grze do wielkości talii, dlatego talia musi rosnąć szybciej niż liczba graczy.
 
-**Tabela referencyjna** (pierwotna, dla limitu 5; aktualna tabela dla limitu domyślnego jest w `packages/engine/src/deckSelection.ts` i powstaje z `pnpm engine:deck-table`; symulacja 300 gier na wariant, przegrany rundy losowany, 2 karty startowe do 6 graczy, 1 od 7, limit 5):
+**Tabela referencyjna** (pierwotna, dla limitu 5, symulacja 300 gier na wariant, przegrany rundy losowany, 2 karty startowe do 6 graczy, 1 od 7 — zostaje jako historyczny punkt odniesienia w testach silnika, `SPEC_TABLE_LIMIT_5`). Talia dla ustawień domyślnych (`DECK_TABLE` w `packages/engine/src/deckSelection.ts`) nie jest już wyliczana tą symulacją: od `docs/adr/0007-mathematical-category-ranking.md` pochodzi z osobnego badania (`tayan-lab`), wg innego kryterium (czy konkretna deklaracja w ogóle da się znaleźć, a nie częstość karety/pokera); `pnpm engine:deck-table` pokazuje już tylko, co wybrałaby stara symulacja, do porównania.
 
 | Liczba graczy | Najniższa figura | Kart w talii | Śr. kart w grze | Kareta w puli (% rund) | Jakikolwiek poker (% rund) |
 | --- | --- | --- | --- | --- | --- |
@@ -136,7 +136,7 @@ Strit jest poniżej trójki (odwrotnie niż w klasycznym pokerze), bo przy puli 
 - `matchDeclaration(declaration, cards)` zwraca najlepsze dopasowanie deklaracji do puli: znalezione karty oraz brakujące miejsca (np. dla fulla damy na dziewiątkach: dwie damy i dwie dziewiątki znalezione, brakuje jednej damy). Działa także, gdy układu nie ma, żeby przy odkryciu było widać, ile brakowało.
 - Deklaracja fizycznie niemożliwa w bieżącej puli (np. full przy 3 kartach w grze) jest dozwolona; po sprawdzeniu po prostu przegrywa.
 
-**Konfigurowalna kolejność:** kolejność kategorii jest przechowywana jako tablica w ustawieniach gry, a nie zaszyta w kodzie. W talii od 9 kolor jest trudniejszy niż full, w pełnej talii przy dużej puli łatwiejszy, dlatego później można dodać tryb, w którym kolejność wyznacza symulacja prawdopodobieństw.
+**Konfigurowalna kolejność:** kolejność kategorii jest przechowywana jako tablica w ustawieniach gry, a nie zaszyta w kodzie. W talii od 9 kolor jest trudniejszy niż full, w pełnej talii przy dużej puli łatwiejszy, więc jedna stała kolejność nie pasuje do wszystkich liczby graczy. Domyślna kolejność jest dlatego liczona, nie zaszyta: raz, przy starcie gry, z dokładnego prawdopodobieństwa każdej kategorii dla danej talii, liczby graczy, kart startowych i limitu eliminacji (`rankCategoriesStatic`, `packages/engine/src/ranking.ts`), i nie zmienia się już do końca gry. Źródło i zakres: `docs/adr/0007-mathematical-category-ranking.md` (badanie zewnętrzne, `tayan-lab`; świadomie bez dynamicznej ani "etapowej" zmiany kolejności w trakcie gry). Host może nadal jawnie podać własną kolejność.
 
 ## Architektura techniczna i stack
 
@@ -293,7 +293,7 @@ Pokój identyfikuje 5-znakowy kod, dołącza się linkiem `/r/KOD`, a tożsamoś
 - Dołączenie w trakcie gry: nowa osoba trafia do poczekalni jako widz i wchodzi do gry przy rewanżu. Widz widzi informacje publiczne (liczniki kart, licytację, odkrycia) oraz, gdy włączone jest ustawienie `spectatorsSeeCards` (domyślnie tak), karty graczy. To samo dotyczy graczy, którzy odpadli.
 - Pusty pokój jest usuwany po 10 minutach.
 
-**Lobby:** host widzi ustawienia z wartościami domyślnymi wyliczonymi dla aktualnej liczby graczy (najniższa figura, karty startowe). Wartości automatyczne przeliczają się na żywo przy dołączaniu graczy, dopóki host ich ręcznie nie nadpisze.
+**Lobby:** host widzi ustawienia z wartościami domyślnymi wyliczonymi dla aktualnej liczby graczy (najniższa figura, karty startowe). Wartości automatyczne przeliczają się na żywo przy dołączaniu graczy, dopóki host ich ręcznie nie nadpisze. Ustawienia są w dwóch rozwijanych sekcjach: "Ustawienia ogólne" (limit czasu tury, czekanie na rozłączonego, głosowanie na wyrzucenie, widoczność kart dla widzów) i "Ustawienia gry" (talia, karty na start, limit eliminacji), z notatką, że wartości domyślne w tej drugiej sekcji są dobrane matematycznie i zalecane (`docs/adr/0007-mathematical-category-ranking.md`).
 
 **Reconnect:**
 
@@ -312,7 +312,7 @@ Aplikacja ma pięć ekranów, projektowanych pod desktop (od 1024 px szerokości
 | --- | --- |
 | Start | logo Tayan, pole nick, przyciski "Utwórz pokój" i "Dołącz" (pole na kod) |
 | Lobby | kod pokoju, przycisk "Kopiuj link", lista graczy (host oznaczony), ustawienia (edytowalne tylko dla hosta), "Start" |
-| Stół | gracze wokół stołu z licznikiem kart i statusem, moje karty na dole, historia licytacji, panel akcji |
+| Stół | gracze wokół stołu z licznikiem kart i statusem, moje karty na dole, historia licytacji, ranking układów tej gry (stale widoczny z boku), panel akcji |
 | Odkrycie | karty wszystkich graczy oraz zadeklarowany układ ułożony z kart z puli (z oznaczeniem, kto je miał), a brakujące karty jako puste miejsca, np. "brakowało 1 z 5"; komunikat kto dostaje kartę, przycisk "Dalej" |
 | Koniec gry | zwycięzca, kolejność odpadania, przycisk "Rewanż" (host) |
 
