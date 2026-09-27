@@ -44,7 +44,7 @@ export function Start() {
 
   const submit = async (action: 'create' | 'join') => {
     const clean = nick.trim();
-    if (clean.length < 1 || clean.length > 16) return setNotice('INVALID_PAYLOAD');
+    if (clean.length < 1 || clean.length > 12) return setNotice('INVALID_PAYLOAD');
     setBusy(true);
     const res = action === 'create' ? await createRoom(clean) : await joinRoom(code, clean);
     setBusy(false);
@@ -72,7 +72,7 @@ export function Start() {
           <input
             className="input"
             value={nick}
-            maxLength={16}
+            maxLength={12}
             autoFocus
             onChange={(e) => setNick(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && void submit(invite || code ? 'join' : 'create')}

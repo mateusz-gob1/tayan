@@ -28,7 +28,7 @@
     "or": "albo",
     "joinHint": "Masz kod pokoju od znajomego? Wpisz go tutaj, żeby dołączyć.",
     "invited": "Zaproszenie do pokoju {{code}}",
-    "nickRequired": "Wpisz nick (1 do 16 znaków)",
+    "nickRequired": "Wpisz nick (1 do 12 znaków)",
     "source": "Kod źródłowy",
     "author": "Autor"
   },
