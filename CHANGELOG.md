@@ -6,12 +6,12 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Changed
 
-- On the table, the hand ranking panel moved to the left of the table (narrower) and only the bidding history stays on the right, so the history has the full height to itself instead of sharing it with the ranking
+- On the table, the hand ranking panel moved to the left of the table (narrower, and now the same height as the bidding history) and only the bidding history stays on the right, so the history has the full height to itself instead of sharing it with the ranking
 - The final-duel spotlight (the dimmed felt around the last two players) is gone; the "Grand final" VS splash is the only final-duel effect now
 
 ### Added
 
-- The table always shows the deck's lowest rank and how many of its cards were not dealt to anyone this round, in the table's bottom-right corner
+- The table always shows a small deck badge in its bottom-right corner: the lowest rank in play and how many of the deck's cards were not dealt to anyone this round
 
 ### Changed
 
