@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDeclaration, type Card, type Declaration, type PlayerView } from '@tayan/engine';
+import {
+  deckSize,
+  formatDeclaration,
+  rankLabel,
+  type Card,
+  type Declaration,
+  type PlayerView,
+} from '@tayan/engine';
 import { CardBack, PlayingCard, type Scale } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
 import { FinalDuelSplash } from '../components/FinalDuelSplash';
@@ -70,6 +77,12 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const myTurn = isPlayer && view.currentTurn === view.me;
   // the decisive duel: whole game long if it started with just the two of them
   const isFinal = view.players.filter((p) => !p.eliminated).length === 2;
+  const deckTotal = deckSize(view.settings.lowestRank);
+  // cards not dealt to anyone this round: only active players get a hand (game.ts's `dealRound`)
+  const dealtCards = view.players
+    .filter((p) => !p.eliminated)
+    .reduce((sum, p) => sum + p.cardCount, 0);
+  const undealtCards = deckTotal - dealtCards;
   const lastBid = view.bids[view.bids.length - 1];
   const lastDecl = lastBid ? byId(lastBid.declarationId) : undefined;
   const secondsLeft = view.turnDeadline
@@ -124,9 +137,14 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
         className={
           compact
             ? 'relative min-h-0 min-w-0 flex-1'
-            : 'grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]'
+            : 'grid min-h-0 flex-1 gap-4 xl:grid-cols-[12rem_minmax(0,1fr)_18rem]'
         }
       >
+        {!compact && (
+          <aside className="panel self-start">
+            <HandRanking categoryOrder={view.settings.categoryOrder} />
+          </aside>
+        )}
         <div
           className={`table-shape wood-frame flex ${
             compact
@@ -222,6 +240,18 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             {showVsSplash && duellists.length === 2 && (
               <FinalDuelSplash left={duellists[0]!.nick} right={duellists[1]!.nick} />
             )}
+            <p
+              className="absolute bottom-1 text-right text-[0.7rem] leading-tight text-stone-400"
+              // the felt's stepped corner notch eats the bottom-right ~3*--st square; clearing it on
+              // the right axis alone is enough to stay off the cut, whichever axis the cut favours
+              style={{ right: 'calc(var(--st) * 3.5)' }}
+            >
+              {t('table.deckInfo', {
+                rank: rankLabel(view.settings.lowestRank),
+                total: deckTotal,
+                undealt: undealtCards,
+              })}
+            </p>
           </div>
         </div>
 
@@ -257,20 +287,16 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
               <EventLog log={log} view={view} room={room} />
             </>
           );
-          const ranking = <HandRanking categoryOrder={view.settings.categoryOrder} />;
           return compact ? (
             <aside
               className={`panel absolute bottom-14 right-3 z-10 max-h-[70%] w-56 overflow-y-auto ${historyOpen ? '' : 'hidden'}`}
             >
-              {ranking}
+              <HandRanking categoryOrder={view.settings.categoryOrder} />
               <div className="mt-3 border-t border-white/10 pt-2">{history}</div>
             </aside>
           ) : (
-            <aside className="flex min-h-0 flex-col gap-4">
-              <section className="panel shrink-0">{ranking}</section>
-              <section className="panel max-h-40 min-h-0 overflow-y-auto xl:max-h-none xl:flex-1">
-                {history}
-              </section>
+            <aside className="panel min-h-0 max-h-40 overflow-y-auto xl:max-h-none">
+              {history}
             </aside>
           );
         })()}

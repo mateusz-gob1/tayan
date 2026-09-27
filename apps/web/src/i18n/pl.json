@@ -106,6 +106,7 @@
   "table": {
     "finalDuel": "Wielki finał",
     "vs": "VS",
+    "deckInfo": "Talia: od {{rank}} ({{total}} kart) · nierozdanych: {{undealt}}",
     "ranking": "Ranking układów",
     "round": "Runda {{n}}",
     "yourTurn": "Twoja tura",
