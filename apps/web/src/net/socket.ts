@@ -45,8 +45,10 @@ export function connect(): void {
       sessionToken: saved.sessionToken,
     }).then((res) => {
       if (res.ok) return;
+      // a silent background rejoin, not something the player asked for just now (they may not have
+      // opened the app in days) — a red "wrong code" banner here would be misleading, since no code
+      // was typed; just drop the stale session and land on the normal start screen
       store().clearRoom();
-      store().setNotice(res.error.code);
       setUrl('/');
     });
   });
