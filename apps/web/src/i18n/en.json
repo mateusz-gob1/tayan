@@ -104,6 +104,8 @@
     "tooSmall": "too small for this many players"
   },
   "table": {
+    "finalDuel": "Grand final",
+    "vs": "VS",
     "ranking": "Hand ranking",
     "round": "Round {{n}}",
     "yourTurn": "Your turn",

@@ -104,6 +104,8 @@
     "tooSmall": "za mała dla tylu graczy"
   },
   "table": {
+    "finalDuel": "Wielki finał",
+    "vs": "VS",
     "ranking": "Ranking układów",
     "round": "Runda {{n}}",
     "yourTurn": "Twoja tura",

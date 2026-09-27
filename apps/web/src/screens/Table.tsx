@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDeclaration, type Card, type Declaration, type PlayerView } from '@tayan/engine';
 import { CardBack, PlayingCard, type Scale } from '../components/PlayingCard';
 import { DeclarationPicker } from '../components/DeclarationPicker';
+import { FinalDuelSplash } from '../components/FinalDuelSplash';
 import { HandRanking } from '../components/HandRanking';
 import { SuitText } from '../components/SuitIcon';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
@@ -48,10 +49,28 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const fanRem = showFan ? (136 * seatScale) / rem : 0;
   const halfW = Math.max(4, (fanRem + 1) / 2) + 0.5;
   const halfH = 1.75 + (showFan ? (40 * seatScale) / rem : 0) + 0.5;
+  const myIndex = Math.max(
+    0,
+    view.players.findIndex((x) => x.id === view.me),
+  );
+  /** Where seat `i` sits around the table, shared by the seat itself and the final-duel spotlight. */
+  const seatPos = (i: number) => {
+    const rel = (i - myIndex + view.players.length) % view.players.length;
+    const theta = ((90 + (rel * 360) / view.players.length) * Math.PI) / 180;
+    const cos = Math.cos(theta);
+    const sin = Math.sin(theta);
+    return {
+      left: `round(nearest, calc(50% + (50% - ${halfW}rem) * ${cos.toFixed(4)}), 2px)`,
+      top: `round(nearest, calc(50% + (50% - ${halfH}rem) * ${sin.toFixed(4)}), 2px)`,
+    };
+  };
 
   const myPlayer = view.players.find((p) => p.id === view.me);
   const isPlayer = myPlayer !== undefined && !myPlayer.eliminated;
   const myTurn = isPlayer && view.currentTurn === view.me;
+  // the decisive duel: the rest of the felt dims, a spotlight left on the two players still
+  // standing — whole game long if it started with just the two of them
+  const isFinal = view.players.filter((p) => !p.eliminated).length === 2;
   const lastBid = view.bids[view.bids.length - 1];
   const lastDecl = lastBid ? byId(lastBid.declarationId) : undefined;
   const secondsLeft = view.turnDeadline
@@ -68,6 +87,22 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
     if (!myTurn) stopTitleBlink();
     wasMyTurn.current = myTurn;
   }, [myTurn, t]);
+
+  // A brief "VS" splash the moment the game comes down to its last two players — including round 1
+  // of a game that started with exactly two. Seeded to "already seen" only when we mount mid-final
+  // past round 1, so reloading the page part-way through a duel does not replay it.
+  const wasFinal = useRef(isFinal && view.roundNumber > 1);
+  const [showVsSplash, setShowVsSplash] = useState(false);
+  useEffect(() => {
+    if (isFinal && !wasFinal.current) {
+      setShowVsSplash(true);
+      const id = window.setTimeout(() => setShowVsSplash(false), 2600);
+      wasFinal.current = isFinal;
+      return () => window.clearTimeout(id);
+    }
+    wasFinal.current = isFinal;
+  }, [isFinal]);
+  const duellists = isFinal ? view.players.filter((p) => !p.eliminated) : [];
 
   return (
     <div
@@ -125,15 +160,25 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                 <p className="mt-2 text-sm text-stone-200">{t('table.noBids')}</p>
               )}
             </div>
+            {isFinal &&
+              (() => {
+                const holes = view.players
+                  .map((p, i) => (p.eliminated ? null : seatPos(i)))
+                  .filter((s): s is ReturnType<typeof seatPos> => s !== null)
+                  .map(
+                    ({ left, top }) =>
+                      `radial-gradient(ellipse ${halfW}rem ${halfH}rem at ${left} ${top}, transparent 0 100%, black 100%)`,
+                  );
+                return (
+                  <div
+                    aria-hidden="true"
+                    className="spotlight-mask pointer-events-none absolute inset-0"
+                    style={{ maskImage: holes.join(', '), maskComposite: 'intersect' }}
+                  />
+                );
+              })()}
             {view.players.map((p, i) => {
-              const myIndex = Math.max(
-                0,
-                view.players.findIndex((x) => x.id === view.me),
-              );
-              const rel = (i - myIndex + view.players.length) % view.players.length;
-              const theta = ((90 + (rel * 360) / view.players.length) * Math.PI) / 180;
-              const cos = Math.cos(theta);
-              const sin = Math.sin(theta);
+              const { left, top } = seatPos(i);
               const active = view.currentTurn === p.id && !p.eliminated;
               return (
                 <div
@@ -144,10 +189,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                       : 'plaque border-ink bg-panel'
                   } ${p.eliminated ? 'shake opacity-40 grayscale' : ''}`}
                   // snap to whole pixels so the sprites are not resampled unevenly
-                  style={{
-                    left: `round(nearest, calc(50% + (50% - ${halfW}rem) * ${cos.toFixed(4)}), 2px)`,
-                    top: `round(nearest, calc(50% + (50% - ${halfH}rem) * ${sin.toFixed(4)}), 2px)`,
-                  }}
+                  style={{ left, top }}
                 >
                   <p className="max-w-[8rem] truncate text-sm font-bold">
                     {p.nick}
@@ -188,6 +230,9 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                 </div>
               );
             })}
+            {showVsSplash && duellists.length === 2 && (
+              <FinalDuelSplash left={duellists[0]!.nick} right={duellists[1]!.nick} />
+            )}
           </div>
         </div>
 
