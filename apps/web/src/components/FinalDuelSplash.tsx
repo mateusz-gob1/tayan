@@ -5,7 +5,15 @@ import { useTranslation } from 'react-i18next';
  * players (`Table.tsx` decides when to mount/unmount this). Purely decorative: no game state
  * lives here.
  */
-export function FinalDuelSplash({ left, right }: { left: string; right: string }) {
+export function FinalDuelSplash({
+  left,
+  right,
+  deckFromRank,
+}: {
+  left: string;
+  right: string;
+  deckFromRank: string;
+}) {
   const { t } = useTranslation();
   return (
     <div
@@ -36,6 +44,7 @@ export function FinalDuelSplash({ left, right }: { left: string; right: string }
         </span>
       </div>
       <p className="pixel-rule mt-1 w-32" />
+      <p className="text-xs text-stone-400">{t('table.deckFrom', { rank: deckFromRank })}</p>
     </div>
   );
 }
