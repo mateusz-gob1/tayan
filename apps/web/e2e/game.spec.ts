@@ -52,6 +52,24 @@ test('a refreshed page returns to the same game with the same cards', async ({ b
   await expect(host.getByText('offline')).toHaveCount(0); // Bob is connected again
 });
 
+test('an invite to a different room is not overridden by a saved session', async ({ browser }) => {
+  const host = await newPlayer(browser);
+  const codeA = await createRoom(host, 'Ala'); // host now has a saved session for room A
+
+  const otherHost = await newPlayer(browser);
+  const codeB = await createRoom(otherHost, 'Bob');
+
+  // host's browser still holds room A's session when it follows a link to room B
+  await host.goto(`/r/${codeB}`);
+  await expect(host.getByText(`Zaproszenie do pokoju ${codeB}`)).toBeVisible();
+  expect(host.url()).toContain(`/r/${codeB}`);
+  expect(host.url()).not.toContain(`/r/${codeA}`);
+
+  // accepting the invite actually joins room B, not silently room A
+  await host.getByRole('button', { name: 'Dołącz' }).click();
+  await expect(host.getByText('Gracze (2)')).toBeVisible();
+});
+
 test('language switch and help panel', async ({ browser }) => {
   const page = await newPlayer(browser);
   await page.goto('/');

@@ -39,6 +39,17 @@ export function connect(): void {
     store().setConn('connected');
     const saved = loadSession();
     if (!saved) return;
+    // an invite link to a *different* room takes priority: silently resuming the old session would
+    // rewrite the URL out from under the player and dump them back in their old game instead of
+    // letting them see and accept the invite they actually opened. The store hydrates `session`
+    // from local storage eagerly (for the normal rejoin case), so without clearing it here the app
+    // would think it is mid-rejoin forever and get stuck on the "waking" screen instead of falling
+    // through to the invite prompt.
+    const invite = codeFromUrl();
+    if (invite && invite !== saved.roomCode) {
+      store().clearRoom();
+      return;
+    }
     void request('room:join', {
       code: saved.roomCode,
       nick: saved.nick,
