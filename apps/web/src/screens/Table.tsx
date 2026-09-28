@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  deckSize,
   formatDeclaration,
   rankLabel,
   type Card,
@@ -13,7 +12,6 @@ import { DeclarationPicker } from '../components/DeclarationPicker';
 import { FinalDuelSplash } from '../components/FinalDuelSplash';
 import { HandRanking } from '../components/HandRanking';
 import { SuitText } from '../components/SuitIcon';
-import { backSprite } from '../lib/cards';
 import { useDeclarations, useLang, useNow } from '../lib/hooks';
 import { iconZoom, seatCardScale, useArtScale, useLayoutMode, useLayoutScale } from '../lib/scale';
 import { playTurnSound, startTitleBlink, stopTitleBlink } from '../lib/sound';
@@ -78,12 +76,6 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const myTurn = isPlayer && view.currentTurn === view.me;
   // the decisive duel: whole game long if it started with just the two of them
   const isFinal = view.players.filter((p) => !p.eliminated).length === 2;
-  const deckTotal = deckSize(view.settings.lowestRank);
-  // cards not dealt to anyone this round: only active players get a hand (game.ts's `dealRound`)
-  const dealtCards = view.players
-    .filter((p) => !p.eliminated)
-    .reduce((sum, p) => sum + p.cardCount, 0);
-  const undealtCards = deckTotal - dealtCards;
   const lastBid = view.bids[view.bids.length - 1];
   const lastDecl = lastBid ? byId(lastBid.declarationId) : undefined;
   const secondsLeft = view.turnDeadline
@@ -143,6 +135,9 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
       >
         {!compact && (
           <aside className="panel min-h-0 overflow-y-auto">
+            <p className="mb-3 border-b border-white/10 pb-2 text-sm text-stone-300">
+              {t('table.deckFrom', { rank: rankLabel(view.settings.lowestRank) })}
+            </p>
             <HandRanking categoryOrder={view.settings.categoryOrder} />
           </aside>
         )}
@@ -241,26 +236,6 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             {showVsSplash && duellists.length === 2 && (
               <FinalDuelSplash left={duellists[0]!.nick} right={duellists[1]!.nick} />
             )}
-            <div
-              className="plaque absolute bottom-1 flex items-center gap-1.5 border-4 border-ink bg-panel px-1.5 py-1"
-              // the felt's stepped corner notch eats the bottom-right ~3*--st square; clearing it on
-              // the right axis alone is enough to stay off the cut, whichever axis the cut favours
-              style={{ right: 'calc(var(--st) * 3.5)' }}
-            >
-              <img
-                src={backSprite('red')}
-                alt=""
-                width={28}
-                height={40}
-                draggable={false}
-                className="block select-none"
-                style={{ imageRendering: 'pixelated' }}
-              />
-              <div className="text-left text-xs leading-tight text-stone-300">
-                <p>{t('table.deckFrom', { rank: rankLabel(view.settings.lowestRank) })}</p>
-                <p>{t('table.deckUndealt', { count: undealtCards })}</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -300,6 +275,9 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             <aside
               className={`panel absolute bottom-14 right-3 z-10 max-h-[70%] w-56 overflow-y-auto ${historyOpen ? '' : 'hidden'}`}
             >
+              <p className="mb-3 border-b border-white/10 pb-2 text-sm text-stone-300">
+                {t('table.deckFrom', { rank: rankLabel(view.settings.lowestRank) })}
+              </p>
               <HandRanking categoryOrder={view.settings.categoryOrder} />
               <div className="mt-3 border-t border-white/10 pt-2">{history}</div>
             </aside>

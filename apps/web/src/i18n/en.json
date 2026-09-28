@@ -107,7 +107,6 @@
     "finalDuel": "Grand final",
     "vs": "VS",
     "deckFrom": "Deck from: {{rank}}",
-    "deckUndealt": "In the deck: {{count}}",
     "ranking": "Hand ranking",
     "round": "Round {{n}}",
     "yourTurn": "Your turn",

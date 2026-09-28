@@ -16,7 +16,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Added
 
-- The table always shows a small deck badge in its bottom-right corner: the lowest rank in play and how many of the deck's cards were not dealt to anyone this round
+- The table always shows the deck's lowest rank, above the hand ranking panel
 - Optional: when `GAME_LOG_DATABASE_URL` is set, every finished game with no bots is recorded to Postgres (players, settings, winner, and the full round-by-round transcript), for play-activity stats and future bot training data. Off unless configured; see `docs/deployment.md`
 
 ### Changed
