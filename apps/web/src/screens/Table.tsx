@@ -234,7 +234,11 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
               );
             })}
             {showVsSplash && duellists.length === 2 && (
-              <FinalDuelSplash left={duellists[0]!.nick} right={duellists[1]!.nick} />
+              <FinalDuelSplash
+                left={duellists[0]!.nick}
+                right={duellists[1]!.nick}
+                deckFromRank={rankLabel(view.settings.lowestRank)}
+              />
             )}
           </div>
         </div>
