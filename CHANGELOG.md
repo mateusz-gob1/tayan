@@ -6,6 +6,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Fixed
 
+- Opening an invite link to a different room while still holding a saved session for another one no longer silently rewrites the URL and drops the player back into their old room; the invite now wins, and the stale session is dropped so the player sees the invite prompt instead of getting stuck on "waking the server"
 - A stale saved session (from a room that no longer exists, e.g. after the server restarted) no longer flashes a misleading "no such room, check the code" banner on load; the app just quietly returns to the start screen
 
 ### Changed
