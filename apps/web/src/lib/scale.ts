@@ -14,6 +14,9 @@ export type Layout = {
   /** Zoom of the card sprites: whole numbers only, otherwise pixels get resampled unevenly. */
   cards: CardScale;
   mode: LayoutMode;
+  /** Raw window height in px; `rem` alone can't tell a roomy `wide` window from a short one, since
+   * it clamps to the same minimum for a wide range of heights. */
+  windowHeight: number;
 };
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
@@ -26,11 +29,22 @@ const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n
  */
 export function pickLayout(width: number, height: number): Layout {
   if (width < 700 && height > width)
-    return { rem: clamp(Math.floor(width / 28), 12, 16), cards: 1, mode: 'portrait' };
-  if (height < 560) return { rem: clamp(Math.floor(height / 28), 12, 16), cards: 1, mode: 'short' };
+    return {
+      rem: clamp(Math.floor(width / 28), 12, 16),
+      cards: 1,
+      mode: 'portrait',
+      windowHeight: height,
+    };
+  if (height < 560)
+    return {
+      rem: clamp(Math.floor(height / 28), 12, 16),
+      cards: 1,
+      mode: 'short',
+      windowHeight: height,
+    };
   const rem = clamp(Math.floor(Math.min(width / 100, height / 48)), 16, 28);
   const cards: CardScale = rem >= 27 ? 4 : rem >= 24 ? 3 : 2;
-  return { rem, cards, mode: 'wide' };
+  return { rem, cards, mode: 'wide', windowHeight: height };
 }
 
 let current: Layout = pickLayout(1366, 768);
@@ -39,7 +53,12 @@ const listeners = new Set<() => void>();
 function apply(): void {
   const next = pickLayout(window.innerWidth, window.innerHeight);
   document.documentElement.style.fontSize = `${next.rem}px`;
-  if (next.rem !== current.rem || next.cards !== current.cards || next.mode !== current.mode) {
+  if (
+    next.rem !== current.rem ||
+    next.cards !== current.cards ||
+    next.mode !== current.mode ||
+    next.windowHeight !== current.windowHeight
+  ) {
     current = next;
     listeners.forEach((l) => l());
   }

@@ -27,7 +27,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   const byId = (id: string) => declarations.find((d) => d.id === id);
   const now = useNow(250);
   const art = useArtScale();
-  const { rem } = useLayoutScale();
+  const { rem, windowHeight } = useLayoutScale();
   const mode = useLayoutMode();
   const compact = mode !== 'wide';
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -44,9 +44,13 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
     : cardW + 12;
   const seatScale = seatCardScale(art);
   // a seat's size in rem: the card fan (136 sprite px per scale step) and ~3.5rem of text and padding
-  // held upright the seats have no card fan, only the number of cards, to leave room in the middle
+  // compact modes (and a short-but-"wide" window, e.g. a laptop with little vertical room) have no
+  // card fan, only the number of cards: it leaves more vertical room around the centre text and the
+  // seats sit closer to the felt's edge, clear of the round info in the middle. `mode` alone can't
+  // tell a roomy `wide` window from a cramped one, since a wide window is still `wide` well below
+  // the height where two opposing fan-sized seats and the round text start to collide.
   const spectating = view.spectatedHands !== undefined; // an eliminated player or a late joiner
-  const showFan = mode !== 'portrait' || spectating;
+  const showFan = (mode === 'wide' && windowHeight >= 700) || spectating;
   /** What to draw for a seat: the real cards for someone watching, otherwise card backs. */
   const seatCards = (id: string, count: number): (Card | undefined)[] =>
     view.spectatedHands
@@ -152,11 +156,14 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             className="table-shape felt-texture relative flex-1"
             style={{
               containerType: 'size',
-              ['--centre-w' as string]: mode === 'short' ? '42%' : '80%',
-              ['--centre-top' as string]: mode === 'portrait' ? '52%' : '40%',
+              ['--centre-w' as string]: mode === 'short' ? '60%' : '90%',
+              ['--centre-top' as string]: mode === 'portrait' ? '52%' : '50%',
             }}
           >
-            <div className="absolute left-1/2 top-[var(--centre-top,40%)] w-[min(18rem,var(--centre-w,80%))] -translate-x-1/2 -translate-y-1/2 text-center">
+            <div
+              data-testid="centre-info"
+              className="absolute left-1/2 top-[var(--centre-top,40%)] w-[min(26rem,var(--centre-w,80%))] -translate-x-1/2 -translate-y-1/2 text-center"
+            >
               <p className="text-xs uppercase tracking-widest text-stone-300">
                 {t('table.round', { n: view.roundNumber })}
               </p>
@@ -169,7 +176,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   <p
                     className="font-bold leading-tight text-gold"
                     style={{
-                      fontSize: 'clamp(1rem, min(9cqh, 5cqw), var(--text-2xl))',
+                      fontSize: 'clamp(1rem, min(7cqh, 4cqw), var(--text-xl))',
                       textShadow: '2px 2px 0 var(--color-ink)',
                     }}
                   >

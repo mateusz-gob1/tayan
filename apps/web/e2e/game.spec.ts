@@ -91,3 +91,53 @@ test('a lone player can add bots in the lobby and play against them', async ({ b
   await expect(host.getByText('Twoje karty')).toBeVisible();
   await host.getByText('Bot 1').first().waitFor();
 });
+
+test('the round info never overlaps a seat on a short, wide window', async ({ browser }) => {
+  // a laptop with limited vertical room (browser chrome eats into a ~768px screen); a 2-player
+  // duel is the tightest case since the opponent's seat sits directly above the centre text
+  const context = await browser.newContext({ viewport: { width: 1366, height: 660 } });
+  await context.addInitScript(() => {
+    localStorage.setItem('tayan.lang', 'pl');
+    localStorage.setItem('tayan.muted', '1');
+  });
+  const page = await context.newPage();
+  await createRoom(page, 'Ala');
+  await page.getByRole('button', { name: 'Graj z botami' }).click();
+  await expect(page.getByText('Twoje karty')).toBeVisible();
+  // declare on our own turn (the bot declares on its own) until a "X zadeklarował" byline shows,
+  // so the centre text is at its tallest — a category name plus a two-line hand like "Poker do asa"
+  const category = page.locator('[data-testid="picker-category"]:not([disabled])');
+  const option = page.getByTestId('picker-option');
+  const confirm = page.getByTestId('picker-confirm');
+  const byline = page.getByText(/zadeklarował/);
+  for (let i = 0; i < 50 && !(await byline.isVisible()); i++) {
+    if (await confirm.count()) await confirm.click({ timeout: 1000 }).catch(() => {});
+    else if (await option.count())
+      await option
+        .last()
+        .click({ timeout: 1000 })
+        .catch(() => {});
+    else if (await category.count())
+      await category
+        .last()
+        .click({ timeout: 1000 })
+        .catch(() => {});
+    await page.waitForTimeout(200);
+  }
+  await expect(byline).toBeVisible({ timeout: 5000 });
+  await page.waitForTimeout(500);
+
+  const centre = await page.getByTestId('centre-info').boundingBox();
+  const seats = await page.locator('.plaque, .plaque-active').all();
+  expect(centre).not.toBeNull();
+  for (const seat of seats) {
+    const box = await seat.boundingBox();
+    if (!box || !centre) continue;
+    const overlapsX = centre.x < box.x + box.width && centre.x + centre.width > box.x;
+    const overlapsY = centre.y < box.y + box.height && centre.y + centre.height > box.y;
+    expect(
+      overlapsX && overlapsY,
+      `seat ${JSON.stringify(box)} overlaps centre info ${JSON.stringify(centre)}`,
+    ).toBe(false);
+  }
+});

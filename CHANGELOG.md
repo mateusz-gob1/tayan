@@ -6,6 +6,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Fixed
 
+- On a laptop window with limited vertical room (common once the browser's own chrome is subtracted), the round info at the centre of the table could overlap a seat — most visibly in a 2-player duel, where the opponent sits directly above it. Opponents' card-back fans are now hidden below a height where they'd no longer fit cleanly, same as they already were on a phone, and the round info got a bit more horizontal room so long hand names wrap less
 - Opening an invite link to a different room while still holding a saved session for another one no longer silently rewrites the URL and drops the player back into their old room; the invite now wins, and the stale session is dropped so the player sees the invite prompt instead of getting stuck on "waking the server"
 - A stale saved session (from a room that no longer exists, e.g. after the server restarted) no longer flashes a misleading "no such room, check the code" banner on load; the app just quietly returns to the start screen
 

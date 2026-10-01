@@ -3,18 +3,28 @@ import { iconZoom, pickLayout, seatCardScale } from '../src/lib/scale';
 
 describe('pickLayout', () => {
   it('keeps the base size on laptop-sized windows', () => {
-    expect(pickLayout(1024, 768)).toEqual({ rem: 16, cards: 2, mode: 'wide' });
-    expect(pickLayout(1366, 768)).toEqual({ rem: 16, cards: 2, mode: 'wide' });
+    expect(pickLayout(1024, 768)).toEqual({ rem: 16, cards: 2, mode: 'wide', windowHeight: 768 });
+    expect(pickLayout(1366, 768)).toEqual({ rem: 16, cards: 2, mode: 'wide', windowHeight: 768 });
   });
 
   it('grows text smoothly on bigger windows while the cards stay at 2x', () => {
-    expect(pickLayout(1920, 1080)).toEqual({ rem: 19, cards: 2, mode: 'wide' });
-    expect(pickLayout(2000, 1000)).toEqual({ rem: 20, cards: 2, mode: 'wide' });
+    expect(pickLayout(1920, 1080)).toEqual({
+      rem: 19,
+      cards: 2,
+      mode: 'wide',
+      windowHeight: 1080,
+    });
+    expect(pickLayout(2000, 1000)).toEqual({ rem: 20, cards: 2, mode: 'wide', windowHeight: 1000 });
   });
 
   it('moves the cards to 3x and 4x only on very big windows', () => {
     expect(pickLayout(2560, 1440).cards).toBe(3);
-    expect(pickLayout(3840, 2160)).toEqual({ rem: 28, cards: 4, mode: 'wide' });
+    expect(pickLayout(3840, 2160)).toEqual({
+      rem: 28,
+      cards: 4,
+      mode: 'wide',
+      windowHeight: 2160,
+    });
   });
 
   it('is limited by the smaller of width and height', () => {
@@ -33,8 +43,13 @@ describe('pickLayout', () => {
   });
 
   it('uses a smaller interface and the smallest cards on phones', () => {
-    expect(pickLayout(812, 375)).toEqual({ rem: 13, cards: 1, mode: 'short' });
-    expect(pickLayout(390, 844)).toEqual({ rem: 13, cards: 1, mode: 'portrait' });
+    expect(pickLayout(812, 375)).toEqual({ rem: 13, cards: 1, mode: 'short', windowHeight: 375 });
+    expect(pickLayout(390, 844)).toEqual({
+      rem: 13,
+      cards: 1,
+      mode: 'portrait',
+      windowHeight: 844,
+    });
     expect(pickLayout(320, 568).rem).toBe(12);
     expect(pickLayout(667, 320).rem).toBe(12);
   });
