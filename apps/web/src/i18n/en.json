@@ -178,6 +178,9 @@
     "place": "{{n}}. place",
     "rematch": "Rematch",
     "waitRematch": "Waiting for the host to offer a rematch.",
+    "scores": "Points this session",
+    "points": "{{count}} pts",
+    "scoresHint": "The first player out gets 0 points, each next one a point more than the one before.",
     "leave": "Leave"
   },
   "help": {

@@ -31,18 +31,47 @@ export function GameOver({ view, room }: { view: PlayerView; room: RoomState }) 
         {winner === view.me && <p className="mt-1 text-lg">{t('gameOver.youWon')}</p>}
       </div>
 
-      <div className="panel-deco mx-auto max-w-sm space-y-2">
-        <SuitStrip />
-        <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('gameOver.order')}</h3>
-        <ol className="space-y-1">
-          {ranking.map((id, i) => (
-            <li key={id} className="flex justify-between rounded-lg bg-white/5 px-3 py-1.5">
-              <span className="text-stone-300">{t('gameOver.place', { n: i + 1 })}</span>
-              <span className="font-semibold">{nick(id)}</span>
-            </li>
-          ))}
-        </ol>
-        <SuitStrip />
+      <div className="mx-auto grid max-w-3xl items-start gap-4 md:grid-cols-2">
+        <div className="panel-deco w-full space-y-2">
+          <SuitStrip />
+          <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('gameOver.order')}</h3>
+          <ol className="space-y-1">
+            {ranking.map((id, i) => (
+              <li key={id} className="flex justify-between rounded-lg bg-white/5 px-3 py-1.5">
+                <span className="text-stone-300">{t('gameOver.place', { n: i + 1 })}</span>
+                <span className="font-semibold">{nick(id)}</span>
+              </li>
+            ))}
+          </ol>
+          <SuitStrip />
+        </div>
+
+        {room.scores.length > 0 && (
+          <div className="panel-deco w-full space-y-2" data-testid="scoreboard">
+            <SuitStrip />
+            <h3 className="mb-2 text-sm font-semibold text-stone-300">{t('gameOver.scores')}</h3>
+            <ol className="space-y-1">
+              {room.scores.map((row) => (
+                <li
+                  key={row.id}
+                  className="flex justify-between gap-3 rounded-lg bg-white/5 px-3 py-1.5"
+                >
+                  <span className="font-semibold">{row.nick}</span>
+                  <span>
+                    {row.gained > 0 && (
+                      <span className="mr-2 text-sm text-gold">+{row.gained}</span>
+                    )}
+                    <span className="text-stone-300">
+                      {t('gameOver.points', { count: row.points })}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p className="text-xs text-stone-400">{t('gameOver.scoresHint')}</p>
+            <SuitStrip />
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col items-center gap-2">

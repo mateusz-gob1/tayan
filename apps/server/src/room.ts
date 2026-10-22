@@ -85,6 +85,9 @@ export class Room {
   private gamePlayers: { id: string; nick: string }[] = [];
   private transcript: ServerLogEvent[] = [];
 
+  /** Points per player over the games of this room; `gained` is what the last game added. */
+  private scores = new Map<string, { nick: string; points: number; gained: number }>();
+
   constructor(
     readonly code: string,
     private readonly deps: RoomDeps,
@@ -365,6 +368,7 @@ export class Room {
         this.emitEvents(result.events);
         if (result.state.winner) {
           this.phase = 'GAME_OVER';
+          this.scoreGame();
           this.finishGameLog(result.state.winner);
         }
       }
@@ -391,6 +395,22 @@ export class Room {
   private emitEvent(event: ServerLogEvent): void {
     this.transcript.push(event);
     this.deps.transport.toRoom(this.code, 'game:event', event);
+  }
+
+  /** First out gets 0 points, each later one a point more than the one before, the winner most. */
+  private scoreGame(): void {
+    const st = this.state;
+    if (!st) return;
+    for (const row of this.scores.values()) row.gained = 0;
+    const order = st.winner ? [...st.eliminated, st.winner] : st.eliminated;
+    order.forEach((id, points) => {
+      const prev = this.scores.get(id);
+      this.scores.set(id, {
+        nick: this.nickById.get(id) ?? prev?.nick ?? id,
+        points: (prev?.points ?? 0) + points,
+        gained: points,
+      });
+    });
   }
 
   /** Records a finished game (no bots among its players) for play-activity stats and, eventually,
@@ -491,6 +511,7 @@ export class Room {
     this.ready.clear();
     if (winner) {
       this.emitEvents([{ type: 'GAME_OVER', winner }]);
+      this.scoreGame();
       this.finishGameLog(winner);
     }
   }
@@ -597,6 +618,9 @@ export class Room {
       deckWarning,
       readyIds: [...this.ready],
       ...(this.revealEndsAt !== undefined ? { revealEndsAt: this.revealEndsAt } : {}),
+      scores: [...this.scores.entries()]
+        .map(([id, r]) => ({ id, ...r }))
+        .sort((a, b) => b.points - a.points || a.nick.localeCompare(b.nick)),
       kickVote: voting
         ? {
             targetId: st.round.currentTurn,

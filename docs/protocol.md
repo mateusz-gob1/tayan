@@ -19,7 +19,7 @@ Every client event takes a payload and an `ack` callback: `ack({ ok: true, data?
 | Server → client | Payload                                                                                                                                          |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `session`       | `{ playerId, sessionToken, roomCode }`; store in localStorage for reconnect                                                                      |
-| `room:state`    | members, host, phase, host overrides, effective settings, deck warning, ready ids, kick vote                                                     |
+| `room:state`    | members, host, phase, host overrides, effective settings, deck warning, ready ids, kick vote, session scores                                     |
 | `game:view`     | the receiving player's `PlayerView` (never other players' cards before the reveal)                                                               |
 | `game:event`    | engine events (`DECLARED`, `CHECKED`, `REVEALED`, `PLAYER_ELIMINATED`, `GAME_OVER`, `ROUND_STARTED`) plus `AUTO_PLAYED` and `ELIMINATION_REASON` |
 | `error`         | `{ code }` for things not tied to an ack (`KICKED`, `SERVER_SHUTDOWN`)                                                                           |
