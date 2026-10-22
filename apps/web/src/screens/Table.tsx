@@ -50,6 +50,8 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   // tell a roomy `wide` window from a cramped one, since a wide window is still `wide` well below
   // the height where two opposing fan-sized seats and the round text start to collide.
   const spectating = view.spectatedHands !== undefined; // an eliminated player or a late joiner
+  const spectatedCards = view.spectatedHands;
+  const [zoomedSeat, setZoomedSeat] = useState<string | null>(null);
   const showFan = (mode === 'wide' && windowHeight >= 700) || spectating;
   /** What to draw for a seat: the real cards for someone watching, otherwise card backs. */
   const seatCards = (id: string, count: number): (Card | undefined)[] =>
@@ -200,7 +202,29 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   } ${p.eliminated ? 'shake opacity-40 grayscale' : ''}`}
                   // snap to whole pixels so the sprites are not resampled unevenly
                   style={{ left, top }}
+                  onPointerEnter={() => spectatedCards && setZoomedSeat(p.id)}
+                  onPointerLeave={() => setZoomedSeat(null)}
+                  onClick={() => spectatedCards && setZoomedSeat(zoomedSeat === p.id ? null : p.id)}
                 >
+                  {spectatedCards &&
+                    zoomedSeat === p.id &&
+                    (spectatedCards[p.id]?.length ?? 0) > 0 && (
+                      // a spectator sees the real cards: bring them up close on hover (or tap on touch)
+                      <div
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-1/2 top-1/2 z-30 flex w-max -translate-x-1/2 -translate-y-1/2 border-4 border-ink bg-panel p-2"
+                      >
+                        {spectatedCards[p.id]!.map((card, k) => (
+                          <div
+                            key={k}
+                            className="shrink-0"
+                            style={{ marginLeft: k === 0 ? 0 : -24 }}
+                          >
+                            <PlayingCard card={card} scale={2} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   <p className="max-w-[14rem] text-sm font-bold">
                     {p.nick}
                     {p.id === view.me && ' ★'}

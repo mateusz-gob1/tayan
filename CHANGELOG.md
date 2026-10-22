@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+
+- Spectators (eliminated players and late joiners) see a player's cards enlarged when they hover over that player's seat (tap on touch screens)
+
 ### Fixed
 
 - On a laptop window with limited vertical room (common once the browser's own chrome is subtracted), the round info at the centre of the table could overlap a seat — most visibly in a 2-player duel, where the opponent sits directly above it. Opponents' card-back fans are now hidden below a height where they'd no longer fit cleanly, same as they already were on a phone, and the round info got a bit more horizontal room so long hand names wrap less
