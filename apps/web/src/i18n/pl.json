@@ -180,6 +180,9 @@
     "place": "{{n}}. miejsce",
     "rematch": "Rewanż",
     "waitRematch": "Czekamy, aż host zaproponuje rewanż.",
+    "scores": "Punkty w tej sesji",
+    "points": "{{count}} pkt",
+    "scoresHint": "Pierwsza osoba, która odpadnie, dostaje 0 punktów, każda kolejna o punkt więcej niż poprzednia.",
     "leave": "Wyjdź"
   },
   "help": {

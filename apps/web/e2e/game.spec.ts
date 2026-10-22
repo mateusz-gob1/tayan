@@ -25,6 +25,7 @@ test('three players play a whole game and start a rematch', async ({ browser }) 
   for (const p of [host, bob, cyd]) {
     await expect(p.getByText(/^Zwycięzca:/)).toBeVisible();
     await expect(p.getByText('Kolejność odpadania')).toBeVisible();
+    await expect(p.getByTestId('scoreboard')).toContainText('Punkty w tej sesji');
   }
 
   await host.getByRole('button', { name: 'Rewanż' }).click();

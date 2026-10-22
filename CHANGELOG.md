@@ -21,6 +21,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Added
 
+- Points over a session: across the games (rematches) of one room the first player out of each game gets 0 points, each next one a point more than the one before and the winner the most; the end screen shows everyone's running total and what the last game added
 - The table always shows the deck's lowest rank, above the hand ranking panel, and it's also shown on the "Grand final" VS splash
 - Optional: when `GAME_LOG_DATABASE_URL` is set, every finished game with no bots is recorded to Postgres (players, settings, winner, and the full round-by-round transcript), for play-activity stats and future bot training data. Off unless configured; see `docs/deployment.md`
 

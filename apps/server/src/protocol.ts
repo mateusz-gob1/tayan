@@ -140,4 +140,8 @@ export type RoomStatePayload = {
   readyIds: string[];
   revealEndsAt?: number;
   kickVote: { targetId: string; votes: string[]; availableAt: number } | null;
+  /** Points over the games played in this room (first out 0, each next one more), best first. */
+  scores: ScoreRow[];
 };
+
+export type ScoreRow = { id: string; nick: string; points: number; gained: number };

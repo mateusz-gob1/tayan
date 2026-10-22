@@ -26,6 +26,9 @@ export type RoomState = {
   readyIds: string[];
   revealEndsAt?: number;
   kickVote: { targetId: string; votes: string[]; availableAt: number } | null;
+  scores: ScoreRow[];
 };
+
+export type ScoreRow = { id: string; nick: string; points: number; gained: number };
 
 export type ServerEvent = { type: string; [key: string]: unknown };
