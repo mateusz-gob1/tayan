@@ -322,9 +322,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-sm text-stone-400">{isPlayer ? '' : t('table.spectating')}</p>
-            )}
+            ) : null}
           </div>
         );
         const actions = (withHand: boolean) => (
@@ -335,7 +333,7 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             myTurn={myTurn}
             isPlayer={isPlayer}
             now={now}
-            handSlot={withHand ? hand : undefined}
+            handSlot={withHand && isPlayer ? hand : undefined}
           />
         );
         return compact ? (
@@ -346,8 +344,10 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
             {actions(true)}
           </div>
         ) : (
-          <div className="panel grid shrink-0 gap-x-6 gap-y-3 lg:grid-cols-[auto_minmax(0,1fr)]">
-            {hand}
+          <div
+            className={`panel grid shrink-0 gap-x-6 gap-y-3 ${isPlayer ? 'lg:grid-cols-[auto_minmax(0,1fr)]' : ''}`}
+          >
+            {isPlayer && hand}
             {actions(false)}
           </div>
         );
