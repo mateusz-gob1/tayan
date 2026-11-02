@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
   formatDeclaration,
@@ -51,7 +52,12 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
   // the height where two opposing fan-sized seats and the round text start to collide.
   const spectating = view.spectatedHands !== undefined; // an eliminated player or a late joiner
   const spectatedCards = view.spectatedHands;
-  const [zoomedSeat, setZoomedSeat] = useState<string | null>(null);
+  // the seat a spectator is pointing at, with the centre of its plaque on screen
+  const [zoomedSeat, setZoomedSeat] = useState<{ id: string; x: number; y: number } | null>(null);
+  const zoomSeat = (el: HTMLElement, id: string) => {
+    const r = el.getBoundingClientRect();
+    setZoomedSeat({ id, x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  };
   const showFan = (mode === 'wide' && windowHeight >= 700) || spectating;
   /** What to draw for a seat: the real cards for someone watching, otherwise card backs. */
   const seatCards = (id: string, count: number): (Card | undefined)[] =>
@@ -202,29 +208,15 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                   } ${p.eliminated ? 'shake opacity-40 grayscale' : ''}`}
                   // snap to whole pixels so the sprites are not resampled unevenly
                   style={{ left, top }}
-                  onPointerEnter={() => spectatedCards && setZoomedSeat(p.id)}
+                  onPointerEnter={(e) => spectatedCards && zoomSeat(e.currentTarget, p.id)}
                   onPointerLeave={() => setZoomedSeat(null)}
-                  onClick={() => spectatedCards && setZoomedSeat(zoomedSeat === p.id ? null : p.id)}
+                  onClick={(e) =>
+                    spectatedCards &&
+                    (zoomedSeat?.id === p.id
+                      ? setZoomedSeat(null)
+                      : zoomSeat(e.currentTarget, p.id))
+                  }
                 >
-                  {spectatedCards &&
-                    zoomedSeat === p.id &&
-                    (spectatedCards[p.id]?.length ?? 0) > 0 && (
-                      // a spectator sees the real cards: bring them up close on hover (or tap on touch)
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-1/2 top-1/2 z-30 flex w-max -translate-x-1/2 -translate-y-1/2 border-4 border-ink bg-panel p-2"
-                      >
-                        {spectatedCards[p.id]!.map((card, k) => (
-                          <div
-                            key={k}
-                            className="shrink-0"
-                            style={{ marginLeft: k === 0 ? 0 : -24 }}
-                          >
-                            <PlayingCard card={card} scale={2} />
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   <p className="max-w-[14rem] text-sm font-bold">
                     {p.nick}
                     {p.id === view.me && ' ★'}
@@ -264,6 +256,13 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
                 </div>
               );
             })}
+            {zoomedSeat && spectatedCards?.[zoomedSeat.id]?.length ? (
+              <ZoomedHand
+                cards={spectatedCards[zoomedSeat.id]!}
+                x={zoomedSeat.x}
+                y={zoomedSeat.y}
+              />
+            ) : null}
             {showVsSplash && duellists.length === 2 && (
               <FinalDuelSplash
                 left={duellists[0]!.nick}
@@ -377,6 +376,36 @@ export function Table({ view, room }: { view: PlayerView; room: RoomState }) {
         );
       })()}
     </div>
+  );
+}
+
+/**
+ * A spectator's close-up of one player's cards. Drawn on the page itself (not inside the felt, whose
+ * rounded frame would cut it off) and kept within the window, centred on the seat when it can be.
+ */
+function ZoomedHand({ cards, x, y }: { cards: Card[]; x: number; y: number }) {
+  const CARD_W = 56 * 2;
+  const CARD_H = 80 * 2;
+  const OVERLAP = 24;
+  const PAD = 8 + 4; // padding and border
+  const w = CARD_W + (cards.length - 1) * (CARD_W - OVERLAP) + PAD * 2;
+  const h = CARD_H + PAD * 2;
+  const margin = 8;
+  const left = Math.min(Math.max(x - w / 2, margin), Math.max(margin, innerWidth - w - margin));
+  const top = Math.min(Math.max(y - h / 2, margin), Math.max(margin, innerHeight - h - margin));
+  return createPortal(
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed z-50 flex w-max border-4 border-ink bg-panel p-2"
+      style={{ left, top }}
+    >
+      {cards.map((card, k) => (
+        <div key={k} className="shrink-0" style={{ marginLeft: k === 0 ? 0 : -OVERLAP }}>
+          <PlayingCard card={card} scale={2} />
+        </div>
+      ))}
+    </div>,
+    document.body,
   );
 }
 
