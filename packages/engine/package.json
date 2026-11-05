@@ -16,7 +16,7 @@
     "cli": "tsx src/cli/play.ts"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@vitest/coverage-v8": "^5.0.5",
     "fast-check": "^4.10.2",
     "tsx": "^4.23.15",
