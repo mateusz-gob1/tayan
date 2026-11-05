@@ -16,11 +16,11 @@
     "@fontsource/press-start-2p": "^5.3.0",
     "@fontsource/silkscreen": "^5.3.0",
     "@tayan/engine": "workspace:*",
-    "i18next": "^26.5.11",
-    "i18next-browser-languagedetector": "^8.2.3",
+    "i18next": "^26.7.1",
+    "i18next-browser-languagedetector": "^8.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-i18next": "^17.1.9",
+    "react-i18next": "^17.1.11",
     "socket.io-client": "^4.8.4",
     "zustand": "^5.0.16"
   },
@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
+    "@vitejs/plugin-react": "^6.2.1",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
